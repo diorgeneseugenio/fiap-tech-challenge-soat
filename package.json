@@ -1,0 +1,16 @@
+{
+  "name": "fiap-tech-challenge-soat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:diorgeneseugenio/fiap-tech-challenge-soat.git",
+  "author": "Diórgenes Eugênio <diorgeneseugenio@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
+    "husky": "^8.0.3"
+  }
+}
