@@ -5,6 +5,11 @@
   "repository": "git@github.com:diorgeneseugenio/fiap-tech-challenge-soat.git",
   "author": "Diórgenes Eugênio <diorgeneseugenio@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": "16.x",
+    "npm": "please-use-yarn",
+    "yarn": ">= 1.19.1"
+  },
   "scripts": {
     "prepare": "husky install",
     "commit": "git-cz",
