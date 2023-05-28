@@ -13,7 +13,7 @@ export default class ProdutoService {
         this.produtoRepository.deletarProduto(idProduto);
     }
 
-    async editarProduto(idProduto: string, produto: string): Promise<Produto> {
+    async editarProduto(idProduto: string, produto: Produto): Promise<Produto|undefined> {
         const produtoEditado = this.produtoRepository.editarProduto(idProduto, produto);
         return produtoEditado;
     }
@@ -23,7 +23,7 @@ export default class ProdutoService {
         return produtos;
     }
 
-    async pegarProduto(idProduto: string): Promise<Produto> {
+    async pegarProduto(idProduto: string): Promise<Produto|undefined> {
         const produto = this.produtoRepository.pegarProduto(idProduto);
         return produto
     }

@@ -1,3 +1,5 @@
+import Categoria from "./enum/categorias";
+
 export default interface Produto {
     id: string;
     nome: string;

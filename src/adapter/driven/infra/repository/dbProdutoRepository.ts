@@ -15,13 +15,13 @@ class DBProdutosRepository implements ProdutoRepository {
     deletarProduto(idProduto: string): void {
         throw new Error("Method not implemented.");
     }
-    editarProduto(idProduto: string, produto: string): Promise<Produto> {
+    editarProduto(idProduto: string, produto: Produto): Promise<Produto> {
         throw new Error("Method not implemented.");
     }
     async listarProdutos(): Promise<Produto[]> {
         return this.listaProdutos;
     }
-    pegarProduto(idProduto: string): Promise<Produto> {
+    pegarProduto(idProduto: string): Promise<Produto|undefined> {
         throw new Error("Method not implemented.");
     }
 }
