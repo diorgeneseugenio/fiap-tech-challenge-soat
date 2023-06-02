@@ -1,10 +1,16 @@
-import Categoria from "./enum/categorias";
+export interface ImagensAtributos {
+    id?: number;
+    url: string;
+    produtoId?: number;
+}
 
-export default interface Produto {
-    id: string;
+export interface Produto {
+    id?: string;
     nome: string;
-    categoria: Categoria;
+    categoriaId?: string;
     preco: number;
     descricao: string;
-    imagens: string[];
+    imagens?: ImagensAtributos[];
+    createdAt?: Date;
+    updatedAt?: Date;
 }

@@ -1,4 +1,4 @@
-import Produto from "core/domain/produto";
+import { Produto } from "core/domain/produto";
 import ProdutoRepository from "../ports/produtoRepository";
 
 export default class ProdutoService {

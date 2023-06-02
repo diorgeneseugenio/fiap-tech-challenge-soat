@@ -1,7 +1,7 @@
 import express from "express";
 
 import ProdutoController from "../controllers/produtoController";
-import DBProdutosRepository from "../../../driven/infra/repository/dbProdutoRepository";
+import DBProdutosRepository from "../../../driven/infra/repository/produtoDatabaseRepository";
 import ProdutoService from "../../../../core/applications/services/produtoService";
 
 const produtoRouter = express.Router();
