@@ -56,7 +56,8 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
         }
     }
 
-    async listaProdutos(): Promise<Produto[]> {
+    async listaProdutos(filtro: any): Promise<Produto[]> {
+        console.log({...filtro})
         try {
             const produtos = await ProdutoModel.findAll({
                 attributes: {
@@ -69,7 +70,8 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
                     {
                         model: CategoriaModel, as: 'categoria',
                     },
-                ]
+                ],
+                where: {...filtro},
             });
             return produtos;
         } catch (err: any) {
