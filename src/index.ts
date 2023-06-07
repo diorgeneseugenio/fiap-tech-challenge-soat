@@ -26,5 +26,3 @@ const server = new Server({ appConfig: app, });
 server.addRouter("/api/produto", produtoRouter);
 
 server.init();
-
-// console.log('hello world!2')
