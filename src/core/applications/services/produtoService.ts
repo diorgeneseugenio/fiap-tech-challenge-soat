@@ -1,30 +1,26 @@
 import { Produto } from "core/domain/produto";
-import ProdutoRepository from "../ports/produtoRepository";
+import ProdutoRepository from "../repositories/produtoRepository";
 
 export default class ProdutoService {
     constructor(private readonly produtoRepository: ProdutoRepository) { }
 
-    async criarProduto(produto: Produto): Promise<Produto> {
-        const produtoCriado = await this.produtoRepository.criarProduto(produto);
-        return produtoCriado;
+    async criaProduto(produto: Produto): Promise<Produto> {
+        return this.produtoRepository.criaProduto(produto);
     }
 
-    async deletarProduto(idProduto: string) {
-        this.produtoRepository.deletarProduto(idProduto);
+    async deletaProduto(idProduto: string): Promise<number> {
+        return this.produtoRepository.deletaProduto(idProduto);
     }
 
-    async editarProduto(idProduto: string, produto: Produto): Promise<Produto|undefined> {
-        const produtoEditado = this.produtoRepository.editarProduto(idProduto, produto);
-        return produtoEditado;
+    async editaProduto(idProduto: string, produto: Produto): Promise<Produto | null> {
+        return this.produtoRepository.editaProduto(idProduto, produto);
     }
 
-    async listarProdutos(): Promise<Produto[]> {
-        const produtos = this.produtoRepository.listarProdutos();
-        return produtos;
+    async listaProdutos(): Promise<Produto[]> {
+        return this.produtoRepository.listaProdutos();
     }
 
-    async pegarProduto(idProduto: string): Promise<Produto|undefined> {
-        const produto = this.produtoRepository.pegarProduto(idProduto);
-        return produto
+    async retornaProduto(idProduto: string): Promise<Produto | null> {
+        return this.produtoRepository.retornaProduto(idProduto);
     }
 }

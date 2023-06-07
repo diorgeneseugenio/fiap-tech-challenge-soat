@@ -4,16 +4,16 @@ import { Request, Response } from "express";
 export default class ProdutoController {
     constructor(private readonly produtoService: ProdutoService) { }
 
-    async criarProduto(req: Request, res: Response) {
+    async criaProduto(req: Request, res: Response) {
         try {
             const produto = req.body;
 
-            const produtoCriado = await this.produtoService.criarProduto(produto);
+            const produtoCriado = await this.produtoService.criaProduto(produto);
             return res.status(201).json({
                 status: "success",
                 message: produtoCriado,
             });
-        } catch (err: unknown) {
+        } catch (err: any) {
             return res.status(500).json({
                 status: "error",
                 message: err,
@@ -21,16 +21,22 @@ export default class ProdutoController {
         }
     }
 
-    async deletarProduto(req: Request, res: Response) {
+    async deletaProduto(req: Request, res: Response) {
         try {
             const { id } = req.params;
 
-            const produtoDeletado = await this.produtoService.deletarProduto(id);
-            return res.status(200).json({
-                status: "success",
-                message: produtoDeletado,
+            const produtoDeletado = await this.produtoService.deletaProduto(id);
+
+            if (produtoDeletado > 0) {
+                return res.status(200).json({
+                    status: "success",
+                });
+            }
+            return res.status(404).json({
+                status: "error",
+                message: 'product not found!',
             });
-        } catch (err: unknown) {
+        } catch (err: any) {
             return res.status(500).json({
                 status: "error",
                 message: err,
@@ -38,17 +44,30 @@ export default class ProdutoController {
         }
     }
 
-    async editarProduto(req: Request, res: Response) {
+    async editaProduto(req: Request, res: Response) {
         try {
             const { id } = req.params;
             const produto = req.body;
 
-            const produtorAtualizado = await this.produtoService.editarProduto(id, produto);
-            return res.status(200).json({
-                status: "success",
-                message: produtorAtualizado,
+            const produtorAtualizado = await this.produtoService.editaProduto(id, produto);
+
+            if (produtorAtualizado) {
+                return res.status(200).json({
+                    status: "success",
+                    message: produtorAtualizado,
+                });
+            }
+            return res.status(404).json({
+                status: "error",
+                message: 'product not found!',
             });
-        } catch (err: unknown) {
+        } catch (err: any) {
+            if (err.message === 'categoria_inexistente') {
+                return res.status(400).json({
+                    status: "error",
+                    message: 'Categoria inexistente!',
+                });
+            }
             return res.status(500).json({
                 status: "error",
                 message: err,
@@ -56,15 +75,15 @@ export default class ProdutoController {
         }
     }
 
-    async listarProdutos(req: Request, res: Response) {
+    async listaProdutos(req: Request, res: Response) {
         try {
-            const produtos = await this.produtoService.listarProdutos();
-            console.log(produtos)
+            const produtos = await this.produtoService.listaProdutos();
+
             return res.status(200).json({
                 status: "success",
                 produtos,
             });
-        } catch (err: unknown) {
+        } catch (err: any) {
             return res.status(500).json({
                 status: "error",
                 message: err,
@@ -72,16 +91,24 @@ export default class ProdutoController {
         }
     }
 
-    async pegarProduto(req: Request, res: Response) {
+    async retornaProduto(req: Request, res: Response) {
         try {
             const { id } = req.params;
 
-            const produto = await this.produtoService.pegarProduto(id);
-            return res.status(200).json({
-                status: "success",
-                produto,
+            const produto = await this.produtoService.retornaProduto(id);
+
+            if (produto) {
+                return res.status(200).json({
+                    status: "success",
+                    produto,
+                });
+            }
+            return res.status(404).json({
+                status: "error",
+                message: "Product not found!",
             });
-        } catch (err: unknown) {
+
+        } catch (err: any) {
             return res.status(500).json({
                 status: "error",
                 message: err,

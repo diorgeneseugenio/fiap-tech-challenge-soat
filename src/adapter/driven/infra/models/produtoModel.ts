@@ -12,12 +12,13 @@ class ProdutoModel extends Model<Produto> implements Produto {
   public descricao!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 
   static initialize(sequelize: Sequelize): void {
     ProdutoModel.init({
       id: {
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV1,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         onDelete: 'CASCADE',
       },
@@ -25,14 +26,6 @@ class ProdutoModel extends Model<Produto> implements Produto {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      // categoria: {
-      //   type: DataTypes.INTEGER,
-      //   allowNull: false,
-      //   references: {
-      //     model: CategoriaModel,
-      //     key: 'id'
-      //   },
-      // },
       categoriaId: {
         type: DataTypes.UUID,
         allowNull: false,
@@ -49,7 +42,13 @@ class ProdutoModel extends Model<Produto> implements Produto {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null
+      }
     }, {
+      paranoid: true,
       sequelize,
       tableName: 'Produtos',
       timestamps: true,

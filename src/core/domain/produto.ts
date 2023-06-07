@@ -1,7 +1,10 @@
 export interface ImagensAtributos {
-    id?: number;
+    id?: string;
     url: string;
-    produtoId?: number;
+    produtoId?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
 }
 
 export interface Produto {
@@ -13,4 +16,5 @@ export interface Produto {
     imagens?: ImagensAtributos[];
     createdAt?: Date;
     updatedAt?: Date;
+    deletedAt?: Date;
 }

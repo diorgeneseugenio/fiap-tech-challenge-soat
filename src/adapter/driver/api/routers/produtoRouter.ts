@@ -11,11 +11,11 @@ const produtoService = new ProdutoService(dbProdutosRepository);
 const produtoController = new ProdutoController(produtoService);
 
 
-produtoRouter.post("/", produtoController.criarProduto.bind(produtoController));
-produtoRouter.get("/", produtoController.listarProdutos.bind(produtoController));
-produtoRouter.get("/:id", produtoController.pegarProduto.bind(produtoController));
-produtoRouter.delete("/:id", produtoController.deletarProduto.bind(produtoController));
-produtoRouter.put("/:id", produtoController.editarProduto.bind(produtoController));
+produtoRouter.post("/", produtoController.criaProduto.bind(produtoController));
+produtoRouter.get("/", produtoController.listaProdutos.bind(produtoController));
+produtoRouter.get("/:id", produtoController.retornaProduto.bind(produtoController));
+produtoRouter.delete("/:id", produtoController.deletaProduto.bind(produtoController));
+produtoRouter.put("/:id", produtoController.editaProduto.bind(produtoController));
 
 
 export default produtoRouter;

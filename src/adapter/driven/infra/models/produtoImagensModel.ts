@@ -4,17 +4,19 @@ import { ImagensAtributos } from 'core/domain/produto';
 
 
 class ImagensProdutoModel extends Model<ImagensAtributos> implements ImagensAtributos {
-    public id!: number;
+    public id!: string;
     public url!: string;
-    public produtoId!: number;
+    public produtoId!: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
+    public readonly deletedAt!: Date;
+
 
     static initialize(sequelize: Sequelize): void {
         ImagensProdutoModel.init({
             id: {
                 type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV1,
+                defaultValue: DataTypes.UUIDV4,
                 primaryKey: true,
             },
             url: {
@@ -25,8 +27,14 @@ class ImagensProdutoModel extends Model<ImagensAtributos> implements ImagensAtri
                 type: DataTypes.UUID,
                 allowNull: false,
                 onDelete: 'CASCADE',
-            }
+            },
+            deletedAt: {
+                type: DataTypes.DATE,
+                allowNull: true,
+                defaultValue: null
+              }
         }, {
+            paranoid: true,
             sequelize,
             tableName: 'ImagensProduto',
             timestamps: true,

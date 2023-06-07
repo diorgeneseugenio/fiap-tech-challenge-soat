@@ -1,12 +1,11 @@
-import ProdutoRepository from "core/applications/ports/produtoRepository";
-import { ImagensAtributos, Produto } from "core/domain/produto";
+import ProdutoRepository from "core/applications/repositories/produtoRepository";
+import { Produto } from "core/domain/produto";
 import ProdutoModel from "../models/produtoModel";
 import ImagensProdutoModel from "../models/produtoImagensModel";
 import CategoriaModel from "../models/categoriaModel";
 
-
 class ProdutosDataBaseRepository implements ProdutoRepository {
-    async criarProduto(produto: Produto): Promise<any> {
+    async criaProduto(produto: Produto): Promise<Produto> {
         try {
             const produtoCriado = await ProdutoModel.create({
                 ...produto,
@@ -22,29 +21,42 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
             });
             return produtoCriado;
         } catch (err: any) {
-            console.log('Erro ao editar Produto: ', err)
-            return err.message
+            console.error('Erro ao criar Produto: ', err)
+            throw new Error(err);
         }
     }
 
-    async deletarProduto(idProduto: string) {
+    async deletaProduto(idProduto: string): Promise<number> {
         try {
-            ProdutoModel.destroy({ where: { id: idProduto } })
+            return ProdutoModel.destroy({ where: { id: idProduto } })
         } catch (err: any) {
-            console.log('Erro em deletar Produto: ', err)
+            console.error('Erro ao deletar produto: ', err)
+            throw new Error(err);
         }
+
     }
-    async editarProduto(idProduto: string, produto: Produto): Promise<any> {
+    async editaProduto(idProduto: string, produto: Produto): Promise<Produto | null> {
         try {
-            const produtoAtualizado = await ProdutoModel.update(produto, { where: { id: idProduto }, });
-            return produtoAtualizado;
+            const categoriaExiste = await CategoriaModel.findByPk(produto.categoriaId);
+
+            if (!categoriaExiste) {
+                throw new Error("categoria_inexistente");
+            }
+
+            const produtoAtual = await ProdutoModel.findByPk(idProduto);
+
+            if (produtoAtual) {
+                Object.assign(produtoAtual, produto);
+                await produtoAtual.save();
+            }
+            return produtoAtual;
         } catch (err: any) {
-            console.log('Erro ao editar Produto: ', err)
-            return err.message
+            console.error('Erro ao editar Produto: ', err);
+            throw new Error(err);
         }
     }
 
-    async listarProdutos(): Promise<Produto[]> {
+    async listaProdutos(): Promise<Produto[]> {
         try {
             const produtos = await ProdutoModel.findAll({
                 attributes: {
@@ -61,13 +73,12 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
             });
             return produtos;
         } catch (err: any) {
-            console.log('Erro ao editar Produto: ', err)
+            console.error('Erro ao listar Produto: ', err);
+            throw new Error(err);
         }
-
-        return [];
     }
 
-    async pegarProduto(idProduto: string): Promise<any> {
+    async retornaProduto(idProduto: string): Promise<Produto | null> {
         try {
             const produto = await ProdutoModel.findOne({
                 attributes: {
@@ -84,7 +95,8 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
             });
             return produto;
         } catch (err: any) {
-            console.log('Erro ao editar Produto: ', err)
+            console.error('Erro ao retornar Produto: ', err);
+            throw new Error(err);
         }
     }
 }
