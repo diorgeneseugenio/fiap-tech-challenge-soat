@@ -4,9 +4,6 @@ import express, { Express } from "express";
 import { DataBaseConfig } from "./adapter/driven/infra/config/db.config";
 import { Server } from "./adapter/driver/api/config/server.config";
 import { produtoRouter } from "./adapter/driver/api/routers/index";
-// import ProdutoModel  from "./adapter/driven/infra/models/produtoModel";
-// import ImagensProdutoModel from "./adapter/driven/infra/models/produtoImagensModel";
-// import CategoriaModel from "./adapter/driven/infra/models/categoriaModel";
 import Modelos from "./adapter/driven/infra/models/index";
 
 dotenv.config();

@@ -77,7 +77,16 @@ export default class ProdutoController {
 
     async listaProdutos(req: Request, res: Response) {
         try {
-            const produtos = await this.produtoService.listaProdutos();
+            const categoriaId = req.query.categoriaId;
+            const filtro: {
+                categoriaId?: string
+            } = {};
+
+            if (categoriaId) {
+                filtro.categoriaId = categoriaId as string;
+            }
+
+            const produtos = await this.produtoService.listaProdutos(filtro);
 
             return res.status(200).json({
                 status: "success",
