@@ -16,6 +16,9 @@ produtoRouter.get("/", produtoController.listaProdutos.bind(produtoController));
 produtoRouter.get("/:id", produtoController.retornaProduto.bind(produtoController));
 produtoRouter.delete("/:id", produtoController.deletaProduto.bind(produtoController));
 produtoRouter.put("/:id", produtoController.editaProduto.bind(produtoController));
+produtoRouter.delete("/:idProduto/imagem/:idImagem", produtoController.removeImagem.bind(produtoController));
+produtoRouter.post("/:id/imagems", produtoController.adicionaImagens.bind(produtoController));
+
 
 
 export default produtoRouter;

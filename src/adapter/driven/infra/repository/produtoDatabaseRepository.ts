@@ -1,10 +1,29 @@
 import ProdutoRepository from "core/applications/repositories/produtoRepository";
-import { Produto } from "core/domain/produto";
+import { ImagemProduto, Produto } from "core/domain/produto";
 import ProdutoModel from "../models/produtoModel";
 import ImagensProdutoModel from "../models/produtoImagensModel";
 import CategoriaModel from "../models/categoriaModel";
 
 class ProdutosDataBaseRepository implements ProdutoRepository {
+
+    async adicionaImagens(imagensProduto: ImagemProduto[]): Promise<ImagemProduto[]> {
+        try {
+            return await ImagensProdutoModel.bulkCreate(imagensProduto);
+        } catch (err: any) {
+            console.error('Erro ao adicionar imagens ao produto: ', err);
+            throw new Error(err);
+        }
+    }
+    async removeImagem(produtoId: string, imagemId: string): Promise<number> {
+        try {
+            return ImagensProdutoModel.destroy({ where: { id: imagemId, produtoId } });
+        } catch (err: any) {
+            console.error('Erro ao remover imagem do produto: ', err);
+            throw new Error(err);
+        }
+
+    }
+
     async criaProduto(produto: Produto): Promise<Produto> {
         try {
             const categoriaExiste = await CategoriaModel.findByPk(produto.categoriaId);
