@@ -14,6 +14,12 @@ export default class ProdutoController {
                 message: produtoCriado,
             });
         } catch (err: any) {
+            if (err.message === 'Error: categoria_inexistente') {
+                return res.status(400).json({
+                    status: "error",
+                    message: 'Categoria inexistente!',
+                });
+            }
             return res.status(500).json({
                 status: "error",
                 message: err,
@@ -62,7 +68,7 @@ export default class ProdutoController {
                 message: 'product not found!',
             });
         } catch (err: any) {
-            if (err.message === 'categoria_inexistente') {
+            if (err.message === 'Error: categoria_inexistente') {
                 return res.status(400).json({
                     status: "error",
                     message: 'Categoria inexistente!',

@@ -7,6 +7,12 @@ import CategoriaModel from "../models/categoriaModel";
 class ProdutosDataBaseRepository implements ProdutoRepository {
     async criaProduto(produto: Produto): Promise<Produto> {
         try {
+            const categoriaExiste = await CategoriaModel.findByPk(produto.categoriaId);
+
+            if (!categoriaExiste) {
+                throw new Error("categoria_inexistente");
+            }
+
             const produtoCriado = await ProdutoModel.create({
                 ...produto,
                 ...{
