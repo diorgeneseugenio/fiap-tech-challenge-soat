@@ -4,7 +4,7 @@ import {
   DataBaseConfigConstructorInterface,
   DataBaseConfigInterface,
 } from "./interfaces/db.config.interface";
-// import {ImagensProdutoModel,  ProdutoModel} from "../models/produtoModel";
+import createCategorias from "../seeders/cria-categorias";
 
 
 interface Model {
@@ -65,6 +65,8 @@ export class DataBaseConfig implements DataBaseConfigInterface {
       });
       await this.instance.sync();
       console.log('Modelos sincronizados com o banco de dados.');
+
+      await createCategorias.up(this.instance.getQueryInterface(), this.instance)
     } catch (error) {
       console.error('Erro ao sincronizar modelos com o banco de dados:', error);
     }
