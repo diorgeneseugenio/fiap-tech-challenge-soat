@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 
 export interface DataBaseConfigInterface {
+  database: string;
   host: string;
   userName: string;
   password: string;
@@ -12,5 +13,5 @@ export interface DataBaseConfigInterface {
 
 export type DataBaseConfigConstructorInterface = Pick<
   DataBaseConfigInterface,
-  "host" | "userName" | "password" | "port"
+  "database" | "host" | "userName" | "password" | "port"
 >;

@@ -1,10 +1,10 @@
 import { Express, Router } from "express";
 
-import { DataBaseConfigInterface } from "./db.config.interface";
+// import { DataBaseConfigInterface } from "../../adapter/driven/infra/config/interfaces/db.config.interface";
 
 export interface ServerInterface {
   appConfig: Express;
-  dataBaseConfig: DataBaseConfigInterface;
+  // dataBaseConfig: DataBaseConfigInterface;
   port?: number;
   init: () => Promise<void>;
   addRouter: (routeBase: string, router: Router) => void;
@@ -12,5 +12,6 @@ export interface ServerInterface {
 
 export type ServerConstructorInterface = Pick<
   ServerInterface,
-  "dataBaseConfig" | "appConfig"
+  // "dataBaseConfig" | "appConfig"
+  "appConfig"
 >;
