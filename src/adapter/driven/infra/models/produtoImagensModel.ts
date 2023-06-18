@@ -1,8 +1,16 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from 'sequelize';
+import ProdutoModel from './produtoModel';
+import { ImagemProduto } from 'core/domain/produto';
 
 import { ImagemProduto } from "~core/domain/produto";
 
-import ProdutoModel from "./produtoModel";
+class ImagensProdutoModel extends Model<ImagemProduto> implements ImagemProduto {
+    public id!: string;
+    public url!: string;
+    public produtoId!: string;
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+    public readonly deletedAt!: Date;
 
 class ImagensProdutoModel
   extends Model<ImagemProduto>
