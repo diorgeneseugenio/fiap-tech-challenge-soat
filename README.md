@@ -77,3 +77,36 @@ Além das etapas do cliente, o estabelecimento precisa de um acesso administrati
 
 _Não será necessário o desenvolvimento de interfaces para o frontend, o foco deve ser total no
 backend._
+
+
+## Instalação do projeto
+
+Este projeto está pronto para ser executado em um ambiente Docker. Por este motivo, será necessária apenas a instalação do Docker, não sendo necessária a instalação manual do projeto. Também não será necessária a instalação manual do banco de dados (MySQL).
+
+Caso não tenha o Docker instalado, siga as instruções para seu sistema operacional na [documentação oficial do Docker](https://docs.docker.com/get-docker/).
+
+Para executar em ambiente de desenvolvimento:
+
+* Faça o `fork` e `clone` este repositório em seu computador;
+* Entre no diretório local onde o repositório foi clonado;
+* Utilize o comando `sudo docker-compose up dev` para "build" e subir o servidor local e expor a porta 3000 em `localhost`. Além de `dev` também subirá o serviço `db` com o banco de dados de desenvolvimento.
+
+> **IMPORTANTE:** Esta API está programada para ser acessada a partir de `http://localhost:3000`. Certifique-se de que não existem outros recursos ocupando a porta `3000` antes de subir o projeto.
+
+## Endpoints
+
+A API expõe os seguintes *endpoints* a partir da *base URL* `localhost:3000`:
+
+`/produto`
+- `GET /api/produto`
+- `GET /api/produto/:id`
+- `POST /api/produto`
+- `PUT /api/produto/:id`
+- `DELETE /api/produto/:id`
+
+`/categoria`
+- `GET /api/categoria`
+- `GET /api/categoria/:id`
+- `POST /api/categoria`
+- `PUT /api/categoria/:id`
+- `DELETE /api/categoria/:id`
