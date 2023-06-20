@@ -1,0 +1,52 @@
+version: '3.4'
+
+services:
+  dev:
+    build: .
+    container_name: fiap-soat-project_api_dev
+    command: yarn run dev
+    working_dir: /app
+    environment:
+      - DB_HOST=db
+      - DB_USERNAME=root
+      - DB_PASSWORD=admin123
+      - DB_NAME=fiap-soat-project_db
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app:cached
+    depends_on:
+      - db
+    networks:
+      - fiap-project-network
+  test:
+    build: .
+    container_name: fiap-soat-project_api_test
+    command: yarn run test
+    working_dir: /app
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./:/app:cached
+    networks:
+      - fiap-project-network
+  db:
+    image: mysql
+    container_name: fiap-soat-project_db
+    environment:
+      - DB_USERNAME=root
+      - MYSQL_ROOT_PASSWORD=admin123
+      - MYSQL_DATABASE=fiap-soat-project_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - fiap-project-network
+
+volumes:
+   db:
+
+networks:
+  fiap-project-network:
+    driver: bridge
