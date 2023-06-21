@@ -1,12 +1,12 @@
 name: rodar testes em PRs
 on:
-  # push:
-  #   branches-ignore:
-  #     - main
-  pull_request:
-    types: [ opened, synchronize ]
-    branches:
+  push:
+    branches-ignore:
       - main
+  # pull_request:
+  #   types: [ opened, synchronize ]
+  #   branches:
+  #     - main
 jobs:
   run-compose:
     runs-on: ubuntu-latest

@@ -17,12 +17,12 @@ import specs from "./adapter/driver/api/swaggerConfig";
 dotenv.config();
 
 const database = new DataBaseConfig({
-  database: process.env.DB_NAME ?? "projeto",
-  host: process.env.DB_HOST ?? "localhost",
-  userName: process.env.DB_USERNAME ?? "root",
-  password: process.env.DB_PASSWORD ?? "testtest",
-  port: 3306,
-});
+    database: process.env.DB_NAME ?? "projeto",
+    host: process.env.DB_HOST ?? "localhost",
+    userName: process.env.DB_USERNAME ?? "root",
+    password: process.env.DB_PASSWORD ?? "testtest",
+    port: 3306,
+})
 
 database.authenticate();
 database.synchronizeModels(Modelos);
