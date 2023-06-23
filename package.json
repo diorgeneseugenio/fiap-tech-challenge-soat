@@ -17,7 +17,7 @@
     "start": "node dist/index.js",
     "dev": "concurrently \"yarn run build --watch\" \"nodemon -q dist/index.js\"",
     "lint": "eslint . --ext .ts",
-    "test": "jest --coverage"
+    "test": "npx tsc && node --experimental-vm-modules ./node_modules/.bin/jest --coverage"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
