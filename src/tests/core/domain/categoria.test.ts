@@ -1,4 +1,4 @@
-import Categoria from '../../../core/domain/categoria';
+import Categoria from '../../../core/domain/categorias';
 
 describe('Criação de instância de Categoria', () => {
   it('Deve ter todas as propriedades obrigatórias', () => {
