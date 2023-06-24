@@ -12,6 +12,7 @@
     "noImplicitThis": true,
     "noImplicitAny": true,
     "outDir": "./dist",
+<<<<<<< HEAD
     "moduleResolution": "node",
     "paths": {
       "~driven/*": ["adapter/driven/*"],
@@ -21,6 +22,9 @@
   },
   "ts-node": {
     "require": ["tsconfig-paths/register"]
+=======
+    "moduleResolution": "node"
+>>>>>>> test: add: primeira versão de testes finalizados para Categorias
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
