@@ -81,7 +81,7 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
         }
     }
 
-    async listaProdutos(filtro: any): Promise<Produto[]> {
+    async listaProdutos(filtro: object): Promise<Produto[]> {
         try {
             const produtos = await ProdutoModel.findAll({
                 attributes: {
