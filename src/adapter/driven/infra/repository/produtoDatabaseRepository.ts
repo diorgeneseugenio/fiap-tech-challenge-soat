@@ -92,28 +92,27 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
     }
   }
 
-  async listaProdutos(filtro: object): Promise<Produto[]> {
-    try {
-      const produtos = await ProdutoModel.findAll({
-        attributes: {
-          exclude: ["categoriaId"],
-        },
-        include: [
-          {
-            model: ImagensProdutoModel,
-            as: "imagens",
-          },
-          {
-            model: CategoriaModel,
-            as: "categoria",
-          },
-        ],
-        where: { ...filtro },
-      });
-      return produtos;
-    } catch (err: any) {
-      console.error("Erro ao listar Produto: ", err);
-      throw new Error(err);
+    async listaProdutos(filtro: object): Promise<Produto[]> {
+        try {
+            const produtos = await ProdutoModel.findAll({
+                attributes: {
+                    exclude: ['categoriaId'],
+                },
+                include: [
+                    {
+                        model: ImagensProdutoModel, as: "imagens",
+                    },
+                    {
+                        model: CategoriaModel, as: 'categoria',
+                    },
+                ],
+                where: {...filtro},
+            });
+            return produtos;
+        } catch (err: any) {
+            console.error('Erro ao listar Produto: ', err);
+            throw new Error(err);
+        }
     }
   }
 
