@@ -1,6 +1,7 @@
 import { jest } from "@jest/globals";
 import { Request, Response } from "express";
 
+//TODO: criar alias dos módulos
 import CategoriaController from "../../../../../adapter/driver/api/controllers/categoriaController";
 import CategoriaService from "../../../../../core/applications/services/categoriaService";
 jest.mock("../../../../../core/applications/services/categoriaService");
@@ -10,7 +11,7 @@ describe("CategoriaController", () => {
   let res: Response;
 
   const categoriaServiceMock = {
-    criaCategoria: jest.fn().mockReturnValueOnce({ id: 1, nome: "Categoria teste" }),
+    criaCategoria: jest.fn().mockReturnValueOnce({ id: "1", nome: "Categoria teste" }),
     deletaCategoria: jest.fn().mockReturnValueOnce(1),
     editaCategoria: jest.fn().mockReturnValueOnce({ id: "1", nome: "Categoria atualizada" }),
     listaCategorias: jest.fn().mockReturnValueOnce([
@@ -36,12 +37,17 @@ describe("CategoriaController", () => {
 
   describe("criar categoria", () => {
     it("deve criar uma nova Categoria com sucesso", async () => {
-      await categoriaController.criaCategoria(req, res);
+      req = {
+        body: { nome: "Categoria teste" },
+      } as unknown as Request;
 
+      await categoriaController.criaCategoria(req, res);
+      
+      expect(categoriaServiceMock.criaCategoria).toBeCalledWith({ nome: "Categoria teste" })
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
         status: "success",
-        message: { id: 1, nome: "Categoria teste" },
+        message: { id: "1", nome: "Categoria teste" },
       });
     });
   });
@@ -54,19 +60,21 @@ describe("CategoriaController", () => {
 
       await categoriaController.deletaCategoria(req, res);
 
+      expect(categoriaServiceMock.deletaCategoria).toBeCalledWith("1")
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         status: "success",
       });
     });
-
+    
     it("deve retornar erro em caso de categoria não encontrada", async () => {
       req = {
         params: { id: "a" },
       } as unknown as Request;
-
+      
       await categoriaController.deletaCategoria(req, res);
 
+      expect(categoriaServiceMock.deletaCategoria).toBeCalledWith("a")
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         status: "error",
@@ -84,13 +92,14 @@ describe("CategoriaController", () => {
 
       await categoriaController.editaCategoria(req, res);
 
+      expect(categoriaServiceMock.editaCategoria).toBeCalledWith("1", { nome: "Categoria atualizada" })
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         status: "success",
         message: { id: "1", nome: "Categoria atualizada" },
       });
     });
-
+    
     it("deve retornar erro em caso de categoria não encontrada", async () => {
       req = {
         params: { id: "a" },
@@ -128,7 +137,7 @@ describe("CategoriaController", () => {
     // TODO: caso de erro
     // TODO: caso para lista vazia
   });
-
+  
   describe('listar uma categoria', () => {
     it('deve retornar uma categoria', async () => {
       req = {
@@ -136,21 +145,23 @@ describe("CategoriaController", () => {
       } as unknown as Request;
       
       await categoriaController.retornaCategoria(req, res);
-
+      
+      expect(categoriaServiceMock.retornaCategoria).toHaveBeenCalledWith("1");
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
         categoria: { id: 1, nome: 'Uma categoria' },
       });
     });
-
+    
     it('deve retornar erro em caso de categoria não encontrada', async () => {
       req = {
         params: { id: 'a' },
       } as unknown as Request;
       
       await categoriaController.retornaCategoria(req, res);
-
+      
+      expect(categoriaServiceMock.retornaCategoria).toHaveBeenCalledWith("a");
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         status: 'error',
