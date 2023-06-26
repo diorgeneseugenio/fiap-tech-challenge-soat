@@ -1,9 +1,9 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import ProdutoModel from './produtoModel';
-import { ImagensAtributos } from 'core/domain/produto';
+import { ImagemProduto } from 'core/domain/produto';
 
 
-class ImagensProdutoModel extends Model<ImagensAtributos> implements ImagensAtributos {
+class ImagensProdutoModel extends Model<ImagemProduto> implements ImagemProduto {
     public id!: string;
     public url!: string;
     public produtoId!: string;

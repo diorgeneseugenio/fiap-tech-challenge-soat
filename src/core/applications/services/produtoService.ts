@@ -1,8 +1,15 @@
-import { Produto } from "core/domain/produto";
+import { ImagemProduto, Produto } from "core/domain/produto";
 import ProdutoRepository from "../repositories/produtoRepository";
 
 export default class ProdutoService {
     constructor(private readonly produtoRepository: ProdutoRepository) { }
+    async adicionaImagens(imagens: ImagemProduto[]) {
+        return this.produtoRepository.adicionaImagens(imagens);
+    }
+
+    async removeImagem(idProduto: string, idImagem: string): Promise<number> {
+        return this.produtoRepository.removeImagem(idProduto, idImagem);
+    }
 
     async criaProduto(produto: Produto): Promise<Produto> {
         return this.produtoRepository.criaProduto(produto);

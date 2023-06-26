@@ -1,8 +1,55 @@
 import ProdutoService from "core/applications/services/produtoService";
+import { ImagemProduto } from "core/domain/produto";
 import { Request, Response } from "express";
 
 export default class ProdutoController {
     constructor(private readonly produtoService: ProdutoService) { }
+    async adicionaImagens(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const body = req.body;
+
+            const imagens = body?.imagens.map((imagem: ImagemProduto) => {
+                return { ...imagem, produtoId: id }
+            });
+
+            const imagensAdicionadas = await this.produtoService.adicionaImagens(imagens);
+            return res.status(201).json({
+                status: "success",
+                message: imagensAdicionadas,
+            });
+        } catch (err: any) {
+            return res.status(500).json({
+                status: "error",
+                message: err,
+            });
+        }
+    }
+    async removeImagem(req: Request, res: Response) {
+        try {
+            const { idProduto } = req.params;
+            const { idImagem } = req.params;
+
+            const imagemDeletada = await this.produtoService.removeImagem(idProduto, idImagem);
+
+            if (imagemDeletada > 0) {
+                return res.status(200).json({
+                    status: "success",
+                });
+            }
+            return res.status(404).json({
+                status: "error",
+                message: 'images or product not found!',
+            });
+        } catch (err: any) {
+            return res.status(500).json({
+                status: "error",
+                message: err,
+            });
+        }
+
+    }
+
 
     async criaProduto(req: Request, res: Response) {
         try {
