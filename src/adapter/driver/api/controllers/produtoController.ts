@@ -86,8 +86,8 @@ export default class ProdutoController {
         message: produtoCriado,
       });
     } catch (err: any) {
-      if (err.message === "categoria_inexistente") {
-        return res.status(404).json({
+      if (err.message === 'categoria_inexistente') {
+        return res.status(400).json({
           status: "error",
           message: "Category not found!",
         });

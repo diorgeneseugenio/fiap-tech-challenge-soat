@@ -55,7 +55,28 @@ describe("ProdutoController", () => {
       });
     });
 
-    // TODO: caso categoria inexistente
+    it('deve retornar um erro em caso de categoria inexistente', async () => {
+      req = { 
+        body: { nome: 'Produto', categoriaId: 'a' }
+      } as unknown as Request;
+
+      const produtoServiceMock = {
+        criaProduto: jest.fn().mockImplementationOnce(() => {
+          throw new Error('categoria_inexistente')
+        }),
+      } as unknown as ProdutoService;
+    
+      const controller = new ProdutoController(produtoServiceMock);
+    
+      await controller.criaProduto(req, res);
+    
+      expect(produtoServiceMock.criaProduto).toBeCalledWith({ nome: 'Produto', categoriaId: 'a' });
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'error',
+        message: 'Categoria inexistente!',
+      });
+    });
   });
 
   describe("deletar produto", () => {
@@ -199,8 +220,28 @@ describe("ProdutoController", () => {
       });      
     });
 
+    it('deve retornar uma lista vazia de produtos', async () => {
+      req = {
+        query: { categoriaId: '1' },
+      } as unknown as Request;
+
+      const produtoServiceMock = {
+        listaProdutos: jest.fn().mockReturnValueOnce([]),
+      } as unknown as ProdutoService;
+
+      const produtoController = new ProdutoController(produtoServiceMock);
+
+      await produtoController.listaProdutos(req, res);
+
+      expect(produtoServiceMock.listaProdutos).toBeCalledWith({ categoriaId: '1' });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        produtos: [],
+      });
+    });
+
     // TODO: caso de erro
-    // TODO: caso para lista vazia
   });
   
   describe('listar um produto', () => {
