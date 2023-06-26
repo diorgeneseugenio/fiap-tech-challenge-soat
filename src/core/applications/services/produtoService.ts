@@ -23,7 +23,7 @@ export default class ProdutoService {
         return this.produtoRepository.editaProduto(idProduto, produto);
     }
 
-    async listaProdutos(filtro: any): Promise<Produto[]> {
+    async listaProdutos(filtro: object): Promise<Produto[]> {
         const produtos = this.produtoRepository.listaProdutos(filtro);
         return produtos;
     }
