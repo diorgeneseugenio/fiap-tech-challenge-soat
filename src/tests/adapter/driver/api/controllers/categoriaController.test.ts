@@ -38,6 +38,7 @@ describe("CategoriaController", () => {
     it("deve criar uma nova Categoria com sucesso", async () => {
       await categoriaController.criaCategoria(req, res);
 
+      expect(categoriaServiceMock.criaCategoria).toBeCalledWith({ nome: "Categoria teste" })
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
         status: "success",
@@ -122,7 +123,7 @@ describe("CategoriaController", () => {
           { id: "1", nome: "Categoria 1" },
           { id: "2", nome: "Categoria 2" },
         ],
-      });      
+      });
     });
 
     // TODO: caso de erro
@@ -134,9 +135,10 @@ describe("CategoriaController", () => {
       req = {
         params: { id: '1' },
       } as unknown as Request;
-      
+
       await categoriaController.retornaCategoria(req, res);
 
+      expect(categoriaServiceMock.retornaCategoria).toHaveBeenCalledWith("1");
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
@@ -148,9 +150,10 @@ describe("CategoriaController", () => {
       req = {
         params: { id: 'a' },
       } as unknown as Request;
-      
+
       await categoriaController.retornaCategoria(req, res);
 
+      expect(categoriaServiceMock.retornaCategoria).toHaveBeenCalledWith("a");
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         status: 'error',

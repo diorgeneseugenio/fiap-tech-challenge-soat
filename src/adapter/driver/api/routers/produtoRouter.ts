@@ -185,6 +185,11 @@ produtoRouter.put("/:id",
   validaRequisicao(editaProdutoSchema),
   produtoController.editaProduto.bind(produtoController)
 );
+produtoRouter.get("/:id", produtoController.retornaProduto.bind(produtoController));
+produtoRouter.delete("/:id", produtoController.deletaProduto.bind(produtoController));
+produtoRouter.put("/:id", produtoController.editaProduto.bind(produtoController));
+produtoRouter.delete("/:idProduto/imagem/:idImagem", produtoController.removeImagem.bind(produtoController));
+produtoRouter.post("/:id/imagens", produtoController.adicionaImagens.bind(produtoController));
 
 /**
  * @openapi

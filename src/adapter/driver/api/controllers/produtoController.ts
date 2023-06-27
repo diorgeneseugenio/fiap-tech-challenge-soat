@@ -22,10 +22,10 @@ export default class ProdutoController {
         message: imagensAdicionadas,
       });
     } catch (err: any) {
-      if (err.message === "produto_inexistente") {
+      if (err.message === 'produto_inexistente') {
         return res.status(404).json({
           status: "error",
-          message: "Product not found!",
+          message: 'Product not found!',
         });
       }
       return res.status(500).json({
@@ -43,21 +43,18 @@ export default class ProdutoController {
       if (!idProduto) {
         return res.status(404).json({
           status: "error",
-          message: "productId not found!",
+          message: 'productId not found!',
         });
       }
 
       if (!idImagem) {
         return res.status(404).json({
           status: "error",
-          message: "productId not found!",
+          message: 'productId not found!',
         });
       }
 
-      const imagemDeletada = await this.produtoService.removeImagem(
-        idProduto,
-        idImagem
-      );
+      const imagemDeletada = await this.produtoService.removeImagem(idProduto, idImagem);
 
       if (imagemDeletada > 0) {
         return res.status(200).json({
@@ -87,9 +84,9 @@ export default class ProdutoController {
       });
     } catch (err: any) {
       if (err.message === 'categoria_inexistente') {
-        return res.status(400).json({
+        return res.status(404).json({
           status: "error",
-          message: "Category not found!",
+          message: 'Category not found!',
         });
       }
       return res.status(500).json({
@@ -143,10 +140,10 @@ export default class ProdutoController {
         message: "product not found!",
       });
     } catch (err: any) {
-      if (err.message === "categoria_inexistente") {
+      if (err.message === 'categoria_inexistente') {
         return res.status(404).json({
           status: "error",
-          message: "Category not found!",
+          message: 'Category not found!',
         });
       }
 
