@@ -1,10 +1,11 @@
 import { Sequelize } from "sequelize";
 
+import createCategorias from "../seeders/cria-categorias";
+
 import {
   DataBaseConfigConstructorInterface,
   DataBaseConfigInterface,
 } from "./interfaces/db.config.interface";
-import createCategorias from "../seeders/cria-categorias";
 
 
 interface Model {
