@@ -19,17 +19,37 @@ export default class ProdutoController {
         message: imagensAdicionadas,
       });
     } catch (err: any) {
+      if (err.message === 'produto_inexistente') {
+        return res.status(404).json({
+          status: "error",
+          message: 'Product not found!',
+        });
+      }
       return res.status(500).json({
         status: "error",
         message: err,
       });
     }
   }
-  
+
   async removeImagem(req: Request, res: Response) {
     try {
       const { idProduto } = req.params;
       const { idImagem } = req.params;
+
+      if (!idProduto) {
+        return res.status(404).json({
+          status: "error",
+          message: 'productId not found!',
+        });
+      }
+
+      if (!idImagem) {
+        return res.status(404).json({
+          status: "error",
+          message: 'productId not found!',
+        });
+      }
 
       const imagemDeletada = await this.produtoService.removeImagem(idProduto, idImagem);
 
@@ -61,9 +81,9 @@ export default class ProdutoController {
       });
     } catch (err: any) {
       if (err.message === 'categoria_inexistente') {
-        return res.status(400).json({
+        return res.status(404).json({
           status: "error",
-          message: 'Categoria inexistente!',
+          message: 'Category not found!',
         });
       }
       return res.status(500).json({
@@ -115,9 +135,9 @@ export default class ProdutoController {
       });
     } catch (err: any) {
       if (err.message === 'categoria_inexistente') {
-        return res.status(400).json({
+        return res.status(404).json({
           status: "error",
-          message: 'Categoria inexistente!',
+          message: 'Category not found!',
         });
       }
 
