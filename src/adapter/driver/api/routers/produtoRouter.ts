@@ -25,5 +25,13 @@ produtoRouter.put(
   "/:id",
   produtoController.editaProduto.bind(produtoController)
 );
+produtoRouter.delete(
+  "/:idProduto/imagem/:idImagem",
+  produtoController.removeImagem.bind(produtoController)
+);
+produtoRouter.post(
+  "/:id/imagems",
+  produtoController.adicionaImagens.bind(produtoController)
+);
 
 export default produtoRouter;

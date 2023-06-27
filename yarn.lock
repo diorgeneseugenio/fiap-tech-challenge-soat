@@ -678,7 +678,7 @@
 
 "@jest/globals@^29.5.0":
   version "29.5.0"
-  resolved "https://registry.npmjs.org/@jest/globals/-/globals-29.5.0.tgz"
+  resolved "https://registry.yarnpkg.com/@jest/globals/-/globals-29.5.0.tgz#6166c0bfc374c58268677539d0c181f9c1833298"
   integrity sha512-S02y0qMWGihdzNbUiqSAiKSpSozSuHX5UYc7QbnHP+D9Lyw8DgGGCinrN9uSuHPeKgSSzvPom2q1nAtBvUsvPQ==
   dependencies:
     "@jest/environment" "^29.5.0"
@@ -1003,7 +1003,7 @@
 
 "@types/jest@^29.5.2":
   version "29.5.2"
-  resolved "https://registry.npmjs.org/@types/jest/-/jest-29.5.2.tgz"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.5.2.tgz#86b4afc86e3a8f3005b297ed8a72494f89e6395b"
   integrity sha512-mSoZVJF5YzGVCk+FsDxzDuH7s+SCkzrgKZzf0Z0T2WudhBUPoF6ktoTPC4R0ZoCPCV5xUvuU6ias5NvxcBcMMg==
   dependencies:
     expect "^29.0.0"

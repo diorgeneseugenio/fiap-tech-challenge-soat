@@ -1,4 +1,4 @@
-export interface ImagemAtributos {
+export interface ImagemProduto {
   id?: string;
   url: string;
   produtoId?: string;
@@ -13,7 +13,7 @@ export interface Produto {
   categoriaId?: string;
   preco: number;
   descricao: string;
-  imagens?: ImagemAtributos[];
+  imagens?: ImagemProduto[];
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;

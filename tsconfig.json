@@ -12,6 +12,7 @@
     "noImplicitThis": true,
     "noImplicitAny": true,
     "outDir": "./dist",
+    "moduleResolution": "node",
     "paths": {
       "~driven/*": ["adapter/driven/*"],
       "~driver/*": ["adapter/driver/*"],

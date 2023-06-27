@@ -1,0 +1,16 @@
+name: rodar testes em PRs
+on:
+  # push:
+  #   branches-ignore:
+  #     - main
+  pull_request:
+    types: [ opened, synchronize ]
+    branches:
+      - main
+jobs:
+  run-compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: build and run docker compose
+        run: docker-compose up test

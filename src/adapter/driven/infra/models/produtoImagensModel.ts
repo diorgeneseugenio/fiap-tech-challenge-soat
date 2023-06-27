@@ -1,12 +1,12 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-import { ImagemAtributos } from "~core/domain/produto";
+import { ImagemProduto } from "~core/domain/produto";
 
 import ProdutoModel from "./produtoModel";
 
 class ImagensProdutoModel
-  extends Model<ImagemAtributos>
-  implements ImagemAtributos
+  extends Model<ImagemProduto>
+  implements ImagemProduto
 {
   public id!: string;
   public url!: string;

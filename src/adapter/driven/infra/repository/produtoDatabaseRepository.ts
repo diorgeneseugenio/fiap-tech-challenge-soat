@@ -1,11 +1,32 @@
 import ProdutoRepository from "~core/applications/repositories/produtoRepository";
-import { Produto } from "~core/domain/produto";
+import { ImagemProduto, Produto } from "~core/domain/produto";
 
 import CategoriaModel from "../models/categoriaModel";
 import ImagensProdutoModel from "../models/produtoImagensModel";
 import ProdutoModel from "../models/produtoModel";
 
 class ProdutosDataBaseRepository implements ProdutoRepository {
+  async adicionaImagens(
+    imagensProduto: ImagemProduto[]
+  ): Promise<ImagemProduto[]> {
+    try {
+      return await ImagensProdutoModel.bulkCreate(imagensProduto);
+    } catch (err: any) {
+      console.error("Erro ao adicionar imagens ao produto: ", err);
+      throw new Error(err);
+    }
+  }
+  async removeImagem(produtoId: string, imagemId: string): Promise<number> {
+    try {
+      return ImagensProdutoModel.destroy({
+        where: { id: imagemId, produtoId },
+      });
+    } catch (err: any) {
+      console.error("Erro ao remover imagem do produto: ", err);
+      throw new Error(err);
+    }
+  }
+
   async criaProduto(produto: Produto): Promise<Produto> {
     try {
       const categoriaExiste = await CategoriaModel.findByPk(
@@ -47,6 +68,7 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
       throw new Error(err);
     }
   }
+
   async editaProduto(
     idProduto: string,
     produto: Produto
@@ -73,7 +95,7 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
     }
   }
 
-  async listaProdutos(filtro: any): Promise<Produto[]> {
+  async listaProdutos(filtro: object): Promise<Produto[]> {
     try {
       const produtos = await ProdutoModel.findAll({
         attributes: {

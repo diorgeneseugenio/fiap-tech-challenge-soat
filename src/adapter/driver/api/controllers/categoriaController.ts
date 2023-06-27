@@ -52,15 +52,15 @@ export default class CategoriaController {
       const { id } = req.params;
       const categoria = req.body;
 
-      const categoriarAtualizado = await this.categoriaService.editaCategoria(
+      const categoriaAtualizada = await this.categoriaService.editaCategoria(
         id,
         categoria
       );
 
-      if (categoriarAtualizado) {
+      if (categoriaAtualizada) {
         return res.status(200).json({
           status: "success",
-          message: categoriarAtualizado,
+          message: categoriaAtualizada,
         });
       }
       return res.status(404).json({
