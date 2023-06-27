@@ -30,7 +30,7 @@ produtoRouter.delete(
   produtoController.removeImagem.bind(produtoController)
 );
 produtoRouter.post(
-  "/:id/imagems",
+  "/:id/imagens",
   produtoController.adicionaImagens.bind(produtoController)
 );
 

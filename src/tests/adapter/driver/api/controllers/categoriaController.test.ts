@@ -42,7 +42,7 @@ describe("CategoriaController", () => {
       } as unknown as Request;
 
       await categoriaController.criaCategoria(req, res);
-      
+
       expect(categoriaServiceMock.criaCategoria).toBeCalledWith({ nome: "Categoria teste" })
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
@@ -66,12 +66,12 @@ describe("CategoriaController", () => {
         status: "success",
       });
     });
-    
+
     it("deve retornar erro em caso de categoria não encontrada", async () => {
       req = {
         params: { id: "a" },
       } as unknown as Request;
-      
+
       await categoriaController.deletaCategoria(req, res);
 
       expect(categoriaServiceMock.deletaCategoria).toBeCalledWith("a")
@@ -99,7 +99,7 @@ describe("CategoriaController", () => {
         message: { id: "1", nome: "Categoria atualizada" },
       });
     });
-    
+
     it("deve retornar erro em caso de categoria não encontrada", async () => {
       req = {
         params: { id: "a" },
@@ -131,21 +131,21 @@ describe("CategoriaController", () => {
           { id: "1", nome: "Categoria 1" },
           { id: "2", nome: "Categoria 2" },
         ],
-      });      
+      });
     });
 
     // TODO: caso de erro
     // TODO: caso para lista vazia
   });
-  
+
   describe('listar uma categoria', () => {
     it('deve retornar uma categoria', async () => {
       req = {
         params: { id: '1' },
       } as unknown as Request;
-      
+
       await categoriaController.retornaCategoria(req, res);
-      
+
       expect(categoriaServiceMock.retornaCategoria).toHaveBeenCalledWith("1");
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -153,14 +153,14 @@ describe("CategoriaController", () => {
         categoria: { id: 1, nome: 'Uma categoria' },
       });
     });
-    
+
     it('deve retornar erro em caso de categoria não encontrada', async () => {
       req = {
         params: { id: 'a' },
       } as unknown as Request;
-      
+
       await categoriaController.retornaCategoria(req, res);
-      
+
       expect(categoriaServiceMock.retornaCategoria).toHaveBeenCalledWith("a");
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({

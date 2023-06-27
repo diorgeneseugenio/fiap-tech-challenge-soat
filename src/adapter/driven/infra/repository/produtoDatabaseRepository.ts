@@ -10,6 +10,10 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
     imagensProduto: ImagemProduto[]
   ): Promise<ImagemProduto[]> {
     try {
+      const produtoExiste = ProdutoModel.findByPk(imagensProduto[0].produtoId);
+      if (!produtoExiste) {
+        throw new Error("produto_inexistente");
+      }
       return await ImagensProdutoModel.bulkCreate(imagensProduto);
     } catch (err: any) {
       console.error("Erro ao adicionar imagens ao produto: ", err);
