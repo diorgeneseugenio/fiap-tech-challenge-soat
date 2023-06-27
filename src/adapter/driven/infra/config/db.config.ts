@@ -1,11 +1,11 @@
 import { Sequelize } from "sequelize";
 
+import createCategorias from "../seeders/cria-categorias";
+
 import {
   DataBaseConfigConstructorInterface,
   DataBaseConfigInterface,
 } from "./interfaces/db.config.interface";
-import createCategorias from "../seeders/cria-categorias";
-
 
 interface Model {
   initialize(sequelize: Sequelize): void;
@@ -41,7 +41,6 @@ export class DataBaseConfig implements DataBaseConfigInterface {
       password: this.password,
       port: this.port,
     });
-
   }
 
   getInstance(): Sequelize {
@@ -54,22 +53,24 @@ export class DataBaseConfig implements DataBaseConfigInterface {
 
   async synchronizeModels(models: Model[]) {
     try {
-      models.forEach(model => {
+      models.forEach((model) => {
         model.initialize(this.instance);
       });
 
-      models.forEach(model => {
+      models.forEach((model) => {
         if (model.associate) {
           model.associate();
         }
       });
       await this.instance.sync();
-      console.log('Modelos sincronizados com o banco de dados.');
+      console.log("Modelos sincronizados com o banco de dados.");
 
-      await createCategorias.up(this.instance.getQueryInterface(), this.instance)
+      await createCategorias.up(
+        this.instance.getQueryInterface(),
+        this.instance
+      );
     } catch (error) {
-      console.error('Erro ao sincronizar modelos com o banco de dados:', error);
+      console.error("Erro ao sincronizar modelos com o banco de dados:", error);
     }
   }
-
 }

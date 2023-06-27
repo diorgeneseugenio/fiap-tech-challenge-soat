@@ -1,14 +1,17 @@
-import CategoriaService from "core/applications/services/categoriaService";
 import { Request, Response } from "express";
 
+import CategoriaService from "~core/applications/services/categoriaService";
+
 export default class CategoriaController {
-  constructor(private readonly categoriaService: CategoriaService) { }
+  constructor(private readonly categoriaService: CategoriaService) {}
 
   async criaCategoria(req: Request, res: Response) {
     try {
       const categoria = req.body;
 
-      const categoriaCriado = await this.categoriaService.criaCategoria(categoria);
+      const categoriaCriado = await this.categoriaService.criaCategoria(
+        categoria
+      );
       return res.status(201).json({
         status: "success",
         message: categoriaCriado,
@@ -34,7 +37,7 @@ export default class CategoriaController {
       }
       return res.status(404).json({
         status: "error",
-        message: 'Category not found!',
+        message: "Category not found!",
       });
     } catch (err: unknown) {
       return res.status(500).json({
@@ -49,8 +52,11 @@ export default class CategoriaController {
       const { id } = req.params;
       const categoria = req.body;
 
-      const categoriaAtualizada = await this.categoriaService.editaCategoria(id, categoria);
-    
+      const categoriaAtualizada = await this.categoriaService.editaCategoria(
+        id,
+        categoria
+      );
+
       if (categoriaAtualizada) {
         return res.status(200).json({
           status: "success",
@@ -59,7 +65,7 @@ export default class CategoriaController {
       }
       return res.status(404).json({
         status: "error",
-        message: 'Category not found!',
+        message: "Category not found!",
       });
     } catch (err: unknown) {
       return res.status(500).json({
@@ -101,7 +107,6 @@ export default class CategoriaController {
         status: "error",
         message: "Category not found!",
       });
-
     } catch (err: unknown) {
       return res.status(500).json({
         status: "error",

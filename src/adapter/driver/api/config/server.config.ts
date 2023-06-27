@@ -3,7 +3,6 @@ import { Express, Request, Response, Router } from "express";
 import morgan from "morgan";
 
 // import { DataBaseConfigInterface } from "adapter/driven/infra/config/interfaces/db.config.interface";
-
 import {
   ServerConstructorInterface,
   ServerInterface,

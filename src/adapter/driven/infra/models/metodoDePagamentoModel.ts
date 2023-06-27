@@ -1,25 +1,42 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-import Categoria from "~core/domain/categorias";
+import { MetodoDePagamento } from "~core/domain/metodoDePagamento";
 
-import ProdutoModel from "./produtoModel";
-
-class CategoriaModel extends Model<Categoria> implements Categoria {
+class MetodoDePagamentoModel
+  extends Model<MetodoDePagamento>
+  implements MetodoDePagamento
+{
   public id!: string;
   public nome!: string;
+  public ativo!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date | null;
 
   static initialize(sequelize: Sequelize): void {
-    CategoriaModel.init(
+    MetodoDePagamentoModel.init(
       {
         id: {
           type: DataTypes.UUID,
           defaultValue: DataTypes.UUIDV4,
           primaryKey: true,
+          allowNull: false,
         },
         nome: {
           type: DataTypes.STRING,
+          allowNull: false,
+        },
+        ativo: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: true,
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
           allowNull: false,
         },
         deletedAt: {
@@ -31,7 +48,7 @@ class CategoriaModel extends Model<Categoria> implements Categoria {
       {
         paranoid: true,
         sequelize,
-        tableName: "Categorias",
+        tableName: "MetodosDePagamento",
         timestamps: true,
         underscored: true,
       }
@@ -39,11 +56,8 @@ class CategoriaModel extends Model<Categoria> implements Categoria {
   }
 
   static associate(): void {
-    this.hasMany(ProdutoModel, {
-      as: "categorias",
-      foreignKey: "categoriaId",
-    });
+    // Sem associação
   }
 }
 
-export default CategoriaModel;
+export default MetodoDePagamentoModel;
