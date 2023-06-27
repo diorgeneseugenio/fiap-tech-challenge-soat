@@ -4,10 +4,13 @@ import express, { Express } from "express";
 import { DataBaseConfig } from "./adapter/driven/infra/config/db.config";
 import Modelos from "./adapter/driven/infra/models";
 import { Server } from "./adapter/driver/api/config/server.config";
+
 import {
   categoriaRouter,
   produtoRouter,
+  usuarioRouter
 } from "./adapter/driver/api/routers/index";
+
 
 dotenv.config();
 
@@ -28,5 +31,6 @@ const server = new Server({ appConfig: app });
 
 server.addRouter("/api/categoria", categoriaRouter);
 server.addRouter("/api/produto", produtoRouter);
+server.addRouter("/api/usuario", usuarioRouter);
 
 server.init();
