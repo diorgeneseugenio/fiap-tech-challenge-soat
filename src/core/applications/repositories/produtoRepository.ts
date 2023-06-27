@@ -1,4 +1,4 @@
-import { ImagemProduto, Produto } from "core/domain/produto";
+import { ImagemProduto, Produto } from "~core/domain/produto";
 
 export default interface ProdutoRepository {
   adicionaImagens(imagens: ImagemProduto[]): Promise<ImagemProduto[]>;
