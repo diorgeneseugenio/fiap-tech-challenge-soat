@@ -2,9 +2,9 @@ import { Produto } from "./produto";
 
 export interface ItemDoPedido {
   id: string;
-  idProduto: string;
+  produtoId: string;
   produto?: Produto;
-  idPedido: string;
+  pedidoId: string;
   quantidade: number;
   valorUnitario: number;
   valorTotal: number;

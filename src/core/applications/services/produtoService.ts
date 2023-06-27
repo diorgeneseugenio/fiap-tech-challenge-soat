@@ -1,5 +1,5 @@
-import ProdutoRepository from "core/applications/repositories/produtoRepository";
-import { Produto } from "core/domain/produto";
+import ProdutoRepository from "~core/applications/repositories/produtoRepository";
+import { Produto } from "~core/domain/produto";
 
 export default class ProdutoService {
   constructor(private readonly produtoRepository: ProdutoRepository) {}

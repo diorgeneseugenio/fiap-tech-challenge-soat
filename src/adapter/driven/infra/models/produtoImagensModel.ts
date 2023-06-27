@@ -1,5 +1,6 @@
-import { ImagemAtributos } from "core/domain/produto";
 import { DataTypes, Model, Sequelize } from "sequelize";
+
+import { ImagemAtributos } from "~core/domain/produto";
 
 import ProdutoModel from "./produtoModel";
 

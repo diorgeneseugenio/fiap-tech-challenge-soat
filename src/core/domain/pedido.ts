@@ -3,9 +3,9 @@ import { ItensDoPedido } from "./itemPedido";
 
 export interface Pedido {
   id: string;
-  idCliente: string | null /** Todo: Vincular ao cliente */;
+  clienteId: string | null /** Todo: Vincular ao cliente */;
   cliente?: any /** Todo: Vincular ao cliente */;
-  idFatura?: string;
+  faturaId?: string;
   fatura?: Fatura;
   status: StatusDoPedido;
   valor: number;

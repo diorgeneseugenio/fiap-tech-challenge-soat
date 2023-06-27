@@ -13,9 +13,9 @@ export type StatusDePagamento =
 
 export interface Fatura {
   id: string;
-  idPedido: string;
+  pedidoId: string;
   pedido?: Pedido;
-  idMetodoDePagamento: string;
+  metodoDePagamentoId: string;
   metodoDePagamento?: MetodoDePagamento;
   statusDePagamento: StatusDePagamento;
   pagoEm: Date | null;

@@ -1,15 +1,16 @@
-import { ItemDoPedido } from "core/domain/itemPedido";
-import { Produto } from "core/domain/produto";
 import { DataTypes, Model, Sequelize } from "sequelize";
+
+import { ItemDoPedido } from "~core/domain/itemPedido";
+import { Produto } from "~core/domain/produto";
 
 import PedidoModel from "./pedidoModel";
 import ProdutoModel from "./produtoModel";
 
 class ItemDoPedidoModel extends Model<ItemDoPedido> implements ItemDoPedido {
   public id!: string;
-  public idProduto!: string;
+  public produtoId!: string;
   public produto?: Produto;
-  public idPedido!: string;
+  public pedidoId!: string;
   public quantidade!: number;
   public valorUnitario!: number;
   public valorTotal!: number;
@@ -27,12 +28,12 @@ class ItemDoPedidoModel extends Model<ItemDoPedido> implements ItemDoPedido {
           primaryKey: true,
           allowNull: false,
         },
-        idProduto: {
-          type: DataTypes.STRING,
+        produtoId: {
+          type: DataTypes.UUID,
           allowNull: true,
         },
-        idPedido: {
-          type: DataTypes.STRING,
+        pedidoId: {
+          type: DataTypes.UUID,
           allowNull: true,
         },
         quantidade: {
@@ -68,7 +69,7 @@ class ItemDoPedidoModel extends Model<ItemDoPedido> implements ItemDoPedido {
       {
         paranoid: true,
         sequelize,
-        tableName: "ItemDoPedidos",
+        tableName: "ItensPedido",
         timestamps: true,
         underscored: true,
       }
@@ -76,13 +77,11 @@ class ItemDoPedidoModel extends Model<ItemDoPedido> implements ItemDoPedido {
   }
 
   static associate(): void {
-    this.hasOne(PedidoModel, {
-      foreignKey: "idPedido",
+    this.belongsTo(PedidoModel, {
       as: "pedido",
     });
 
-    this.hasOne(ProdutoModel, {
-      foreignKey: "idProduto",
+    this.belongsTo(ProdutoModel, {
       as: "produto",
     });
   }

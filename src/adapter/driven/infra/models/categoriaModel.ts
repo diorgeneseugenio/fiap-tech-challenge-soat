@@ -1,6 +1,6 @@
-// import ProdutoModel from './produtoModel';
-import Categoria from "core/domain/categorias";
 import { DataTypes, Model, Sequelize } from "sequelize";
+
+import Categoria from "~core/domain/categorias";
 
 import ProdutoModel from "./produtoModel";
 

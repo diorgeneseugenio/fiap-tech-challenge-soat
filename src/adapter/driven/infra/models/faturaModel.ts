@@ -1,20 +1,21 @@
+import { DataTypes, Model, Sequelize } from "sequelize";
+
 import {
   Fatura,
   StatusDePagamento,
   statusDePagamento,
-} from "core/domain/fatura";
-import { MetodoDePagamento } from "core/domain/metodoDePagamento";
-import { Pedido } from "core/domain/pedido";
-import { DataTypes, Model, Sequelize } from "sequelize";
+} from "~core/domain/fatura";
+import { MetodoDePagamento } from "~core/domain/metodoDePagamento";
+import { Pedido } from "~core/domain/pedido";
 
 import MetodoDePagamentoModel from "./metodoDePagamentoModel";
 import PedidoModel from "./pedidoModel";
 
 class FaturaModel extends Model<Fatura> implements Fatura {
   public id!: string;
-  public idPedido!: string;
+  public pedidoId!: string;
   public pedido?: Pedido;
-  public idMetodoDePagamento!: string;
+  public metodoDePagamentoId!: string;
   public metodoDePagamento?: MetodoDePagamento;
   public statusDePagamento!: StatusDePagamento;
   public pagoEm!: Date | null;
@@ -31,12 +32,12 @@ class FaturaModel extends Model<Fatura> implements Fatura {
           primaryKey: true,
           allowNull: false,
         },
-        idPedido: {
-          type: DataTypes.STRING,
+        pedidoId: {
+          type: DataTypes.UUID,
           allowNull: false,
         },
-        idMetodoDePagamento: {
-          type: DataTypes.STRING,
+        metodoDePagamentoId: {
+          type: DataTypes.UUID,
           allowNull: false,
         },
         statusDePagamento: {
@@ -78,13 +79,11 @@ class FaturaModel extends Model<Fatura> implements Fatura {
   }
 
   static associate(): void {
-    this.hasOne(MetodoDePagamentoModel, {
-      foreignKey: "idMetodoDePagamento",
+    this.belongsTo(MetodoDePagamentoModel, {
       as: "metodoDePagamento",
     });
 
-    this.hasOne(PedidoModel, {
-      foreignKey: "idPedido",
+    this.belongsTo(PedidoModel, {
       as: "pedido",
     });
   }

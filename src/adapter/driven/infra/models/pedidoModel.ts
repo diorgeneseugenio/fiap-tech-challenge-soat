@@ -1,16 +1,17 @@
-import { Fatura } from "core/domain/fatura";
-import { ItensDoPedido } from "core/domain/itemPedido";
-import { Pedido, StatusDoPedido, statusDoPedido } from "core/domain/pedido";
 import { DataTypes, Model, Sequelize } from "sequelize";
+
+import { Fatura } from "~core/domain/fatura";
+import { ItensDoPedido } from "~core/domain/itemPedido";
+import { Pedido, StatusDoPedido, statusDoPedido } from "~core/domain/pedido";
 
 import FaturaModel from "./faturaModel";
 import ItemDoPedidoModel from "./itemPedidoModel";
 
 class PedidoModel extends Model<Pedido> implements Pedido {
   public id!: string;
-  public idCliente!: string | null;
+  public clienteId!: string | null;
   public cliente?: any;
-  public idFatura?: string;
+  public faturaId?: string;
   public fatura?: Fatura;
   public status!: StatusDoPedido;
   public valor!: number;
@@ -29,12 +30,12 @@ class PedidoModel extends Model<Pedido> implements Pedido {
           primaryKey: true,
           allowNull: false,
         },
-        idCliente: {
+        clienteId: {
           type: DataTypes.STRING,
           allowNull: true,
         },
-        idFatura: {
-          type: DataTypes.STRING,
+        faturaId: {
+          type: DataTypes.UUID,
           allowNull: true,
         },
         status: {
@@ -83,13 +84,13 @@ class PedidoModel extends Model<Pedido> implements Pedido {
   }
 
   static associate(): void {
-    this.hasOne(FaturaModel, {
-      foreignKey: "idFatura",
+    this.belongsTo(FaturaModel, {
       as: "fatura",
     });
 
     this.hasMany(ItemDoPedidoModel, {
-      foreignKey: "idPedido",
+      foreignKey: "pedidoId",
+      sourceKey: "id",
       as: "itens",
     });
 
