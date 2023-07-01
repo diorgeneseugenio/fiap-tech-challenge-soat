@@ -11,6 +11,7 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=admin123
       - DB_NAME=fiap-soat-project_db
+      - JWT_SECRET=u6BY8w4s3ayG62oG05MV1HOzy9eboTaWhQjHCFiZhc20EbR08gsZVOuGPPeUUEI2
     ports:
       - "3000:3000"
     volumes:

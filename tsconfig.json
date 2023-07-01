@@ -16,7 +16,8 @@
     "paths": {
       "~driven/*": ["adapter/driven/*"],
       "~driver/*": ["adapter/driver/*"],
-      "~core/*": ["core/*"]
+      "~core/*": ["core/*"],
+      "~adapter/*": ["adapter/*"]
     }
   },
   "ts-node": {

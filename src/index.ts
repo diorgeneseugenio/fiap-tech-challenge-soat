@@ -4,8 +4,8 @@ import express, { Express } from "express";
 import { DataBaseConfig } from "./adapter/driven/infra/config/db.config";
 import Modelos from "./adapter/driven/infra/models";
 import { Server } from "./adapter/driver/api/config/server.config";
-
 import {
+  authenticationRouter,
   categoriaRouter,
   produtoRouter,
   usuarioRouter
@@ -29,6 +29,7 @@ const app: Express = express();
 
 const server = new Server({ appConfig: app });
 
+server.addRouter("/api/auth", authenticationRouter);
 server.addRouter("/api/categoria", categoriaRouter);
 server.addRouter("/api/produto", produtoRouter);
 server.addRouter("/api/usuario", usuarioRouter);
