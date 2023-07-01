@@ -1,10 +1,15 @@
 import Usuario from "core/domain/usuarios";
 import usuarioRepository from "../repositories/usuarioRepository";
+import CPF from "~core/domain/valueObjects/cpf";
 
 export default class UsuarioService {
     constructor(private readonly usuarioRepository: usuarioRepository) { }
 
     async criaUsuario(usuario: Usuario) {
+        if (usuario.cpf) {
+            const cpfValidado = new CPF(usuario.cpf);
+            usuario.cpf = cpfValidado.retornaValor();
+        }
         return this.usuarioRepository.criaUsuario(usuario);
     }
 
@@ -13,8 +18,9 @@ export default class UsuarioService {
         return usuarios;
     }
 
-    async retornaUsuario(cpf: string | null): Promise<Usuario | null> {
-        return this.usuarioRepository.retornaUsuario(cpf);
+    async retornaUsuario(cpf: string): Promise<Usuario | null> {
+        const cpfValidado = new CPF(cpf);
+        return this.usuarioRepository.retornaUsuario(cpfValidado.retornaValor());
     }
 
 }
