@@ -23,7 +23,7 @@ export default class AuthenticationController {
     } catch (err: unknown) {
       return res.status(500).json({
         status: "error",
-        message: err,
+        message: {err, errorMessage: 'dados de acesso inexistentes'},
       });
     }
   }
