@@ -16,12 +16,18 @@ class UsuarioDataBaseRepository implements usuarioRepository {
 
     async filtraUsuario(cpf: string | null, email: string | null): Promise<Usuario | null> {
         try {
+            const filtro = [];
+            if (cpf) {
+                filtro.push([{ cpf }])
+            }
+            if (email) {
+                filtro.push([{ email }])
+            }
+
+
             return await UsuarioModel.findOne({
                 where: {
-                    [Op.or]: [
-                        { cpf },
-                        { email }
-                    ]
+                    [Op.or]: filtro
                 }
             });
         } catch (err: any) {
