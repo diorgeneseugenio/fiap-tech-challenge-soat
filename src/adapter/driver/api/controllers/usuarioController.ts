@@ -40,9 +40,16 @@ export default class UsuarioController {
 
       async retornaUsuario(req: Request, res: Response) {
         try {
-          const { cpf } = req.params;
+          const { body } = req;
+
+          if (!body?.cpf) {
+            return res.status(400).json({
+              status: "error",
+              message: "Faltando cpf no body",
+            });
+          }
     
-          const usuario = await this.usuarioService.retornaUsuario( cpf);
+          const usuario = await this.usuarioService.retornaUsuario(body.cpf);
     
           if (usuario) {
             return res.status(200).json({

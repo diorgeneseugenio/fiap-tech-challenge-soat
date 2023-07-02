@@ -12,13 +12,7 @@ const usuarioController = new UsuarioController(usuarioService);
 
 usuarioRouter.post("/", usuarioController.criaUsuario.bind(usuarioController));
 usuarioRouter.get("/", usuarioController.listaUsuarios.bind(usuarioController));
-usuarioRouter.get("/:cpf", usuarioController.retornaUsuario.bind(usuarioController));
-
-
-
-
-
-
+usuarioRouter.post("/query", usuarioController.retornaUsuario.bind(usuarioController));
 
 
 export default usuarioRouter;

@@ -1,5 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import Usuario from 'core/domain/usuarios';
+import PedidoModel from './pedidoModel';
 
 class UsuarioModel extends Model<Usuario> implements Usuario {
     public id!: string;
@@ -46,8 +47,11 @@ class UsuarioModel extends Model<Usuario> implements Usuario {
     }
 
     static associate(): void {
-        
-      
+        this.hasMany(PedidoModel, {
+            foreignKey: "cliente_id",
+            sourceKey: "id",
+            as: "pedido",
+          });
     }
 
 }
