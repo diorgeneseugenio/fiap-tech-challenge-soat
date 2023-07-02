@@ -6,14 +6,23 @@ Repositório:
 https://github.com/diorgeneseugenio/fiap-tech-challenge-soat/main
 
 Membros do grupo:
-Diórgenes Eugênio - RM <>
-Elton A Rodrigues - RM <>
-Gabriel Mendes - RM <>
+Diórgenes Eugênio da Silveira - RM 349116
+Elton de Andrade Rodrigues - RM 349353
+Gabriel Mendes - RM 348989
 Juliana Amoasei dos Reis - RM 348666
 
 ## Propósito do projeto
 
 Fornecer um sistema para gerenciamento de pedidos para uma empresa do ramo de serviços de alimentação.
+
+## Stack utilizada
+
+* Node.js v16
+* TypeScript 
+* MySQL
+* Express
+* Sequelize
+* Docker
 
 ## Instalação do projeto
 
