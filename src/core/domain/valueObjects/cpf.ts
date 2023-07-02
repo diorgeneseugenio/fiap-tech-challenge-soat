@@ -1,16 +1,16 @@
 export default class CPF {
-    private readonly Valor: string;
+    private readonly valor: string;
 
-    constructor(Valor: string) {
-        if (!this.validacao(Valor)) {
+    constructor(valor: string) {
+        if (!this.validacao(valor)) {
             throw new Error('CPF inválido');
         }
 
-        this.Valor = Valor;
+        this.valor = valor;
     }
 
     retornaValor(): string {
-        return this.Valor.replace(/\D/g, '');
+        return this.valor.replace(/\D/g, '');
     }
 
     private validacao(cpf: string): boolean {
