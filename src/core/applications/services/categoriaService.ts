@@ -1,5 +1,5 @@
 import CategoriaRepository from "~core/applications/repositories/categoriaRepository";
-import Categoria from "~core/domain/categorias";
+import Categoria from "~core/domain/categoria";
 
 export default class CategoriaService {
   constructor(private readonly categoriaRepository: CategoriaRepository) {}
