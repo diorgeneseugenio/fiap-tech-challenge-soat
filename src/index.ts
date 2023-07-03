@@ -5,6 +5,7 @@ import swaggerUi from "swagger-ui-express";
 import { DataBaseConfig } from "./adapter/driven/infra/config/db.config";
 import { Server } from "./adapter/driver/api/config/server.config";
 import {
+  authenticationRouter,
   categoriaRouter,
   produtoRouter,
   usuarioRouter
@@ -31,6 +32,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 const server = new Server({ appConfig: app, });
 
+server.addRouter("/api/auth", authenticationRouter);
 server.addRouter("/api/categoria", categoriaRouter);
 server.addRouter("/api/produto", produtoRouter);
 server.addRouter("/api/usuario", usuarioRouter);
