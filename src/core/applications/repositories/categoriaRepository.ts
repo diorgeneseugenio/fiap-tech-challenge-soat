@@ -1,4 +1,4 @@
-import Categoria from "~core/domain/categorias";
+import Categoria from "~core/domain/categoria";
 
 export default interface CategoriaRepository {
   criaCategoria(Categoria: Categoria): Promise<Categoria>;

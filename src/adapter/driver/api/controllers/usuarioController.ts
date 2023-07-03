@@ -1,3 +1,4 @@
+import { error } from "console";
 import UsuarioService from "core/applications/services/usuarioService";
 import  Usuario  from "core/domain/usuarios";
 import { Request, Response } from "express";
@@ -15,6 +16,12 @@ export default class UsuarioController {
               message: usuarioCriado,
             });
           } catch (err: any) {
+            if (err.message === "Usuario já existe") {
+              return res.status(400).json({
+                status:"error",
+                message: err.message
+              })
+            }
             return res.status(500).json({
               status: "error",
               message: err.message,

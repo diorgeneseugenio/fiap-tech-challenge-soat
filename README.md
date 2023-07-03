@@ -78,7 +78,6 @@ Além das etapas do cliente, o estabelecimento precisa de um acesso administrati
 _Não será necessário o desenvolvimento de interfaces para o frontend, o foco deve ser total no
 backend._
 
-
 ## Instalação do projeto
 
 Este projeto está pronto para ser executado em um ambiente Docker. Por este motivo, será necessária apenas a instalação do Docker, não sendo necessária a instalação manual do projeto. Também não será necessária a instalação manual do banco de dados (MySQL).
@@ -112,3 +111,7 @@ A API expõe os seguintes *endpoints* a partir da *base URL* `localhost:3000`:
 - `POST /api/categoria`
 - `PUT /api/categoria/:id`
 - `DELETE /api/categoria/:id`
+
+## Criação de schemas a partir dos domains
+
+`npx typescript-json-schema src/core/domain/<domain>.ts NomeDomain`
