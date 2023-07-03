@@ -43,7 +43,7 @@ Para derrubar o serviço, execute o comando `docker compose down`.
 ## Endpoints
 
 Esta API fornece documentação no padrão OpenAPI.
-Os endpoints disponíveis, suas descrições e dados necessários para requisição podem ser consultados e testados em http://localhost/3000/api/api-docs.
+Os endpoints disponíveis, suas descrições e dados necessários para requisição podem ser consultados e testados em http://localhost/3000/api-docs.
 
 ## Desenvolvimento do projeto
 
