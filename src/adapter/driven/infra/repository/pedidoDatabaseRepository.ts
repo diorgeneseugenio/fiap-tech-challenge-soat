@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import PedidoRepository, {
   AdicionaItemInput,
+  AtualizaPedidoInput,
   CriaPedidoInput,
   RemoveItemInput,
 } from "~core/applications/repositories/pedidoRepository";
@@ -28,6 +29,28 @@ class PedidoDataBaseRepository implements PedidoRepository {
       });
     } catch (err: any) {
       console.error("Erro ao criar Pedido: ", err);
+      throw new Error(err);
+    }
+  }
+
+  async atualizaPedido({
+    id,
+    status,
+    retiradoEm,
+    faturaId,
+  }: AtualizaPedidoInput): Promise<Pedido> {
+    try {
+      return (await PedidoModel.update(
+        { status, retiradoEm, faturaId },
+        { where: { id } }
+      ).then(() =>
+        PedidoModel.findOne({
+          where: { id },
+          include: ["itens", "fatura"],
+        })
+      )) as Pedido;
+    } catch (err: any) {
+      console.error("Erro ao atualizar Pedido: ", err);
       throw new Error(err);
     }
   }

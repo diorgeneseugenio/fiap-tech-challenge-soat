@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 
 import createCategorias from "../seeders/cria-categorias";
+import createMetodoDePagamento from "../seeders/cria-metodo-de-pagamento";
 
 import {
   DataBaseConfigConstructorInterface,
@@ -66,6 +67,11 @@ export class DataBaseConfig implements DataBaseConfigInterface {
       console.log("Modelos sincronizados com o banco de dados.");
 
       await createCategorias.up(
+        this.instance.getQueryInterface(),
+        this.instance
+      );
+
+      await createMetodoDePagamento.up(
         this.instance.getQueryInterface(),
         this.instance
       );

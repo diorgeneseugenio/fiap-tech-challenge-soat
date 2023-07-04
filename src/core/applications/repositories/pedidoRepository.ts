@@ -7,6 +7,13 @@ export type CriaPedidoInput = {
   status: StatusDoPedido;
 };
 
+export type AtualizaPedidoInput = {
+  id: string;
+  status?: StatusDoPedido;
+  retiradoEm?: Date;
+  faturaId?: string;
+};
+
 export type AdicionaItemInput = {
   pedidoId: string;
   produtoId: string;
@@ -28,6 +35,7 @@ export type RetornaItemInput = {
 
 export default interface PedidoRepository {
   criaPedido(criarPedidoInput: CriaPedidoInput): Promise<Pedido>;
+  atualizaPedido(atualizaPedidoInput: AtualizaPedidoInput): Promise<Pedido>;
   adicionaItem(adicionarItemInput: AdicionaItemInput): Promise<Pedido | null>;
   retornaPedido(id: string): Promise<Pedido | null>;
   removeItem(removeItemInput: RemoveItemInput): Promise<Pedido | null>;

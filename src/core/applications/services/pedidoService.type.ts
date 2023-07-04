@@ -2,6 +2,11 @@ export type IniciaPedidoInput = {
   clienteId?: string | null;
 };
 
+export type RealizaPedidoInput = {
+  pedidoId: string;
+  metodoDePagamentoId: string;
+};
+
 export type AdicionaItemInput = {
   pedidoId: string;
   produtoId: string;

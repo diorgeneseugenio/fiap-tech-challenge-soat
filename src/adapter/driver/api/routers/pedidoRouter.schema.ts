@@ -65,5 +65,28 @@ export const removerItemSchema = z.object({
 });
 
 export type RemoverItemPayload = z.infer<typeof removerItemSchema>;
-
 export type RemoverItemParams = RemoverItemPayload["params"];
+
+/** Realizar Pedido */
+export const realizarPedidoSchema = z.object({
+  params: z.object({
+    id: z
+      .string({
+        required_error: "O id do pedido é obrigatório",
+        invalid_type_error: "O id pedido deve ser um texto",
+      })
+      .uuid({ message: "O id do pedido deve ser UUID" }),
+  }),
+  body: z.object({
+    metodoDePagamentoId: z
+      .string({
+        required_error: "O id do método de pagamento é obrigatório",
+        invalid_type_error: "O id do método de pagamento deve ser um texto",
+      })
+      .uuid({ message: "O id do método de pagamento deve ser UUID" }),
+  }),
+});
+
+export type RealizarPedidoPayload = z.infer<typeof realizarPedidoSchema>;
+export type RealizarPedidoBody = RealizarPedidoPayload["body"];
+export type RealizarPedidoParams = RealizarPedidoPayload["params"];

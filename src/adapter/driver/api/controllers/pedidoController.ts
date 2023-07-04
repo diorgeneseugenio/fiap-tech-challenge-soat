@@ -6,17 +6,46 @@ import {
   AdicionarItemBody,
   AdicionarItemParams,
   IniciaPedidoPayload,
+  RealizarPedidoBody,
+  RealizarPedidoParams,
   RemoverItemParams,
 } from "../routers/pedidoRouter.schema";
 
 export default class PedidoController {
   constructor(private readonly pedidoService: PedidoService) {}
 
-  async iniciaPedido(req: Request, res: Response) {
+  async iniciaPedido(
+    req: Request<unknown, IniciaPedidoPayload>,
+    res: Response
+  ) {
     try {
-      const { body } = req as IniciaPedidoPayload;
+      const { body } = req;
 
       const pedidoCriado = await this.pedidoService.iniciaPedido(body);
+
+      return res.status(201).json({
+        status: "success",
+        message: pedidoCriado,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
+
+  async realizaPedido(
+    req: Request<RealizarPedidoParams, RealizarPedidoBody>,
+    res: Response
+  ) {
+    try {
+      const { params, body } = req;
+
+      const pedidoCriado = await this.pedidoService.realizaPedido({
+        pedidoId: params.id,
+        metodoDePagamentoId: body.metodoDePagamentoId,
+      });
 
       return res.status(201).json({
         status: "success",

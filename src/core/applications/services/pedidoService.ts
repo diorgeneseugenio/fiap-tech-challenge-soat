@@ -1,18 +1,21 @@
 import { Pedido, statusDoPedido } from "~core/domain/pedido";
 
+import FaturaRepository from "../repositories/faturaRepository";
 import PedidoRepository from "../repositories/pedidoRepository";
 import ProdutoRepository from "../repositories/produtoRepository";
 
 import {
   AdicionaItemInput,
   IniciaPedidoInput,
+  RealizaPedidoInput,
   RemoveItemInput,
 } from "./pedidoService.type";
 
 export default class PedidoService {
   constructor(
     private readonly pedidoRepository: PedidoRepository,
-    private readonly produtoRepository: ProdutoRepository
+    private readonly produtoRepository: ProdutoRepository,
+    private readonly faturaRepository: FaturaRepository
   ) {}
 
   async iniciaPedido({ clienteId = null }: IniciaPedidoInput): Promise<Pedido> {
@@ -20,6 +23,30 @@ export default class PedidoService {
       clienteId,
       valor: 0,
       status: statusDoPedido.RASCUNHO,
+    });
+  }
+
+  async realizaPedido({
+    pedidoId,
+    metodoDePagamentoId,
+  }: RealizaPedidoInput): Promise<Pedido> {
+    const pedido = await this.pedidoRepository.retornaPedido(pedidoId);
+
+    if (pedido?.status !== statusDoPedido.RASCUNHO) {
+      throw new Error(
+        "Não é possível realizar um pedido que não está em rascunho"
+      );
+    }
+
+    const fatura = await this.faturaRepository.criaFatura({
+      pedidoId,
+      metodoDePagamentoId,
+    });
+
+    return this.pedidoRepository.atualizaPedido({
+      id: pedidoId,
+      status: statusDoPedido.AGUARDANDO_PAGAMENTO,
+      faturaId: fatura.id,
     });
   }
 

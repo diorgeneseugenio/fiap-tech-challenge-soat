@@ -1,6 +1,7 @@
 import express from "express";
 
 import PedidoService from "~core/applications/services/pedidoService";
+import FaturaDataBaseRepository from "~driven/infra/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~driven/infra/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~driven/infra/repository/produtoDatabaseRepository";
 
@@ -9,6 +10,7 @@ import PedidoController from "../controllers/pedidoController";
 import {
   adicionarItemSchema,
   iniciaPedidoSchema,
+  realizarPedidoSchema,
   removerItemSchema,
 } from "./pedidoRouter.schema";
 import { validaRequisicao } from "./utils";
@@ -17,10 +19,12 @@ const pedidoRouter = express.Router({});
 
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
+const dbFaturaRepository = new FaturaDataBaseRepository();
 
 const pedidoService = new PedidoService(
   dbPedidosRepository,
-  dbProdutoRepository
+  dbProdutoRepository,
+  dbFaturaRepository
 );
 
 const pedidoController = new PedidoController(pedidoService);
@@ -41,6 +45,12 @@ pedidoRouter.post(
   "/iniciar-pedido",
   validaRequisicao(iniciaPedidoSchema),
   pedidoController.iniciaPedido.bind(pedidoController)
+);
+
+pedidoRouter.patch(
+  "/realizar-pedido/:id",
+  validaRequisicao(realizarPedidoSchema),
+  pedidoController.realizaPedido.bind(pedidoController)
 );
 
 export default pedidoRouter;
