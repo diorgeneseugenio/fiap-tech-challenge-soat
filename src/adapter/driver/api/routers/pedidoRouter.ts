@@ -13,6 +13,7 @@ import {
   finalizarPreparoSchema,
   iniciaPedidoSchema,
   iniciarPreparoSchema,
+  listarPedidosSchema,
   realizarPedidoSchema,
   removerItemSchema,
 } from "./pedidoRouter.schema";
@@ -72,6 +73,12 @@ pedidoRouter.patch(
   "/entregar-pedido/:id",
   validaRequisicao(entregarPedidoSchema),
   pedidoController.entregaPedido.bind(pedidoController)
+);
+
+pedidoRouter.get(
+  "/",
+  validaRequisicao(listarPedidosSchema),
+  pedidoController.listaPedidos.bind(pedidoController)
 );
 
 export default pedidoRouter;

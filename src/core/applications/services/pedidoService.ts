@@ -147,4 +147,8 @@ export default class PedidoService {
       valorPedido: novoValorPedido,
     });
   }
+
+  async listaPedidos(status?: Array<string>): Promise<Array<Pedido> | null> {
+    return this.pedidoRepository.listaPedidos(status);
+  }
 }

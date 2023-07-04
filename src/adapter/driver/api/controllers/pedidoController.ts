@@ -9,6 +9,7 @@ import {
   FinalizarPreparoParams,
   IniciaPedidoPayload,
   IniciarPreparoParams,
+  ListaPedidosQuery,
   RealizarPedidoBody,
   RealizarPedidoParams,
   RemoverItemParams,
@@ -152,6 +153,32 @@ export default class PedidoController {
       return res.status(201).json({
         status: "success",
         message: pedido,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
+
+  async listaPedidos(
+    req: Request<unknown, unknown, ListaPedidosQuery>,
+    res: Response
+  ) {
+    try {
+      const { query } = req;
+
+      let status: Array<string> = [];
+      if (query?.status && typeof query.status === "string") {
+        status = query.status.split(",");
+      }
+
+      const pedidos = await this.pedidoService.listaPedidos(status);
+
+      return res.status(200).json({
+        status: "success",
+        message: pedidos,
       });
     } catch (err: any) {
       return res.status(500).json({

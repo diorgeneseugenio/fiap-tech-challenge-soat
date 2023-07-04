@@ -1,3 +1,4 @@
+import { WhereOptions } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 
 import PedidoRepository, {
@@ -126,6 +127,27 @@ class PedidoDataBaseRepository implements PedidoRepository {
       });
     } catch (err: any) {
       console.error("Erro ao retornar item: ", err);
+      throw new Error(err);
+    }
+  }
+
+  async listaPedidos(status?: Array<string>): Promise<Array<Pedido> | null> {
+    try {
+      let where: WhereOptions<Pedido> = { deletedAt: null };
+
+      if (status && status.length > 0) {
+        where = { ...where, status };
+      }
+
+      return PedidoModel.findAll({
+        where,
+        order: [
+          ["createdAt", "ASC"],
+          ["status", "ASC"],
+        ],
+      });
+    } catch (err: any) {
+      console.error("Erro ao listar pedidos: ", err);
       throw new Error(err);
     }
   }

@@ -135,3 +135,17 @@ export const entregarPedidoSchema = z.object({
 
 export type EntregarPedidoPayload = z.infer<typeof entregarPedidoSchema>;
 export type EntregarPedidoParams = EntregarPedidoPayload["params"];
+
+/** Lista Pedidos */
+export const listarPedidosSchema = z.object({
+  query: z.object({
+    status: z
+      .string({
+        invalid_type_error: "O status do pedido deve ser um texto",
+      })
+      .optional(),
+  }),
+});
+
+export type ListaPedidosPayload = z.infer<typeof listarPedidosSchema>;
+export type ListaPedidosQuery = ListaPedidosPayload["query"];
