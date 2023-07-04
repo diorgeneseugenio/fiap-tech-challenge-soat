@@ -26,6 +26,16 @@ export default class PedidoService {
   async adicionaItem(
     adicionaItemInput: AdicionaItemInput
   ): Promise<Pedido | null> {
+    const pedido = await this.pedidoRepository.retornaPedido(
+      adicionaItemInput.pedidoId
+    );
+
+    if (pedido?.status !== statusDoPedido.RASCUNHO) {
+      throw new Error(
+        "Não é possível adicionar itens a um pedido que não está em rascunho"
+      );
+    }
+
     const produto = await this.produtoRepository.retornaProduto(
       adicionaItemInput.produtoId
     );
@@ -44,6 +54,13 @@ export default class PedidoService {
     const pedido = await this.pedidoRepository.retornaPedido(
       removeItemInput.pedidoId
     );
+
+    if (pedido?.status !== statusDoPedido.RASCUNHO) {
+      throw new Error(
+        "Não é possível adicionar itens a um pedido que não está em rascunho"
+      );
+    }
+
     const itemDoPedido = await this.pedidoRepository.retornaItem(
       removeItemInput.itemId
     );

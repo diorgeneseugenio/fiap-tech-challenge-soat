@@ -25,7 +25,7 @@ export default class PedidoController {
     } catch (err: any) {
       return res.status(500).json({
         status: "error",
-        message: err,
+        message: err.message,
       });
     }
   }
@@ -49,7 +49,7 @@ export default class PedidoController {
     } catch (err: any) {
       return res.status(500).json({
         status: "error",
-        message: err,
+        message: err.message,
       });
     }
   }
@@ -70,7 +70,7 @@ export default class PedidoController {
     } catch (err: any) {
       return res.status(500).json({
         status: "error",
-        message: err,
+        message: err.message,
       });
     }
   }
