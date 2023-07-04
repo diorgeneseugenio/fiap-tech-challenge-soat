@@ -1,5 +1,5 @@
 import CategoriaRepository from "~core/applications/repositories/categoriaRepository";
-import Categoria from "~core/domain/categorias";
+import Categoria from "~core/domain/categoria";
 
 import CategoriaModel from "../models/categoriaModel";
 

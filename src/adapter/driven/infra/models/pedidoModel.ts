@@ -6,6 +6,7 @@ import { Pedido, StatusDoPedido, statusDoPedido } from "~core/domain/pedido";
 
 import FaturaModel from "./faturaModel";
 import ItemDoPedidoModel from "./itemPedidoModel";
+import UsuarioModel from "./usuarioModel";
 
 class PedidoModel extends Model<Pedido> implements Pedido {
   public id!: string;
@@ -94,7 +95,9 @@ class PedidoModel extends Model<Pedido> implements Pedido {
       as: "itens",
     });
 
-    /** Todo: Adicionar relação com cliente */
+    this.belongsTo(UsuarioModel, {
+      as: "cliente",
+    });
   }
 }
 
