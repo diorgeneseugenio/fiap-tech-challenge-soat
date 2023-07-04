@@ -92,6 +92,7 @@ export default class PedidoService {
     return this.pedidoRepository.atualizaPedido({
       id: pedidoId,
       status: statusDoPedido.ENTREGUE,
+      retiradoEm: new Date(),
     });
   }
 
