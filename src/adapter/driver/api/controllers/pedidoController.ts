@@ -6,6 +6,7 @@ import {
   AdicionarItemBody,
   AdicionarItemParams,
   IniciaPedidoPayload,
+  IniciarPreparoParams,
   RealizarPedidoBody,
   RealizarPedidoParams,
   RemoverItemParams,
@@ -50,6 +51,24 @@ export default class PedidoController {
       return res.status(201).json({
         status: "success",
         message: pedidoCriado,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
+
+  async iniciaPreparo(req: Request<IniciarPreparoParams>, res: Response) {
+    try {
+      const { params } = req;
+
+      const pedido = await this.pedidoService.iniciaPreparo(params.id);
+
+      return res.status(201).json({
+        status: "success",
+        message: pedido,
       });
     } catch (err: any) {
       return res.status(500).json({

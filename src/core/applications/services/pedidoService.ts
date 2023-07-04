@@ -50,6 +50,21 @@ export default class PedidoService {
     });
   }
 
+  async iniciaPreparo(pedidoId: string): Promise<Pedido> {
+    const pedido = await this.pedidoRepository.retornaPedido(pedidoId);
+
+    if (pedido?.status !== statusDoPedido.AGUARDANDO_PREPARO) {
+      throw new Error(
+        "Não é possível iniciar prepero de um pedido que não está aguardando preparo"
+      );
+    }
+
+    return this.pedidoRepository.atualizaPedido({
+      id: pedidoId,
+      status: statusDoPedido.EM_PREPARO,
+    });
+  }
+
   async adicionaItem(
     adicionaItemInput: AdicionaItemInput
   ): Promise<Pedido | null> {
