@@ -8,20 +8,26 @@ export default class UsuarioService {
     constructor(private readonly usuarioRepository: usuarioRepository) { }
 
     async criaUsuario(usuario: Usuario) {
-        if (usuario.cpf) {
-            const cpfValidado = new CPF(usuario.cpf);
-            usuario.cpf = cpfValidado.retornaValor();
-        }
+        if (!usuario.cpf && !usuario.email) {
+            if (!usuario.nome) {
+                usuario.nome = 'Anonimo'
+            }
+        } else {
+            if (usuario.cpf) {
+                const cpfValidado = new CPF(usuario.cpf);
+                usuario.cpf = cpfValidado.retornaValor();
+            }
 
-        if (usuario.email) {
-            const emailValidado = new Email(usuario.email);
-            usuario.email = emailValidado.retornaValor();
-        }
+            if (usuario.email) {
+                const emailValidado = new Email(usuario.email);
+                usuario.email = emailValidado.retornaValor();
+            }
 
-        const usuarioExistente = await this.usuarioRepository.filtraUsuario(usuario.cpf ?? null, usuario.email ?? null);
+            const usuarioExistente = await this.usuarioRepository.filtraUsuario(usuario.cpf ?? null, usuario.email ?? null);
 
-        if (usuarioExistente) {
-            throw new Error("Usuario já existe");
+            if (usuarioExistente) {
+                throw new Error("Usuario já existe");
+            }
         }
 
         return this.usuarioRepository.criaUsuario(usuario);
