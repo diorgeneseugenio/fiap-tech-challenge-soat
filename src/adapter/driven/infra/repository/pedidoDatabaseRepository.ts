@@ -145,6 +145,7 @@ class PedidoDataBaseRepository implements PedidoRepository {
           ["createdAt", "ASC"],
           ["status", "ASC"],
         ],
+        include: ["itens", "fatura"],
       });
     } catch (err: any) {
       console.error("Erro ao listar pedidos: ", err);
