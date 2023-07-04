@@ -58,7 +58,7 @@ class PedidoModel extends Model<Pedido> implements Pedido {
         },
         retiradoEm: {
           type: DataTypes.DATE,
-          allowNull: false,
+          allowNull: true,
         },
         createdAt: {
           type: DataTypes.DATE,
