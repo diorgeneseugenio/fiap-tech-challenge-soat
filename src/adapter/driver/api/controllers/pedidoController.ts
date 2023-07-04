@@ -5,6 +5,7 @@ import PedidoService from "~core/applications/services/pedidoService";
 import {
   AdicionarItemBody,
   AdicionarItemParams,
+  EntregarPedidoParams,
   FinalizarPreparoParams,
   IniciaPedidoPayload,
   IniciarPreparoParams,
@@ -84,6 +85,24 @@ export default class PedidoController {
       const { params } = req;
 
       const pedido = await this.pedidoService.finalizaPreparo(params.id);
+
+      return res.status(201).json({
+        status: "success",
+        message: pedido,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
+
+  async entregaPedido(req: Request<EntregarPedidoParams>, res: Response) {
+    try {
+      const { params } = req;
+
+      const pedido = await this.pedidoService.entregaPedido(params.id);
 
       return res.status(201).json({
         status: "success",

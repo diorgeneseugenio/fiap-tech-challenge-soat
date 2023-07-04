@@ -34,7 +34,7 @@ export default class PedidoService {
 
     if (pedido?.status !== statusDoPedido.RASCUNHO) {
       throw new Error(
-        "Não é possível realizar um pedido que não está em rascunho"
+        `Não é possível realizar um pedido que não está em rascunho. Status atual do pedido é ${pedido?.status}`
       );
     }
 
@@ -55,7 +55,7 @@ export default class PedidoService {
 
     if (pedido?.status !== statusDoPedido.AGUARDANDO_PREPARO) {
       throw new Error(
-        "Não é possível iniciar preparo de um pedido que não está aguardando preparo"
+        `Não é possível iniciar preparo de um pedido que não está aguardando preparo. Status atual do pedido é ${pedido?.status}`
       );
     }
 
@@ -70,13 +70,28 @@ export default class PedidoService {
 
     if (pedido?.status !== statusDoPedido.EM_PREPARO) {
       throw new Error(
-        "Não é possível finalizar preparo de um pedido que não está em preparo"
+        `Não é possível finalizar preparo de um pedido que não está em prepar. Status atual do pedido é ${pedido?.status}`
       );
     }
 
     return this.pedidoRepository.atualizaPedido({
       id: pedidoId,
       status: statusDoPedido.PRONTO,
+    });
+  }
+
+  async entregaPedido(pedidoId: string): Promise<Pedido> {
+    const pedido = await this.pedidoRepository.retornaPedido(pedidoId);
+
+    if (pedido?.status !== statusDoPedido.PRONTO) {
+      throw new Error(
+        `Não é possível entregar um pedido que não está pronto. Status atual do pedido é ${pedido?.status}`
+      );
+    }
+
+    return this.pedidoRepository.atualizaPedido({
+      id: pedidoId,
+      status: statusDoPedido.ENTREGUE,
     });
   }
 
@@ -89,7 +104,7 @@ export default class PedidoService {
 
     if (pedido?.status !== statusDoPedido.RASCUNHO) {
       throw new Error(
-        "Não é possível adicionar itens a um pedido que não está em rascunho"
+        `Não é possível adicionar itens a um pedido que não está em rascunho`
       );
     }
 
@@ -114,7 +129,7 @@ export default class PedidoService {
 
     if (pedido?.status !== statusDoPedido.RASCUNHO) {
       throw new Error(
-        "Não é possível adicionar itens a um pedido que não está em rascunho"
+        `Não é possível adicionar itens a um pedido que não está em rascunho`
       );
     }
 

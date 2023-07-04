@@ -9,6 +9,7 @@ import PedidoController from "../controllers/pedidoController";
 
 import {
   adicionarItemSchema,
+  entregarPedidoSchema,
   finalizarPreparoSchema,
   iniciaPedidoSchema,
   iniciarPreparoSchema,
@@ -65,6 +66,12 @@ pedidoRouter.patch(
   "/finalizar-preparo/:id",
   validaRequisicao(finalizarPreparoSchema),
   pedidoController.finalizaPreparo.bind(pedidoController)
+);
+
+pedidoRouter.patch(
+  "/entregar-pedido/:id",
+  validaRequisicao(entregarPedidoSchema),
+  pedidoController.entregaPedido.bind(pedidoController)
 );
 
 export default pedidoRouter;
