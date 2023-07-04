@@ -49,7 +49,7 @@ class ItemDoPedidoModel extends Model<ItemDoPedido> implements ItemDoPedido {
           allowNull: false,
         },
         observacao: {
-          type: DataTypes.FLOAT,
+          type: DataTypes.STRING,
           allowNull: true,
         },
         createdAt: {

@@ -6,6 +6,7 @@ import Modelos from "./adapter/driven/infra/models";
 import { Server } from "./adapter/driver/api/config/server.config";
 import {
   categoriaRouter,
+  pedidoRouter,
   produtoRouter,
 } from "./adapter/driver/api/routers/index";
 
@@ -28,5 +29,6 @@ const server = new Server({ appConfig: app });
 
 server.addRouter("/api/categoria", categoriaRouter);
 server.addRouter("/api/produto", produtoRouter);
+server.addRouter("/api/pedido", pedidoRouter);
 
 server.init();
