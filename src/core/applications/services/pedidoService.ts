@@ -17,7 +17,6 @@ export default class PedidoService {
   constructor(
     private readonly pedidoRepository: PedidoRepository,
     private readonly produtoRepository: ProdutoRepository,
-    private readonly faturaRepository: FaturaRepository,
     private readonly checkoutRepository: CheckoutRepository,
   ) { }
 
@@ -46,17 +45,13 @@ export default class PedidoService {
       );
     }
 
-    const pagamento = await this.checkoutRepository.geraPagamento(metodoDePagamentoId, pedido);
-    const fatura = await this.faturaRepository.criaFatura({
-      pedidoId,
-      metodoDePagamentoId,
-      qrCode: pagamento.qrCode,
-      statusDePagamento: pagamento.statusDePagamento,
-    });
+    const fatura = await this.checkoutRepository.geraFatura({ metodoDePagamentoId, pedido });
 
     return this.pedidoRepository.atualizaPedido({
       id: pedidoId,
-      status: pagamento.statusDePagamento === statusDePagamento.PAGAMENTO_APROVADO ? statusDoPedido.AGUARDANDO_PREPARO : statusDoPedido.FALHA,
+      status: fatura.statusDePagamento === statusDePagamento.PAGAMENTO_APROVADO
+        ? statusDoPedido.AGUARDANDO_PREPARO
+        : statusDoPedido.FALHA,
       faturaId: fatura.id,
     });
   }

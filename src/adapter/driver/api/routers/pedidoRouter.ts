@@ -22,16 +22,15 @@ import { validaRequisicao } from "./utils";
 
 const pedidoRouter = express.Router({});
 
-const checkout = new FakeCheckout();
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
 const dbFaturaRepository = new FaturaDataBaseRepository();
+const checkoutRepository = new FakeCheckout(dbFaturaRepository);
 
 const pedidoService = new PedidoService(
   dbPedidosRepository,
   dbProdutoRepository,
-  dbFaturaRepository,
-  checkout
+  checkoutRepository
 );
 
 const pedidoController = new PedidoController(pedidoService);
