@@ -40,6 +40,11 @@ export default class PedidoService {
         `Não é possível realizar um pedido que não está em rascunho. Status atual do pedido é ${pedido?.status}`
       );
     }
+    if (pedido.valor <= 0) {
+      throw new Error(
+        `Não é possível realizar um pedido sem nenhum valor`
+      );
+    }
 
     const pagamento = await this.checkoutRepository.geraPagamento(metodoDePagamentoId, pedido);
     const fatura = await this.faturaRepository.criaFatura({
