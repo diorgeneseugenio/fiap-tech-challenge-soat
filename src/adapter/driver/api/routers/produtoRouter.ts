@@ -5,6 +5,9 @@ import DBProdutosRepository from "~driven/infra/repository/produtoDatabaseReposi
 
 import ProdutoController from "../controllers/produtoController";
 
+import { adicionaImagenSchema, criaProdutoSchema, deletaProdutoSchema, editaProdutoSchema, listaProdutoSchema, removeImagemSchema, retornaProdutoSchema } from "./produtoRouter.schema";
+import { validaRequisicao } from "./utils";
+
 const produtoRouter = express.Router();
 
 const dbProdutosRepository = new DBProdutosRepository();
@@ -50,7 +53,11 @@ const produtoController = new ProdutoController(produtoService);
  *       500:
  *         description: Erro na criacao da produto.
  */
-produtoRouter.post("/", produtoController.criaProduto.bind(produtoController));
+produtoRouter.post("/",
+  validaRequisicao(criaProdutoSchema),
+  produtoController.criaProduto.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto:
@@ -71,7 +78,11 @@ produtoRouter.post("/", produtoController.criaProduto.bind(produtoController));
  *       500:
  *         description: Erro na criacao da produto.
  */
-produtoRouter.get("/", produtoController.listaProdutos.bind(produtoController));
+produtoRouter.get("/",
+  validaRequisicao(listaProdutoSchema),
+  produtoController.listaProdutos.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto/{id}:
@@ -94,7 +105,11 @@ produtoRouter.get("/", produtoController.listaProdutos.bind(produtoController));
  *       500:
  *         description: Erro na api.
  */
-produtoRouter.get("/:id", produtoController.retornaProduto.bind(produtoController));
+produtoRouter.get("/:id",
+  validaRequisicao(retornaProdutoSchema),
+  produtoController.retornaProduto.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto/{id}:
@@ -117,7 +132,11 @@ produtoRouter.get("/:id", produtoController.retornaProduto.bind(produtoControlle
  *       500:
  *         description: Erro na api.
  */
-produtoRouter.delete("/:id", produtoController.deletaProduto.bind(produtoController));
+produtoRouter.delete("/:id",
+  validaRequisicao(deletaProdutoSchema),
+  produtoController.deletaProduto.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto/{id}:
@@ -162,7 +181,11 @@ produtoRouter.delete("/:id", produtoController.deletaProduto.bind(produtoControl
  *       500:
  *         description: Erro na api.
  */
-produtoRouter.put("/:id", produtoController.editaProduto.bind(produtoController));
+produtoRouter.put("/:id",
+  validaRequisicao(editaProdutoSchema),
+  produtoController.editaProduto.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto/{idProduto}/imagem/{idImagem}:
@@ -193,8 +216,10 @@ produtoRouter.put("/:id", produtoController.editaProduto.bind(produtoController)
  */
 produtoRouter.delete(
   "/:idProduto/imagem/:idImagem",
+  validaRequisicao(removeImagemSchema),
   produtoController.removeImagem.bind(produtoController)
 );
+
 /**
  * @openapi
  * /produto/{id}/imagens:
@@ -233,6 +258,7 @@ produtoRouter.delete(
  */
 produtoRouter.post(
   "/:id/imagens",
+  validaRequisicao(adicionaImagenSchema),
   produtoController.adicionaImagens.bind(produtoController)
 );
 

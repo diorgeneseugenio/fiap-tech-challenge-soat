@@ -4,6 +4,9 @@ import UsuarioController from "../controllers/usuarioController";
 import DBUsuariosRepository from "../../../driven/infra/repository/usuarioDatabaseRepository";
 import UsuarioService from "../../../../core/applications/services/usuarioService";
 
+import { criaUsuarioSchema, listaPagamentosSchema, retornaUsuarioSchema } from "./usuarioRouter.schema";
+import { validaRequisicao } from "./utils";
+
 const usuarioRouter = express.Router();
 
 const dbUsuariosRepository = new DBUsuariosRepository();
@@ -38,7 +41,11 @@ const usuarioController = new UsuarioController(usuarioService);
  *       500:
  *         description: Erro na api.
  */
-usuarioRouter.post("/", usuarioController.criaUsuario.bind(usuarioController));
+usuarioRouter.post("/",
+  validaRequisicao(criaUsuarioSchema),
+  usuarioController.criaUsuario.bind(usuarioController)
+);
+
 /**
  * @openapi
  * /usuario:
@@ -52,7 +59,11 @@ usuarioRouter.post("/", usuarioController.criaUsuario.bind(usuarioController));
  *       500:
  *         description: Erro na api.
  */
-usuarioRouter.get("/", usuarioController.listaUsuarios.bind(usuarioController));
+usuarioRouter.get("/",
+  validaRequisicao(listaPagamentosSchema),
+  usuarioController.listaUsuarios.bind(usuarioController)
+);
+
 /**
  * @openapi
  * /usuario/query:
@@ -77,7 +88,9 @@ usuarioRouter.get("/", usuarioController.listaUsuarios.bind(usuarioController));
  *       500:
  *         description: Erro na api.
  */
-usuarioRouter.post("/query", usuarioController.retornaUsuario.bind(usuarioController));
-
+usuarioRouter.post("/query",
+  validaRequisicao(retornaUsuarioSchema),
+  usuarioController.retornaUsuario.bind(usuarioController)
+);
 
 export default usuarioRouter;

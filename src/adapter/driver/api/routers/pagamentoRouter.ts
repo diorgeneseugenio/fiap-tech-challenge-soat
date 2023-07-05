@@ -4,6 +4,9 @@ import MetodoPagamentoDatabaseRepository from "~driven/infra/repository/metodoPa
 import MetodoPagamentoService from "~core/applications/services/metodoPagamentoService";
 import MetodoPagamentoController from "../controllers/metodoPagamentoController";
 
+import { listaPagamentosSchema } from "./pagamentoRouter.schema";
+import { validaRequisicao } from "./utils";
+
 const metodoPagamento = express.Router();
 
 const dbMetodoPagamentoRepository = new MetodoPagamentoDatabaseRepository();
@@ -23,6 +26,6 @@ const metodoPagamentoController = new MetodoPagamentoController(metodoPagamentoS
  *       500:
  *         description: Erro na api.
  */
-metodoPagamento.get("/", metodoPagamentoController.listaPagamentos.bind(metodoPagamentoController));
+metodoPagamento.get("/", validaRequisicao(listaPagamentosSchema), metodoPagamentoController.listaPagamentos.bind(metodoPagamentoController));
 
 export default metodoPagamento;
