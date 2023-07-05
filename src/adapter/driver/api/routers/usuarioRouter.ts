@@ -14,7 +14,7 @@ const usuarioController = new UsuarioController(usuarioService);
  * @openapi
  * /usuario:
  *   post:
- *     description: Cria usuario
+ *     summary: Cria usuario
  *     tags:
  *       - usuario
  *     requestBody:
@@ -43,7 +43,7 @@ usuarioRouter.post("/", usuarioController.criaUsuario.bind(usuarioController));
  * @openapi
  * /usuario:
  *   get:
- *     description: retorna lista de usuarios
+ *     summary: Retorna lista de usuarios
  *     tags:
  *       - usuario
  *     responses:
@@ -57,7 +57,7 @@ usuarioRouter.get("/", usuarioController.listaUsuarios.bind(usuarioController));
  * @openapi
  * /usuario/query:
  *   post:
- *     description: Filtra usuario pelo cpf
+ *     summary: Filtra usuario pelo CPF
  *     tags:
  *       - usuario
  *     requestBody:

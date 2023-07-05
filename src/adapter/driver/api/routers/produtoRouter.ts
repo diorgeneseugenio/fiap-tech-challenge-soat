@@ -15,7 +15,7 @@ const produtoController = new ProdutoController(produtoService);
  * @openapi
  * /produto:
  *   post:
- *     description: Criar uma produto
+ *     summary: Criar um produto
  *     tags:
  *       - produto
  *     requestBody:
@@ -55,7 +55,7 @@ produtoRouter.post("/", produtoController.criaProduto.bind(produtoController));
  * @openapi
  * /produto:
  *   get:
- *     description: lista todos os produtos
+ *     summary: Lista todos os produtos
  *     parameters:
  *       - in: query
  *         name: categoriaId
@@ -76,7 +76,7 @@ produtoRouter.get("/", produtoController.listaProdutos.bind(produtoController));
  * @openapi
  * /produto/{id}:
  *   get:
- *     description: retorna produto por id
+ *     summary: Retorna produto por id
  *     tags:
  *       - produto
  *     parameters:
@@ -99,7 +99,7 @@ produtoRouter.get("/:id", produtoController.retornaProduto.bind(produtoControlle
  * @openapi
  * /produto/{id}:
  *   delete:
- *     description: Deleta uma produto
+ *     summary: Deleta uma produto
  *     tags:
  *       - produto
  *     parameters:
@@ -122,7 +122,7 @@ produtoRouter.delete("/:id", produtoController.deletaProduto.bind(produtoControl
  * @openapi
  * /produto/{id}:
  *   put:
- *     description: atualiza uma produto
+ *     summary: Atualiza uma produto
  *     tags:
  *       - produto
  *     parameters:
@@ -167,7 +167,7 @@ produtoRouter.put("/:id", produtoController.editaProduto.bind(produtoController)
  * @openapi
  * /produto/{idProduto}/imagem/{idImagem}:
  *   delete:
- *     description: Deleta imagem do produto
+ *     summary: Deleta imagem do produto
  *     tags:
  *       - produto
  *     parameters:
@@ -199,7 +199,7 @@ produtoRouter.delete(
  * @openapi
  * /produto/{id}/imagens:
  *   post:
- *     description: adiciona lista de imagens ao produto
+ *     summary: Adiciona lista de imagens ao produto
  *     tags:
  *       - produto
  *     parameters:

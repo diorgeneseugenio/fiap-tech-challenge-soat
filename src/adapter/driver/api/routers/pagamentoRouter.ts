@@ -14,7 +14,7 @@ const metodoPagamentoController = new MetodoPagamentoController(metodoPagamentoS
  * @openapi
  * /metodoPagamento:
  *   get:
- *     description: lista metodos de pagamento
+ *     summary: Lista metodos de pagamento
  *     tags:
  *       - MetodoPagamentos
  *     responses:

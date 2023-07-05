@@ -131,7 +131,7 @@ class PedidoDataBaseRepository implements PedidoRepository {
     }
   }
 
-  async listaPedidos(status?: Array<string>): Promise<Array<Pedido> | null> {
+  async listaPedidos(status?: Array<string>, clienteId?: string): Promise<Array<Pedido> | null> {
     try {
       let where: WhereOptions<Pedido> = { deletedAt: null };
 
@@ -139,10 +139,14 @@ class PedidoDataBaseRepository implements PedidoRepository {
         where = { ...where, status };
       }
 
+      if (clienteId && clienteId.length > 0) {
+        where = { ...where, clienteId };
+      }
+
       return PedidoModel.findAll({
         where,
         order: [
-          ["createdAt", "ASC"],
+          ["updatedAt", "ASC"],
           ["status", "ASC"],
         ],
         include: ["itens", "fatura"],

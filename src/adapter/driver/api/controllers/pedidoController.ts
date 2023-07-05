@@ -170,11 +170,12 @@ export default class PedidoController {
       const { query } = req;
 
       let status: Array<string> = [];
+      const clienteId = query.clienteId as string;
       if (query?.status && typeof query.status === "string") {
         status = query.status.split(",");
       }
 
-      const pedidos = await this.pedidoService.listaPedidos(status);
+      const pedidos = await this.pedidoService.listaPedidos(status, clienteId);
 
       return res.status(200).json({
         status: "success",

@@ -15,7 +15,7 @@ const categoriaController = new CategoriaController(categoriaService);
  * @openapi
  * /categoria:
  *   post:
- *     description: Criar uma categoria
+ *     summary: Criar uma categoria
  *     tags:
  *       - categoria
  *     requestBody:
@@ -40,7 +40,7 @@ categoriaRouter.post("/", categoriaController.criaCategoria.bind(categoriaContro
  * @openapi
  * /categoria:
  *   get:
- *     description: lista todas as categorias
+ *     summary: Lista todas as categorias
  *     tags:
  *       - categoria
  *     responses:
@@ -54,7 +54,7 @@ categoriaRouter.get("/", categoriaController.listaCategorias.bind(categoriaContr
  * @openapi
  * /categoria/{id}:
  *   get:
- *     description: retorna categoria por id
+ *     summary: Retorna categoria por id
  *     tags:
  *       - categoria
  *     parameters:
@@ -77,7 +77,7 @@ categoriaRouter.get("/:id", categoriaController.retornaCategoria.bind(categoriaC
  * @openapi
  * /categoria/{id}:
  *   delete:
- *     description: Deleta uma categoria
+ *     summary: Deleta uma categoria
  *     tags:
  *       - categoria
  *     parameters:
@@ -100,7 +100,7 @@ categoriaRouter.delete("/:id", categoriaController.deletaCategoria.bind(categori
  * @openapi
  * /categoria/{id}:
  *   put:
- *     description: atualiza uma categoria
+ *     summary: Atualiza uma categoria
  *     tags:
  *       - categoria
  *     parameters:
