@@ -1,5 +1,6 @@
 import express from "express";
 
+import FakeCheckout from "~driven/checkout/repository/checkoutRepository";
 import PedidoService from "~core/applications/services/pedidoService";
 import FaturaDataBaseRepository from "~driven/infra/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~driven/infra/repository/pedidoDatabaseRepository";
@@ -21,6 +22,7 @@ import { validaRequisicao } from "./utils";
 
 const pedidoRouter = express.Router({});
 
+const checkout = new FakeCheckout();
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
 const dbFaturaRepository = new FaturaDataBaseRepository();
@@ -28,7 +30,8 @@ const dbFaturaRepository = new FaturaDataBaseRepository();
 const pedidoService = new PedidoService(
   dbPedidosRepository,
   dbProdutoRepository,
-  dbFaturaRepository
+  dbFaturaRepository,
+  checkout
 );
 
 const pedidoController = new PedidoController(pedidoService);

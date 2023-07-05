@@ -19,6 +19,7 @@ export interface Fatura {
   metodoDePagamento?: MetodoDePagamento;
   statusDePagamento: StatusDePagamento;
   pagoEm: Date | null;
+  qrCode: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

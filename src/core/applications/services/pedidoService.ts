@@ -1,5 +1,6 @@
 import { Pedido, statusDoPedido } from "~core/domain/pedido";
 
+import CheckoutRepository from "../repositories/checkoutRepository";
 import FaturaRepository from "../repositories/faturaRepository";
 import PedidoRepository from "../repositories/pedidoRepository";
 import ProdutoRepository from "../repositories/produtoRepository";
@@ -10,13 +11,15 @@ import {
   RealizaPedidoInput,
   RemoveItemInput,
 } from "./pedidoService.type";
+import { statusDePagamento } from "~core/domain/fatura";
 
 export default class PedidoService {
   constructor(
     private readonly pedidoRepository: PedidoRepository,
     private readonly produtoRepository: ProdutoRepository,
-    private readonly faturaRepository: FaturaRepository
-  ) {}
+    private readonly faturaRepository: FaturaRepository,
+    private readonly checkoutRepository: CheckoutRepository,
+  ) { }
 
   async iniciaPedido({ clienteId = null }: IniciaPedidoInput): Promise<Pedido> {
     return this.pedidoRepository.criaPedido({
@@ -38,14 +41,17 @@ export default class PedidoService {
       );
     }
 
+    const pagamento = await this.checkoutRepository.geraPagamento(metodoDePagamentoId, pedido);
     const fatura = await this.faturaRepository.criaFatura({
       pedidoId,
       metodoDePagamentoId,
+      qrCode: pagamento.qrCode,
+      statusDePagamento: pagamento.statusDePagamento,
     });
 
     return this.pedidoRepository.atualizaPedido({
       id: pedidoId,
-      status: statusDoPedido.AGUARDANDO_PAGAMENTO,
+      status: pagamento.statusDePagamento === statusDePagamento.PAGAMENTO_APROVADO ? statusDoPedido.AGUARDANDO_PREPARO : statusDoPedido.FALHA,
       faturaId: fatura.id,
     });
   }
