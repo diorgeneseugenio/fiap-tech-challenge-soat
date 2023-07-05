@@ -180,18 +180,18 @@ pedidoRouter.patch(
 
 /**
  * @openapi
- * /pedido/iniciar-preparo/{id}:
+ * /pedido/iniciar-preparo/:
  *   patch:
- *     summary: Muda status para "Em preparo"
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: Id do pedido
+ *     summary: Muda status do proximo pedido da fila para "Em preparo" ou um pedido especifico
  *     tags:
  *       - pedido
+ *     parameters:
+ *       - in: query
+ *         name: pedidoId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Id do pedido
  *     responses:
  *       201:
  *         description: atualizacao do pedido.
@@ -201,7 +201,7 @@ pedidoRouter.patch(
  *         description: Erro na api.
  */
 pedidoRouter.patch(
-  "/iniciar-preparo/:id",
+  "/iniciar-preparo/",
   validaRequisicao(iniciarPreparoSchema),
   pedidoController.iniciaPreparo.bind(pedidoController)
 );

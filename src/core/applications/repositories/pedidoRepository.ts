@@ -39,6 +39,7 @@ export default interface PedidoRepository {
   adicionaItem(adicionarItemInput: AdicionaItemInput): Promise<Pedido | null>;
   retornaPedido(id: string): Promise<Pedido | null>;
   listaPedidos(status?: Array<string>, clienteId?: string): Promise<Array<Pedido> | null>;
+  retornaProximoPedidoFila(): Promise<Pedido | null>;
   removeItem(removeItemInput: RemoveItemInput): Promise<Pedido | null>;
   retornaItem(id: string): Promise<ItemDoPedido | null>;
 }

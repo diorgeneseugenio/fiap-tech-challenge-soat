@@ -56,19 +56,25 @@ export default class PedidoService {
     });
   }
 
-  async iniciaPreparo(pedidoId: string): Promise<Pedido> {
-    const pedido = await this.pedidoRepository.retornaPedido(pedidoId);
+  async iniciaPreparo(pedidoId?: string): Promise<Pedido | null> {
+    const pedido = pedidoId
+      ? await this.pedidoRepository.retornaPedido(pedidoId)
+      : await this.pedidoRepository.retornaProximoPedidoFila();
 
-    if (pedido?.status !== statusDoPedido.AGUARDANDO_PREPARO) {
+    if (pedido && pedido?.status !== statusDoPedido.AGUARDANDO_PREPARO) {
       throw new Error(
         `Não é possível iniciar preparo de um pedido que não está aguardando preparo. Status atual do pedido é ${pedido?.status}`
       );
     }
 
-    return this.pedidoRepository.atualizaPedido({
-      id: pedidoId,
-      status: statusDoPedido.EM_PREPARO,
-    });
+    if (pedido) {
+      return this.pedidoRepository.atualizaPedido({
+        id: pedido.id,
+        status: statusDoPedido.EM_PREPARO,
+      });
+    }
+
+    return null;
   }
 
   async finalizaPreparo(pedidoId: string): Promise<Pedido> {

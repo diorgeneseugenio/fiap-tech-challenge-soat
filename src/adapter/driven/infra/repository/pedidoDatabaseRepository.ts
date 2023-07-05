@@ -8,7 +8,7 @@ import PedidoRepository, {
   RemoveItemInput,
 } from "~core/applications/repositories/pedidoRepository";
 import { ItemDoPedido } from "~core/domain/itemPedido";
-import { Pedido } from "~core/domain/pedido";
+import { Pedido, statusDoPedido } from "~core/domain/pedido";
 
 import ItemDoPedidoModel from "../models/itemPedidoModel";
 import PedidoModel from "../models/pedidoModel";
@@ -63,6 +63,19 @@ class PedidoDataBaseRepository implements PedidoRepository {
       });
     } catch (err: any) {
       console.error("Erro ao retornar pedido: ", err);
+      throw new Error(err);
+    }
+  }
+
+  async retornaProximoPedidoFila(): Promise<Pedido | null> {
+    try {
+      return await PedidoModel.findOne({
+        where: { status: statusDoPedido.AGUARDANDO_PREPARO },
+        order: [['updatedAt', 'ASC']]
+      });
+
+    } catch (err: any) {
+      console.error("Erro ao retornar proximo pedido da fila: ", err);
       throw new Error(err);
     }
   }
