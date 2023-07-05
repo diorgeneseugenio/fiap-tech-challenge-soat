@@ -9,5 +9,5 @@ export interface Pagamento {
 export type GeraPagamentoInput = { metodoDePagamentoId: string; pedido: Pedido }
 
 export default interface CheckoutRepository {
-  geraFatura(geraPagamentoInput: GeraPagamentoInput): Promise<Fatura>;
+  geraPagamento(geraPagamentoInput: GeraPagamentoInput): Promise<Fatura>;
 }
