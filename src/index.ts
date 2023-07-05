@@ -7,6 +7,7 @@ import Modelos from "./adapter/driven/infra/models";
 import { Server } from "./adapter/driver/api/config/server.config";
 import {
   categoriaRouter,
+  metodoPagamento,
   pedidoRouter,
   produtoRouter,
   usuarioRouter,
@@ -36,5 +37,6 @@ server.addRouter("/api/categoria", categoriaRouter);
 server.addRouter("/api/produto", produtoRouter);
 server.addRouter("/api/pedido", pedidoRouter);
 server.addRouter("/api/usuario", usuarioRouter);
+server.addRouter("/api/metodoPagamento", metodoPagamento);
 
 server.init();
