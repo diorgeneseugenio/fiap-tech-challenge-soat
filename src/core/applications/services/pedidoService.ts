@@ -1,5 +1,6 @@
 import { Pedido, statusDoPedido } from "~core/domain/pedido";
 
+import CheckoutRepository from "../repositories/checkoutRepository";
 import FaturaRepository from "../repositories/faturaRepository";
 import PedidoRepository from "../repositories/pedidoRepository";
 import ProdutoRepository from "../repositories/produtoRepository";
@@ -10,13 +11,15 @@ import {
   RealizaPedidoInput,
   RemoveItemInput,
 } from "./pedidoService.type";
+import { statusDePagamento } from "~core/domain/fatura";
 
 export default class PedidoService {
   constructor(
     private readonly pedidoRepository: PedidoRepository,
     private readonly produtoRepository: ProdutoRepository,
-    private readonly faturaRepository: FaturaRepository
-  ) {}
+    private readonly faturaRepository: FaturaRepository,
+    private readonly checkoutRepository: CheckoutRepository,
+  ) { }
 
   async iniciaPedido({ clienteId = null }: IniciaPedidoInput): Promise<Pedido> {
     return this.pedidoRepository.criaPedido({
@@ -37,32 +40,46 @@ export default class PedidoService {
         `Não é possível realizar um pedido que não está em rascunho. Status atual do pedido é ${pedido?.status}`
       );
     }
+    if (pedido.valor <= 0) {
+      throw new Error(
+        `Não é possível realizar um pedido sem nenhum valor`
+      );
+    }
 
+    const pagamento = await this.checkoutRepository.geraPagamento(metodoDePagamentoId, pedido);
     const fatura = await this.faturaRepository.criaFatura({
       pedidoId,
       metodoDePagamentoId,
+      qrCode: pagamento.qrCode,
+      statusDePagamento: pagamento.statusDePagamento,
     });
 
     return this.pedidoRepository.atualizaPedido({
       id: pedidoId,
-      status: statusDoPedido.AGUARDANDO_PAGAMENTO,
+      status: pagamento.statusDePagamento === statusDePagamento.PAGAMENTO_APROVADO ? statusDoPedido.AGUARDANDO_PREPARO : statusDoPedido.FALHA,
       faturaId: fatura.id,
     });
   }
 
-  async iniciaPreparo(pedidoId: string): Promise<Pedido> {
-    const pedido = await this.pedidoRepository.retornaPedido(pedidoId);
+  async iniciaPreparo(pedidoId?: string): Promise<Pedido | null> {
+    const pedido = pedidoId
+      ? await this.pedidoRepository.retornaPedido(pedidoId)
+      : await this.pedidoRepository.retornaProximoPedidoFila();
 
-    if (pedido?.status !== statusDoPedido.AGUARDANDO_PREPARO) {
+    if (pedido && pedido?.status !== statusDoPedido.AGUARDANDO_PREPARO) {
       throw new Error(
         `Não é possível iniciar preparo de um pedido que não está aguardando preparo. Status atual do pedido é ${pedido?.status}`
       );
     }
 
-    return this.pedidoRepository.atualizaPedido({
-      id: pedidoId,
-      status: statusDoPedido.EM_PREPARO,
-    });
+    if (pedido) {
+      return this.pedidoRepository.atualizaPedido({
+        id: pedido.id,
+        status: statusDoPedido.EM_PREPARO,
+      });
+    }
+
+    return null;
   }
 
   async finalizaPreparo(pedidoId: string): Promise<Pedido> {
@@ -149,7 +166,7 @@ export default class PedidoService {
     });
   }
 
-  async listaPedidos(status?: Array<string>): Promise<Array<Pedido> | null> {
-    return this.pedidoRepository.listaPedidos(status);
+  async listaPedidos(status?: Array<string>, clienteId?: string): Promise<Array<Pedido> | null> {
+    return this.pedidoRepository.listaPedidos(status, clienteId);
   }
 }

@@ -16,7 +16,7 @@ import {
 } from "../routers/pedidoRouter.schema";
 
 export default class PedidoController {
-  constructor(private readonly pedidoService: PedidoService) {}
+  constructor(private readonly pedidoService: PedidoService) { }
 
   async iniciaPedido(
     req: Request<unknown, IniciaPedidoPayload>,
@@ -65,14 +65,22 @@ export default class PedidoController {
 
   async iniciaPreparo(req: Request<IniciarPreparoParams>, res: Response) {
     try {
-      const { params } = req;
+      const { pedidoId } = req.query;
 
-      const pedido = await this.pedidoService.iniciaPreparo(params.id);
+      const pedido = await this.pedidoService.iniciaPreparo(pedidoId as string);
 
-      return res.status(201).json({
+      if (pedido) {
+        return res.status(201).json({
+          status: "success",
+          message: pedido,
+        });
+      }
+
+      return res.status(200).json({
         status: "success",
-        message: pedido,
-      });
+        message: "Nenhum pedido na fila",
+      })
+
     } catch (err: any) {
       return res.status(500).json({
         status: "error",
@@ -170,11 +178,12 @@ export default class PedidoController {
       const { query } = req;
 
       let status: Array<string> = [];
+      const clienteId = query.clienteId as string;
       if (query?.status && typeof query.status === "string") {
         status = query.status.split(",");
       }
 
-      const pedidos = await this.pedidoService.listaPedidos(status);
+      const pedidos = await this.pedidoService.listaPedidos(status, clienteId);
 
       return res.status(200).json({
         status: "success",

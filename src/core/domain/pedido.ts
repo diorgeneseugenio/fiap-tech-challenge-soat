@@ -19,6 +19,7 @@ export interface Pedido {
 export const statusDoPedido = {
   RASCUNHO: "Rascunho",
   AGUARDANDO_PAGAMENTO: "Aguardando pagamento",
+  FALHA: "Falha em gerar pedido",
   AGUARDANDO_PREPARO: "Aguardando preparo",
   EM_PREPARO: "Em preparo",
   PRONTO: "Pronto",

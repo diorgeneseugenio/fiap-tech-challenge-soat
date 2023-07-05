@@ -5,6 +5,9 @@ import DBProdutosRepository from "~driven/infra/repository/produtoDatabaseReposi
 
 import ProdutoController from "../controllers/produtoController";
 
+import { adicionaImagenSchema, criaProdutoSchema, deletaProdutoSchema, editaProdutoSchema, listaProdutoSchema, removeImagemSchema, retornaProdutoSchema } from "./produtoRouter.schema";
+import { validaRequisicao } from "./utils";
+
 const produtoRouter = express.Router();
 
 const dbProdutosRepository = new DBProdutosRepository();
@@ -15,7 +18,7 @@ const produtoController = new ProdutoController(produtoService);
  * @openapi
  * /produto:
  *   post:
- *     description: Criar uma produto
+ *     summary: Criar um produto
  *     tags:
  *       - produto
  *     requestBody:
@@ -50,12 +53,16 @@ const produtoController = new ProdutoController(produtoService);
  *       500:
  *         description: Erro na criacao da produto.
  */
-produtoRouter.post("/", produtoController.criaProduto.bind(produtoController));
+produtoRouter.post("/",
+  validaRequisicao(criaProdutoSchema),
+  produtoController.criaProduto.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto:
  *   get:
- *     description: lista todos os produtos
+ *     summary: Lista todos os produtos
  *     parameters:
  *       - in: query
  *         name: categoriaId
@@ -71,12 +78,16 @@ produtoRouter.post("/", produtoController.criaProduto.bind(produtoController));
  *       500:
  *         description: Erro na criacao da produto.
  */
-produtoRouter.get("/", produtoController.listaProdutos.bind(produtoController));
+produtoRouter.get("/",
+  validaRequisicao(listaProdutoSchema),
+  produtoController.listaProdutos.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto/{id}:
  *   get:
- *     description: retorna produto por id
+ *     summary: Retorna produto por id
  *     tags:
  *       - produto
  *     parameters:
@@ -94,12 +105,16 @@ produtoRouter.get("/", produtoController.listaProdutos.bind(produtoController));
  *       500:
  *         description: Erro na api.
  */
-produtoRouter.get("/:id", produtoController.retornaProduto.bind(produtoController));
+produtoRouter.get("/:id",
+  validaRequisicao(retornaProdutoSchema),
+  produtoController.retornaProduto.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto/{id}:
  *   delete:
- *     description: Deleta uma produto
+ *     summary: Deleta uma produto
  *     tags:
  *       - produto
  *     parameters:
@@ -117,12 +132,16 @@ produtoRouter.get("/:id", produtoController.retornaProduto.bind(produtoControlle
  *       500:
  *         description: Erro na api.
  */
-produtoRouter.delete("/:id", produtoController.deletaProduto.bind(produtoController));
+produtoRouter.delete("/:id",
+  validaRequisicao(deletaProdutoSchema),
+  produtoController.deletaProduto.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto/{id}:
  *   put:
- *     description: atualiza uma produto
+ *     summary: Atualiza uma produto
  *     tags:
  *       - produto
  *     parameters:
@@ -162,12 +181,16 @@ produtoRouter.delete("/:id", produtoController.deletaProduto.bind(produtoControl
  *       500:
  *         description: Erro na api.
  */
-produtoRouter.put("/:id", produtoController.editaProduto.bind(produtoController));
+produtoRouter.put("/:id",
+  validaRequisicao(editaProdutoSchema),
+  produtoController.editaProduto.bind(produtoController)
+);
+
 /**
  * @openapi
  * /produto/{idProduto}/imagem/{idImagem}:
  *   delete:
- *     description: Deleta imagem do produto
+ *     summary: Deleta imagem do produto
  *     tags:
  *       - produto
  *     parameters:
@@ -193,13 +216,15 @@ produtoRouter.put("/:id", produtoController.editaProduto.bind(produtoController)
  */
 produtoRouter.delete(
   "/:idProduto/imagem/:idImagem",
+  validaRequisicao(removeImagemSchema),
   produtoController.removeImagem.bind(produtoController)
 );
+
 /**
  * @openapi
  * /produto/{id}/imagens:
  *   post:
- *     description: adiciona lista de imagens ao produto
+ *     summary: Adiciona lista de imagens ao produto
  *     tags:
  *       - produto
  *     parameters:
@@ -233,6 +258,7 @@ produtoRouter.delete(
  */
 produtoRouter.post(
   "/:id/imagens",
+  validaRequisicao(adicionaImagenSchema),
   produtoController.adicionaImagens.bind(produtoController)
 );
 

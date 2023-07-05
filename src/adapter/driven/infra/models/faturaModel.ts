@@ -19,6 +19,7 @@ class FaturaModel extends Model<Fatura> implements Fatura {
   public metodoDePagamento?: MetodoDePagamento;
   public statusDePagamento!: StatusDePagamento;
   public pagoEm!: Date | null;
+  public qrCode!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public readonly deletedAt!: Date | null;
@@ -52,6 +53,10 @@ class FaturaModel extends Model<Fatura> implements Fatura {
         },
         pagoEm: {
           type: DataTypes.DATE,
+          allowNull: true,
+        },
+        qrCode: {
+          type: DataTypes.STRING(1000),
           allowNull: true,
         },
         createdAt: {

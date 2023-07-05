@@ -92,19 +92,9 @@ export type RealizarPedidoBody = RealizarPedidoPayload["body"];
 export type RealizarPedidoParams = RealizarPedidoPayload["params"];
 
 /** Iniciar Preparo */
-export const iniciarPreparoSchema = z.object({
-  params: z.object({
-    id: z
-      .string({
-        required_error: "O id do pedido é obrigatório",
-        invalid_type_error: "O id pedido deve ser um texto",
-      })
-      .uuid({ message: "O id do pedido deve ser UUID" }),
-  }),
-});
+export const iniciarPreparoSchema = z.object({});
 
-export type IniciarPreparoPayload = z.infer<typeof iniciarPreparoSchema>;
-export type IniciarPreparoParams = IniciarPreparoPayload["params"];
+export type IniciarPreparoParams = z.infer<typeof iniciarPreparoSchema>;
 
 /** Finalizar Preparo */
 export const finalizarPreparoSchema = z.object({
