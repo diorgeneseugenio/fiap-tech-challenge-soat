@@ -50,6 +50,7 @@ class PedidoModel extends Model<Pedido> implements Pedido {
             statusDoPedido.EM_PREPARO,
             statusDoPedido.PRONTO,
             statusDoPedido.ENTREGUE,
+            statusDoPedido.FALHA
           ],
         },
         valor: {

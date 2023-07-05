@@ -3,7 +3,7 @@ import { Fatura, StatusDePagamento } from "~core/domain/fatura";
 export type CriaFaturaInput = {
   pedidoId: string;
   metodoDePagamentoId: string;
-  qrCode?: string
+  qrCode: string | null
   statusDePagamento: StatusDePagamento;
 };
 

@@ -1,32 +1,34 @@
 import QRCode from 'qrcode';
 
-import CheckoutRepository, { Pagamento } from "~core/applications/repositories/checkoutRepository";
-import { statusDePagamento } from '~core/domain/fatura';
-import { Pedido, statusDoPedido } from "~core/domain/pedido";
-import PedidoDataBaseRepository from '~driven/infra/repository/pedidoDatabaseRepository';
+import CheckoutRepository, { GeraPagamentoInput, Pagamento } from "~core/applications/repositories/checkoutRepository";
+import FaturaRepository from '~core/applications/repositories/faturaRepository';
+import { Fatura, StatusDePagamento, statusDePagamento } from '~core/domain/fatura';
 
 
 // FAKE CHECKOUT 
 export default class FakeCheckout implements CheckoutRepository {
-  async geraPagamento(metodoDePagamentoId: string, pedido: Pedido): Promise<Pagamento> {
+  constructor(
+    private readonly faturaRepository: FaturaRepository,
+  ) { }
+  async geraFatura(geraPagamentoInput: GeraPagamentoInput): Promise<Fatura> {
     // Deve validar a forma de pagamento e enviar o valor do pedido para o pagamento externo
     // O Fake checkout apenas vai gerar o fake qrcode e automaticamente mudar o status para aguardando preparo
-
+    let qrCode: string | null = null;
+    let status: StatusDePagamento = statusDePagamento.PAGAMENTO_APROVADO; // FIXADO
+ 
     try {
-      const dbPedidosRepository = new PedidoDataBaseRepository();
-
-      await dbPedidosRepository.atualizaPedido({ id: pedido.id, status: statusDoPedido.AGUARDANDO_PREPARO })
-
-      return {
-        qrCode: await QRCode.toDataURL('FAKE CHECKOUT'),
-        statusDePagamento: statusDePagamento.PAGAMENTO_APROVADO
-      }
-
+     qrCode = await QRCode.toDataURL('FAKE CHECKOUT') as string // Em um checkout real aqui seria a chamada externa
+      
     } catch (err) {
       console.error(err);
-      return {
-        statusDePagamento: statusDePagamento.ERRO_AO_PROCESSAR_PAGAMENTO
-      }
+      status = statusDePagamento.ERRO_AO_PROCESSAR_PAGAMENTO
     }
+
+    return this.faturaRepository.criaFatura({
+      pedidoId:  geraPagamentoInput.pedido.id,
+      metodoDePagamentoId:  geraPagamentoInput.metodoDePagamentoId,
+      qrCode,
+      statusDePagamento: status,
+    });
   }
 }
