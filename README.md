@@ -63,7 +63,9 @@ Foram utilizadas técnicas de Domain Driven Design para definição dos fluxos:
 * Categoria: A definição do tipo de Produto
 * Pedido: São os produtos selecionados pelo cliente
 * Cozinha: Equipe que prepara os produtos do pedido.
-* Status: Em que etapa do processo o pedido se encontra
+* Status do Pedido: Em que etapa do processo o pedido se encontra
+* Fatura: Registro relativo ao faturamento do pedido, onde detalhamos o meio de pagamento usado.
+* Status de Pagamento: Identifica o atual estado da fatura, com ele identificamos se o pagamento foi efetuado, ocorreu algum erro, ou ainda não foi processado o pagamento.
 
 ### estrutura do projeto
 
