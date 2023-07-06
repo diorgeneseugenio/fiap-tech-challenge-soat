@@ -1,82 +1,28 @@
 # Tech Challenge - Pós-Tech SOAT - FIAP
 
-## O PROBLEMA
+Este é o projeto desenvolvido durante a fase I do curso de pós-graduação em arquitetura de software da FIAP - turma II/2023.
 
-Há uma lanchonete de bairro que está expandindo devido seu grande sucesso. Porém, com a expansão e sem um sistema de controle de pedidos, o atendimento aos clientes pode ser caótico e confuso. Por exemplo, imagine que um cliente faça um pedido complexo, como um hambúrguer personalizado com ingredientes específicos, acompanhado de batatas fritas e uma bebida. O atendente pode anotar o pedido em um papel e entregá-lo à cozinha, mas não há garantia de que o pedido será preparado corretamente.
+Repositório:
+https://github.com/diorgeneseugenio/fiap-tech-challenge-soat/main
 
-Sem um sistema de controle de pedidos, pode haver confusão entre os atendentes e a cozinha, resultando em atrasos na preparação e entrega dos pedidos. Os pedidos podem ser perdidos, mal interpretados ou esquecidos, levando à insatisfação dos clientes e a perda de negócios.
+Membros do grupo:
+Diórgenes Eugênio da Silveira - RM 349116
+Elton de Andrade Rodrigues - RM 349353
+Gabriel Mendes - RM 348989
+Juliana Amoasei dos Reis - RM 348666
 
-Em resumo, um sistema de controle de pedidos é essencial para garantir que a lanchonete possa atender os clientes de maneira eficiente, gerenciando seus pedidos e estoques de forma adequada. Sem ele, expandir a lanchonete pode acabar não dando certo, resultando em clientes insatisfeitos e impactando os negócios de forma negativa.
+## Propósito do projeto
 
-Para solucionar o problema, a lanchonete irá investir em um sistema de autoatendimento de fast food, que é composto por uma série de dispositivos e interfaces que permitem aos clientes selecionar e fazer pedidos sem precisar interagir com um atendente, com as seguintes
-funcionalidades:
+Fornecer um sistema para gerenciamento de pedidos para uma empresa do ramo de serviços de alimentação.
 
-## PEDIDO
+## Stack utilizada
 
-Os clientes são apresentados a uma interface de seleção na qual podem optar por se identificarem via CPF, se cadastrarem com nome, e-mail ou não se identificar, podendo montar o combo na seguinte sequência, sendo todas elas opcionais:
-
-- Lanche
-- Acompanhamento
-- Bebida
-
-Em cada etapa é exibido o nome, descrição e preço de cada produto.
-
-## PAGAMENTO
-
-O sistema deverá possuir uma opção de pagamento integrada para MVP. A forma de pagamento oferecida será via QRCode do Mercado Pago.
-
-## ACOMPANHAMENTO
-
-Uma vez que o pedido é confirmado e pago, ele é enviado para a cozinha para ser preparado. Simultaneamente deve aparecer em um monitor para o cliente acompanhar o progresso do seu pedido com as seguintes etapas:
-
-- Recebido
-- Em preparação
-- Pronto
-- Finalizado
-
-## ENTREGA
-
-Quando o pedido estiver pronto, o sistema deverá notificar o cliente que ele está pronto para
-retirada. Ao ser retirado, o pedido deve ser atualizado para o status finalizado.
-
-## FEATURES COMPLEMENTARES
-
-Além das etapas do cliente, o estabelecimento precisa de um acesso administrativo:
-
-- Gerenciar clientes: Com a identificação dos clientes o estabelecimento pode trabalhar em campanhas promocionais.
-- Gerenciar produtos e categorias: Os produtos dispostos para escolha do cliente serão gerenciados pelo estabelecimento, definindo nome, categoria, preço, descrição e imagens.
-- Para esse sistema teremos categorias fixas:
-  - Lanche
-  - Acompanhamento
-  - Bebida
-  - Sobremesa
-- Acompanhamento de pedidos: Deve ser possível acompanhar os pedidos em andamento e tempo de espera de cada pedido.
-- As informações dispostas no sistema de pedidos precisarão ser gerenciadas pelo estabelecimento através de um painel administrativo.
-
-## ENTREGA FASE 1
-
-- Documentação do sistema (DDD) utilizando a linguagem ubíqua, dos seguintes fluxos:
-  - Realização do pedido e pagamento
-  - Preparação e entrega do pedido
-- Uma aplicação para todo sistema de backend (monolito) que deverá ser desenvolvido seguindo os padrões apresentados nas aulas:
-  - Utilizando arquitetura hexagonal
-  - APIs:
-    - Cadastro do Cliente
-    - Identificação do Cliente via CPF
-    - Criar, editar e remover de produto
-    - Buscar produtos por categoria
-    - Fake checkout, apenas enviar os produtos escolhidos para a fila
-    - Listar os pedidos
-  - Aplicação deverá ser escalável para atender grandes volumes nos horários de pico
-  - Banco de dados a sua escolha
-  - Inicialmente deveremos trabalhar e organizar a fila dos pedidos apenas em banco de dados
-  - A aplicação deve ser entregue com um Dockerfile configurado para executá-la corretamente.
-  - Para validação da POC, temos a seguinte limitação de infraestrutura:
-    - 1 instância para banco de dados
-    - 1 instâncias para executar aplicação
-
-_Não será necessário o desenvolvimento de interfaces para o frontend, o foco deve ser total no
-backend._
+* Node.js v16
+* TypeScript 
+* MySQL
+* Express
+* Sequelize
+* Docker
 
 ## Instalação do projeto
 
@@ -88,30 +34,179 @@ Para executar em ambiente de desenvolvimento:
 
 * Faça o `fork` e `clone` este repositório em seu computador;
 * Entre no diretório local onde o repositório foi clonado;
-* Utilize o comando `sudo docker-compose up dev` para "build" e subir o servidor local e expor a porta 3000 em `localhost`. Além de `dev` também subirá o serviço `db` com o banco de dados de desenvolvimento.
+* Utilize o comando `docker compose up dev` para "construir" (*build*) e subir o servidor local, expondo a porta 3000 em `localhost`. Além de `dev` também subirá o serviço `db` com o banco de dados de desenvolvimento.
 
 **IMPORTANTE:** Esta API está programada para ser acessada a partir de `http://localhost:3000` e o banco de dados utiliza a porta `3306`. Certifique-se de que não existam outros recursos ocupando as portas `3000` e `3306` antes de subir o projeto.
 
-Para derrubar os serviços, execute o comando `docker-compose down`.
+Para derrubar o serviço, execute o comando `docker compose down`.
 
 ## Endpoints
 
-A API expõe os seguintes *endpoints* a partir da *base URL* `localhost:3000`:
+Esta API fornece documentação no padrão OpenAPI.
+Os endpoints disponíveis, suas descrições e dados necessários para requisição podem ser consultados e testados em http://localhost/3000/api-docs.
 
-`/produto`
-- `GET /api/produto`
-- `GET /api/produto/:id`
-- `POST /api/produto`
-- `PUT /api/produto/:id`
-- `DELETE /api/produto/:id`
+## Desenvolvimento do projeto
 
-`/categoria`
-- `GET /api/categoria`
-- `GET /api/categoria/:id`
-- `POST /api/categoria`
-- `PUT /api/categoria/:id`
-- `DELETE /api/categoria/:id`
+### Diagramas de fluxo
 
-## Criação de schemas a partir dos domains
+Foram utilizadas técnicas de Domain Driven Design para definição dos fluxos:
+- Realização do pedido e pagamento
+![diagrama do fluxo de pedido e pagamento](docs/domain-storytelling/images/pedido-pagamento.png)
 
-`npx typescript-json-schema src/core/domain/<domain>.ts NomeDomain`
+- Preparação e entrega do pedido
+![diagrama do fluxo de preparação e entrega](docs/domain-storytelling/images/preparo-retirada.png)
+
+### Dicionário
+
+* Cliente: Usuário que faz o pedido;
+* Produto: É o alimento cadastrado pelo estabelecimento que será disponibilizado para o cliente escolher.
+* Categoria: A definição do tipo de Produto
+* Pedido: Solicitação realizada pelo cliente que contém itens.
+* Itens do Pedido: São os produtos selecionados pelo cliente, e são vinculados a um pedido.
+* Cozinha: Equipe que prepara os produtos do pedido.
+* Status do Pedido: Em que etapa do processo o pedido se encontra
+* Fatura: Registro relativo ao faturamento do pedido, onde detalhamos o meio de pagamento usado.
+* Status de Pagamento: Identifica o atual estado da fatura, com ele identificamos se o pagamento foi efetuado, ocorreu algum erro, ou ainda não foi processado o pagamento.
+
+### estrutura do projeto
+
+O projeto foi estruturado seguindo o padrão de *ports & adapters*. O `core` contém a camada de domínio da aplicação, separada da infraestrutura, do gerenciamento dos bancos de dados (`driven`) e das interfaces da aplicação (`driver`).
+
+```shell
+.
+└── src
+    ├── adapter
+    │   ├── driven
+    │   │   └── infra
+    │   │       ├── config
+    │   │       │   └── interfaces
+    │   │       ├── models
+    │   │       ├── repository
+    │   │       └── seeders
+    │   └── driver
+    │       └── api
+    │           ├── config
+    │           │   └── interfaces
+    │           ├── controllers
+    │           └── routers
+    ├── core
+    │   ├── applications
+    │   │   ├── repositories
+    │   │   └── services
+    │   └── domain
+    │       └── valueObjects
+    └── tests
+        ├── adapter
+        │   ├── driven
+        │   │   └── infra
+        │   │       └── repository
+        │   └── driver
+        │       └── api
+        │           └── controllers
+        └── core
+            └── domain
+```
+
+### Core
+
+Contém a camada de domínio da aplicação e as lógicas de negócio.
+
+```shell
+ ├── core
+ │   ├── applications
+ │   │   ├── repositories
+ │   │   │   ├── categoriaRepository.ts
+ │   │   │   ├── produtoRepository.ts
+ │   │   │   └── usuarioRepository.ts
+ │   │   └── services
+ │   │       ├── categoriaService.ts
+ │   │       ├── produtoService.ts
+ │   │       └── usuarioService.ts
+ │   └── domain
+ │       ├── categorias.ts
+ │       ├── fatura.ts
+ │       ├── itemPedido.ts
+ │       ├── metodoDePagamento.ts
+ │       ├── pedido.ts
+ │       ├── produto.ts
+ │       ├── usuarios.ts
+ │       └── valueObjects
+ │           ├── cpf.ts
+ │           └── email.ts
+```
+
+O diretório `domain` contém as entidades definidoras do negócio, como `usuario`, `pedido` e `categorias`. Os atributos e métodos disponíveis para cada uma das entidades estão definidos no módulo `services` e a interface entre a camada de domínio e o restante da aplicação foi definida através do uso de interfaces em `repository`.
+
+### adapter
+
+```shell
+ ├── adapter
+ │   ├── driven
+ │   │   └── infra
+ │   │       ├── config
+ │   │       │   ├── db.config.ts
+ │   │       │   └── interfaces
+ │   │       │       └── db.config.interface.ts
+ │   │       ├── models
+ │   │       │   ├── categoriaModel.ts
+ │   │       │   ├── faturaModel.ts
+ │   │       │   ├── index.ts
+ │   │       │   ├── itemPedidoModel.ts
+ │   │       │   ├── metodoDePagamentoModel.ts
+ │   │       │   ├── pedidoModel.ts
+ │   │       │   ├── produtoImagensModel.ts
+ │   │       │   ├── produtoModel.ts
+ │   │       │   └── usuarioModel.ts
+ │   │       ├── repository
+ │   │       │   ├── categoriaDatabaseRepository.ts
+ │   │       │   ├── produtoDatabaseRepository.ts
+ │   │       │   └── usuarioDatabaseRepository.ts
+ │   │       └── seeders
+ │   │           └── cria-categorias.ts
+ │   └── driver
+ │       └── api
+ │           ├── config
+ │           │   ├── interfaces
+ │           │   │   └── server.config.interface.ts
+ │           │   └── server.config.ts
+ │           ├── controllers
+ │           │   ├── categoriaController.ts
+ │           │   ├── produtoController.ts
+ │           │   └── usuarioController.ts
+ │           └── routers
+ │               ├── categoriaRouter.ts
+ │               ├── index.ts
+ │               ├── produtoRouter.ts
+ │               └── usuarioRouter.ts
+```
+
+O diretório `adapter` contém as lógicas responsáveis pela interação do `core` da aplicação (regras de negócio e entidades).
+
+O subdiretório `driven` é responsável pela conexão com elementos externos ao core. Este projeto utiliza este padrão para a conexão com a camada de dados através do uso do padrão `model` para definição de campos e tipos de dados de cada entidade.
+
+O subdiretório `driver` é responsável por definir as interfaces que farão contato com os recursos externos definidos em `driven`. Neste projeto, o diretório `driver` define os pontos de contato através de uma API REST com rotas e controladores para gerenciamento de cada rota.
+
+### tests
+
+```shell
+ └── tests
+     ├── adapter
+     │   ├── driven
+     │   │   └── infra
+     │   │       └── repository
+     │   │           ├── categoriaDatabaseRepository.test.ts
+     │   │           └── produtoDatabaseRepository.test.ts
+     │   └── driver
+     │       └── api
+     │           └── controllers
+     │               ├── categoriaController.test.ts
+     │               └── produtoController.test.ts
+     └── core
+         └── domain
+             ├── categoria.test.ts
+             └── produto.test.ts
+```
+
+A camada de testes está separada do código-fonte (agrupado em `src`) e os testes mantém a estrutura e nomenclatura de diretórios e arquivos para fácil visualização e acesso.
+
+Os testes podem ser executados em um serviço próprio e independente do ambiente `dev`, através do comando `docker compose up test`.
