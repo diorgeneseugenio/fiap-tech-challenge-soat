@@ -61,7 +61,8 @@ Foram utilizadas técnicas de Domain Driven Design para definição dos fluxos:
 * Cliente: Usuário que faz o pedido;
 * Produto: É o alimento cadastrado pelo estabelecimento que será disponibilizado para o cliente escolher.
 * Categoria: A definição do tipo de Produto
-* Pedido: São os produtos selecionados pelo cliente
+* Pedido: Solicitação realizada pelo cliente que contém itens.
+* Itens do Pedido: São os produtos selecionados pelo cliente, e são vinculados a um pedido.
 * Cozinha: Equipe que prepara os produtos do pedido.
 * Status do Pedido: Em que etapa do processo o pedido se encontra
 * Fatura: Registro relativo ao faturamento do pedido, onde detalhamos o meio de pagamento usado.
