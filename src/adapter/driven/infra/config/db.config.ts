@@ -49,7 +49,16 @@ export class DataBaseConfig implements DataBaseConfigInterface {
   }
 
   async authenticate(): Promise<void> {
-    this.getInstance().authenticate();
+    try {
+      await this.getInstance().authenticate();
+      console.log(`✅ Autenticado com sucesso!`);
+    } catch (err: any) {
+      console.log(`🚨 Nao foi possivel autenticar no DB${err}`);
+      console.log(`⏰ Tentando novamente em 5 segundos...`)
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      console.log("Tentando novamente....");
+      return await this.authenticate();
+    }
   }
 
   async synchronizeModels(models: Model[]) {

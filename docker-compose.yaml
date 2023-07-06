@@ -34,7 +34,6 @@ services:
     image: mysql
     container_name: fiap-soat-project_db
     environment:
-      - DB_USERNAME=root
       - MYSQL_ROOT_PASSWORD=admin123
       - MYSQL_DATABASE=fiap-soat-project_db
     ports:

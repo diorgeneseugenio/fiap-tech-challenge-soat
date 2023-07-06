@@ -24,19 +24,24 @@ const database = new DataBaseConfig({
   port: 3306,
 });
 
-database.authenticate();
-database.synchronizeModels(Modelos);
+async function init() {
+  
+  await database.authenticate();
+  await database.synchronizeModels(Modelos);
 
-const app: Express = express();
+  const app: Express = express();
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
-const server = new Server({ appConfig: app });
+  const server = new Server({ appConfig: app });
 
-server.addRouter("/api/categoria", categoriaRouter);
-server.addRouter("/api/produto", produtoRouter);
-server.addRouter("/api/pedido", pedidoRouter);
-server.addRouter("/api/usuario", usuarioRouter);
-server.addRouter("/api/metodoPagamento", metodoPagamento);
+  server.addRouter("/api/categoria", categoriaRouter);
+  server.addRouter("/api/produto", produtoRouter);
+  server.addRouter("/api/pedido", pedidoRouter);
+  server.addRouter("/api/usuario", usuarioRouter);
+  server.addRouter("/api/metodoPagamento", metodoPagamento);
 
-server.init();
+  server.init();
+}
+
+init();
