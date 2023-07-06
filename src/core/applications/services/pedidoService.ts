@@ -45,7 +45,7 @@ export default class PedidoService {
       );
     }
 
-    const fatura = await this.checkoutRepository.geraFatura({ metodoDePagamentoId, pedido });
+    const fatura = await this.checkoutRepository.geraPagamento({ metodoDePagamentoId, pedido });
 
     return this.pedidoRepository.atualizaPedido({
       id: pedidoId,
