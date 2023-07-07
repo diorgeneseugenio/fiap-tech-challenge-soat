@@ -11,8 +11,9 @@ export const CriaProdutoSchema = z.object({
     preco: z
       .number({
         required_error: "O preco é obrigatório",
-        invalid_type_error: "O id deve ser um numer",
-      }),
+        invalid_type_error: "O id deve ser um numero",
+      })
+      .positive({ message: "valor deve ser maior que zero" }),
     descricao: z
       .string(),
     categoriaId: z

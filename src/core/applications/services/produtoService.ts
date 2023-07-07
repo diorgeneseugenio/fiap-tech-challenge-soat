@@ -16,6 +16,9 @@ export default class ProdutoService {
   }
 
   async criaProduto(produto: Produto): Promise<Produto> {
+    if (produto?.preco <= 0) {
+      throw new Error("preco_zerado")
+    }
     return this.produtoRepository.criaProduto(produto);
   }
 

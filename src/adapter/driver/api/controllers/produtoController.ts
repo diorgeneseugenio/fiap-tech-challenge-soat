@@ -112,6 +112,13 @@ export default class ProdutoController {
           message: "Category not found!",
         });
       }
+
+      if (err.message === "preco_zerado") {
+        return res.status(400).json({
+          status: "error",
+          message: "Price has to be greater than 0!",
+        });
+      }
       return res.status(500).json({
         status: "error",
         message: err,
