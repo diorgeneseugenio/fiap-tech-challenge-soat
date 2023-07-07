@@ -1,71 +1,87 @@
 import { z } from "zod";
 
 /** Cria Produto */
-export const criaProdutoSchema = z.object({
+export const CriaProdutoSchema = z.object({
   body: z.object({
     nome: z
       .string({
         required_error: "O nome é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       }),
     preco: z
       .number({
         required_error: "O preco é obrigatório",
-        invalid_type_error: "O id deve ser um numer",
-      }),
+        invalid_type_error: "O preço deve ser um numero",
+      })
+      .positive({ message: "valor deve ser maior que zero" }),
     descricao: z
       .string(),
     categoriaId: z
       .string({
         required_error: "O id da categoria é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "categoriaId deve ser UUID" }),
     //images - TODO 
   }),
 });
 
-export type criaProdutoPayload = z.infer<typeof criaProdutoSchema>;
+export type CriaProdutoPayload = z.infer<typeof CriaProdutoSchema>;
+export type CriaProdutoBody = CriaProdutoPayload["body"];
+
 
 /** Lista Produto */
-export const listaProdutoSchema = z.object({});
-export type listaProdutoPayload = z.infer<typeof listaProdutoSchema>;
+export const ListaProdutoSchema = z.object({
+  params: z.object({
+    categoriaId: z
+      .string({
+        invalid_type_error: "id inválido",
+      })
+      .uuid({ message: "O id deve ser UUID" })
+      .optional(),
+  }),
+});
+export type ListaProdutoPayload = z.infer<typeof ListaProdutoSchema>;
+export type ListaProdutoParams = ListaProdutoPayload["params"];
 
 /** retorna Produto */
-export const retornaProdutoSchema = z.object({
+export const RetornaProdutoSchema = z.object({
   params: z.object({
     id: z
       .string({
         required_error: "O id do Produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
 });
 
-export type retornaProdutoPayload = z.infer<typeof retornaProdutoSchema>;
+export type RetornaProdutoPayload = z.infer<typeof RetornaProdutoSchema>;
+export type RetornaProdutoParams = RetornaProdutoPayload["params"];
+
 
 /** Deleta Produto */
-export const deletaProdutoSchema = z.object({
+export const DeletaProdutoSchema = z.object({
   params: z.object({
     id: z
       .string({
         required_error: "O id do Produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
 });
 
-export type deletaProdutoPayload = z.infer<typeof deletaProdutoSchema>;
+export type DeletaProdutoPayload = z.infer<typeof DeletaProdutoSchema>;
+export type DeletaProdutoBody = DeletaProdutoPayload["params"];
 
 /** Edita Produto */
-export const editaProdutoSchema = z.object({
+export const EditaProdutoSchema = z.object({
   params: z.object({
     id: z
       .string({
-        required_error: "O id da Produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        required_error: "O Id do produto é obrigatório",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
@@ -73,7 +89,7 @@ export const editaProdutoSchema = z.object({
     nome: z
       .string({
         required_error: "O nome é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .optional(),
     preco: z
@@ -88,42 +104,46 @@ export const editaProdutoSchema = z.object({
     categoriaId: z
       .string({
         required_error: "O id da categoria é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "categoriaId deve ser UUID" })
     //images - TODO 
   }),
 });
 
-export type editaProdutoPayload = z.infer<typeof editaProdutoSchema>;
+export type EditaProdutoPayload = z.infer<typeof EditaProdutoSchema>;
+export type EditaProdutoParams = EditaProdutoPayload["params"];
+export type EditaProdutoBody = EditaProdutoPayload["body"];
+
 
 /** Deleta imagem Produto */
-export const removeImagemSchema = z.object({
+export const RemoveImagemSchema = z.object({
   params: z.object({
     idProduto: z
       .string({
         required_error: "O id do Produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
     idImagem: z
       .string({
         required_error: "O id da imagem é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id da imagem deve ser UUID" }),
   }),
 });
 
-export type removeImagemPayload = z.infer<typeof removeImagemSchema>;
+export type RemoveImagemPayload = z.infer<typeof RemoveImagemSchema>;
+export type RemoveImagemParams = RemoveImagemPayload["params"];
 
 /** Edita Produto */
-export const adicionaImagenSchema = z.object({
+export const AdicionaImagenSchema = z.object({
   params: z.object({
     id: z
       .string({
         required_error: "O id do produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
@@ -132,4 +152,4 @@ export const adicionaImagenSchema = z.object({
   }),
 });
 
-export type adicionaImagenPayload = z.infer<typeof adicionaImagenSchema>;
+export type AdicionaImagenPayload = z.infer<typeof AdicionaImagenSchema>;

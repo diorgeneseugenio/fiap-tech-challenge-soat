@@ -13,7 +13,7 @@ import {
   RealizarPedidoBody,
   RealizarPedidoParams,
   RemoverItemParams,
-} from "../routers/pedidoRouter.schema";
+} from "../routers/schemas/pedidoRouter.schema";
 
 export default class PedidoController {
   constructor(private readonly pedidoService: PedidoService) { }

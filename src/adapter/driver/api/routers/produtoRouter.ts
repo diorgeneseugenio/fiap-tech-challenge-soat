@@ -5,7 +5,15 @@ import DBProdutosRepository from "~driven/infra/repository/produtoDatabaseReposi
 
 import ProdutoController from "../controllers/produtoController";
 
-import { adicionaImagenSchema, criaProdutoSchema, deletaProdutoSchema, editaProdutoSchema, listaProdutoSchema, removeImagemSchema, retornaProdutoSchema } from "./produtoRouter.schema";
+import {
+  AdicionaImagenSchema,
+  CriaProdutoSchema,
+  DeletaProdutoSchema,
+  EditaProdutoSchema,
+  ListaProdutoSchema,
+  RemoveImagemSchema,
+  RetornaProdutoSchema
+} from "./schemas/produtoRouter.schema";
 import { validaRequisicao } from "./utils";
 
 const produtoRouter = express.Router();
@@ -54,7 +62,7 @@ const produtoController = new ProdutoController(produtoService);
  *         description: Erro na criacao da produto.
  */
 produtoRouter.post("/",
-  validaRequisicao(criaProdutoSchema),
+  validaRequisicao(CriaProdutoSchema),
   produtoController.criaProduto.bind(produtoController)
 );
 
@@ -79,7 +87,7 @@ produtoRouter.post("/",
  *         description: Erro na criacao da produto.
  */
 produtoRouter.get("/",
-  validaRequisicao(listaProdutoSchema),
+  validaRequisicao(ListaProdutoSchema),
   produtoController.listaProdutos.bind(produtoController)
 );
 
@@ -96,7 +104,7 @@ produtoRouter.get("/",
  *         schema:
  *           type: string
  *         required: true
- *         description: Id da produto
+ *         description: Id do produto
  *     responses:
  *       200:
  *         description: Retorna produtos.
@@ -106,7 +114,7 @@ produtoRouter.get("/",
  *         description: Erro na api.
  */
 produtoRouter.get("/:id",
-  validaRequisicao(retornaProdutoSchema),
+  validaRequisicao(RetornaProdutoSchema),
   produtoController.retornaProduto.bind(produtoController)
 );
 
@@ -123,7 +131,7 @@ produtoRouter.get("/:id",
  *         schema:
  *           type: string
  *         required: true
- *         description: Id da produto
+ *         description: Id do produto
  *     responses:
  *       200:
  *         description: Retorna status de sucesso.
@@ -133,7 +141,7 @@ produtoRouter.get("/:id",
  *         description: Erro na api.
  */
 produtoRouter.delete("/:id",
-  validaRequisicao(deletaProdutoSchema),
+  validaRequisicao(DeletaProdutoSchema),
   produtoController.deletaProduto.bind(produtoController)
 );
 
@@ -150,7 +158,7 @@ produtoRouter.delete("/:id",
  *         schema:
  *           type: string
  *         required: true
- *         description: Id da produto
+ *         description: Id do produto
  *     requestBody:
  *       required: true
  *       content:
@@ -166,13 +174,6 @@ produtoRouter.delete("/:id",
  *                 type: string
  *               categoriaId:
  *                 type: string
- *               imagens:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     url:
- *                       type: string
  *     responses:
  *       200:
  *         description: Retorna produto atualizada.
@@ -182,7 +183,7 @@ produtoRouter.delete("/:id",
  *         description: Erro na api.
  */
 produtoRouter.put("/:id",
-  validaRequisicao(editaProdutoSchema),
+  validaRequisicao(EditaProdutoSchema),
   produtoController.editaProduto.bind(produtoController)
 );
 
@@ -216,7 +217,7 @@ produtoRouter.put("/:id",
  */
 produtoRouter.delete(
   "/:idProduto/imagem/:idImagem",
-  validaRequisicao(removeImagemSchema),
+  validaRequisicao(RemoveImagemSchema),
   produtoController.removeImagem.bind(produtoController)
 );
 
@@ -258,7 +259,7 @@ produtoRouter.delete(
  */
 produtoRouter.post(
   "/:id/imagens",
-  validaRequisicao(adicionaImagenSchema),
+  validaRequisicao(AdicionaImagenSchema),
   produtoController.adicionaImagens.bind(produtoController)
 );
 

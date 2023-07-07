@@ -4,7 +4,6 @@ import FaturaRepository, {
   AtualizaFaturaInput,
   CriaFaturaInput,
 } from "~core/applications/repositories/faturaRepository";
-import { statusDePagamento } from "~core/domain/fatura";
 import { Fatura } from "~core/domain/fatura";
 
 import FaturaModel from "../models/faturaModel";

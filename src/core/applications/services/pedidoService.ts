@@ -1,7 +1,7 @@
+import { statusDePagamento } from "~core/domain/fatura";
 import { Pedido, statusDoPedido } from "~core/domain/pedido";
 
 import CheckoutRepository from "../repositories/checkoutRepository";
-import FaturaRepository from "../repositories/faturaRepository";
 import PedidoRepository from "../repositories/pedidoRepository";
 import ProdutoRepository from "../repositories/produtoRepository";
 
@@ -11,7 +11,6 @@ import {
   RealizaPedidoInput,
   RemoveItemInput,
 } from "./pedidoService.type";
-import { statusDePagamento } from "~core/domain/fatura";
 
 export default class PedidoService {
   constructor(

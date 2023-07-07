@@ -4,5 +4,5 @@ import pedidoRouter from "./pedidoRouter";
 import produtoRouter from "./produtoRouter";
 import usuarioRouter from "./usuarioRouter";
 
-export { categoriaRouter, produtoRouter, metodoPagamento , usuarioRouter, pedidoRouter};
+export { categoriaRouter, metodoPagamento, pedidoRouter, produtoRouter, usuarioRouter };
 

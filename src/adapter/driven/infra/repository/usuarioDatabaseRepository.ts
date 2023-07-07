@@ -1,8 +1,8 @@
 import usuarioRepository from "core/applications/repositories/usuarioRepository";
 import Usuario from "core/domain/usuarios";
+import { Op } from "sequelize";
 
 import UsuarioModel from "../models/usuarioModel";
-import { Op } from "sequelize";
 
 class UsuarioDataBaseRepository implements usuarioRepository {
     async criaUsuario(usuario: Usuario): Promise<Usuario> {

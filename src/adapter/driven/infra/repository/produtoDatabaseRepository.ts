@@ -10,7 +10,7 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
     imagensProduto: ImagemProduto[]
   ): Promise<ImagemProduto[]> {
     try {
-      const produtoExiste = ProdutoModel.findByPk(imagensProduto[0].produtoId);
+      const produtoExiste = ProdutoModel.findByPk(imagensProduto[0]?.produtoId);
       if (!produtoExiste) {
         throw new Error("produto_inexistente");
       }
@@ -45,7 +45,7 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
         {
           ...produto,
           ...{
-            imagens: produto.imagens,
+            imagens: produto?.imagens ?? [],
           },
         },
         {

@@ -1,7 +1,7 @@
 import express from "express";
 
-import FakeCheckout from "~driven/checkout/repository/checkoutRepository";
 import PedidoService from "~core/applications/services/pedidoService";
+import FakeCheckout from "~driven/checkout/repository/checkoutRepository";
 import FaturaDataBaseRepository from "~driven/infra/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~driven/infra/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~driven/infra/repository/produtoDatabaseRepository";
@@ -17,7 +17,7 @@ import {
   listarPedidosSchema,
   realizarPedidoSchema,
   removerItemSchema,
-} from "./pedidoRouter.schema";
+} from "./schemas/pedidoRouter.schema";
 import { validaRequisicao } from "./utils";
 
 const pedidoRouter = express.Router({});
@@ -93,7 +93,7 @@ pedidoRouter.post(
  *         schema:
  *           type: string
  *         required: true
- *         description: Id do produto
+ *         description: Id do item do pedido
  *     tags:
  *       - pedido
  *     responses:

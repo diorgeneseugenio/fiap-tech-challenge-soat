@@ -5,7 +5,13 @@ import DBCategoriasRepository from "~driven/infra/repository/categoriaDatabaseRe
 
 import CategoriaController from "../controllers/categoriaController";
 
-import { criaCategoriaSchema, deletaCategoriaSchema, editaCategoriaSchema, listaCategoriaSchema, retornaCategoriaSchema } from "./categoriaRouter.schema";
+import {
+  CriaCategoriaSchema,
+  DeletaCategoriaSchema,
+  EditaCategoriaSchema,
+  ListaCategoriaSchema,
+  RetornaCategoriaSchema,
+} from "./schemas/categoriaRouter.schema";
 import { validaRequisicao } from "./utils";
 
 const categoriaRouter = express.Router();
@@ -38,7 +44,10 @@ const categoriaController = new CategoriaController(categoriaService);
  *       500:
  *         description: Erro na criacao da categoria.
  */
-categoriaRouter.post("/", validaRequisicao(criaCategoriaSchema), categoriaController.criaCategoria.bind(categoriaController));
+categoriaRouter.post("/",
+  validaRequisicao(CriaCategoriaSchema),
+  categoriaController.criaCategoria.bind(categoriaController)
+);
 /**
  * @openapi
  * /categoria:
@@ -52,7 +61,10 @@ categoriaRouter.post("/", validaRequisicao(criaCategoriaSchema), categoriaContro
  *       500:
  *         description: Erro na criacao da categoria.
  */
-categoriaRouter.get("/", validaRequisicao(listaCategoriaSchema), categoriaController.listaCategorias.bind(categoriaController));
+categoriaRouter.get("/",
+  validaRequisicao(ListaCategoriaSchema),
+  categoriaController.listaCategorias.bind(categoriaController)
+);
 /**
  * @openapi
  * /categoria/{id}:
@@ -75,7 +87,10 @@ categoriaRouter.get("/", validaRequisicao(listaCategoriaSchema), categoriaContro
  *       500:
  *         description: Erro na api.
  */
-categoriaRouter.get("/:id", validaRequisicao(retornaCategoriaSchema), categoriaController.retornaCategoria.bind(categoriaController));
+categoriaRouter.get("/:id",
+  validaRequisicao(RetornaCategoriaSchema),
+  categoriaController.retornaCategoria.bind(categoriaController)
+);
 /**
  * @openapi
  * /categoria/{id}:
@@ -98,7 +113,10 @@ categoriaRouter.get("/:id", validaRequisicao(retornaCategoriaSchema), categoriaC
  *       500:
  *         description: Erro na api.
  */
-categoriaRouter.delete("/:id", validaRequisicao(deletaCategoriaSchema), categoriaController.deletaCategoria.bind(categoriaController));
+categoriaRouter.delete("/:id", 
+  validaRequisicao(DeletaCategoriaSchema),
+  categoriaController.deletaCategoria.bind(categoriaController)
+);
 /**
  * @openapi
  * /categoria/{id}:
@@ -132,7 +150,10 @@ categoriaRouter.delete("/:id", validaRequisicao(deletaCategoriaSchema), categori
  *       500:
  *         description: Erro na api.
  */
-categoriaRouter.put("/:id", validaRequisicao(editaCategoriaSchema), categoriaController.editaCategoria.bind(categoriaController));
+categoriaRouter.put("/:id",
+  validaRequisicao(EditaCategoriaSchema), 
+  categoriaController.editaCategoria.bind(categoriaController)
+);
 
 
 export default categoriaRouter;

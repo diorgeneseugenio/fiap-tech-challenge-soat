@@ -1,8 +1,9 @@
 import Usuario from "core/domain/usuarios";
-import usuarioRepository from "../repositories/usuarioRepository";
+
 import CPF from "~core/domain/valueObjects/cpf";
 import Email from "~core/domain/valueObjects/email";
 
+import usuarioRepository from "../repositories/usuarioRepository";
 
 export default class UsuarioService {
     constructor(private readonly usuarioRepository: usuarioRepository) { }
@@ -26,7 +27,7 @@ export default class UsuarioService {
             const usuarioExistente = await this.usuarioRepository.filtraUsuario(usuario.cpf ?? null, usuario.email ?? null);
 
             if (usuarioExistente) {
-                throw new Error("Usuario já existe");
+                throw new Error("usuario_duplicado");
             }
         }
 
