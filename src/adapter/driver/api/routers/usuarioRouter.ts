@@ -1,10 +1,11 @@
 import express from "express";
 
-import UsuarioController from "../controllers/usuarioController";
-import DBUsuariosRepository from "../../../driven/infra/repository/usuarioDatabaseRepository";
 import UsuarioService from "../../../../core/applications/services/usuarioService";
+import DBUsuariosRepository from "../../../driven/infra/repository/usuarioDatabaseRepository";
+import UsuarioController from "../controllers/usuarioController";
 
-import { criaUsuarioSchema, listaPagamentosSchema, retornaUsuarioSchema } from "./usuarioRouter.schema";
+import { ListaPagamentosSchema } from "./schemas/pagamentoRouter.schema";
+import { CriaUsuarioSchema, RetornaUsuarioSchema } from "./schemas/usuarioRouter.schema";
 import { validaRequisicao } from "./utils";
 
 const usuarioRouter = express.Router();
@@ -42,7 +43,7 @@ const usuarioController = new UsuarioController(usuarioService);
  *         description: Erro na api.
  */
 usuarioRouter.post("/",
-  validaRequisicao(criaUsuarioSchema),
+  validaRequisicao(CriaUsuarioSchema),
   usuarioController.criaUsuario.bind(usuarioController)
 );
 
@@ -60,7 +61,7 @@ usuarioRouter.post("/",
  *         description: Erro na api.
  */
 usuarioRouter.get("/",
-  validaRequisicao(listaPagamentosSchema),
+  validaRequisicao(ListaPagamentosSchema),
   usuarioController.listaUsuarios.bind(usuarioController)
 );
 
@@ -89,7 +90,7 @@ usuarioRouter.get("/",
  *         description: Erro na api.
  */
 usuarioRouter.post("/query",
-  validaRequisicao(retornaUsuarioSchema),
+  validaRequisicao(RetornaUsuarioSchema),
   usuarioController.retornaUsuario.bind(usuarioController)
 );
 

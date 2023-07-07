@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /** Cria Produto */
-export const criaProdutoSchema = z.object({
+export const CriaProdutoSchema = z.object({
   body: z.object({
     nome: z
       .string({
@@ -25,14 +25,26 @@ export const criaProdutoSchema = z.object({
   }),
 });
 
-export type criaProdutoPayload = z.infer<typeof criaProdutoSchema>;
+export type CriaProdutoPayload = z.infer<typeof CriaProdutoSchema>;
+export type CriaProdutoBody = CriaProdutoPayload["body"];
+
 
 /** Lista Produto */
-export const listaProdutoSchema = z.object({});
-export type listaProdutoPayload = z.infer<typeof listaProdutoSchema>;
+export const ListaProdutoSchema = z.object({
+  params: z.object({
+    categoriaId: z
+      .string({
+        invalid_type_error: "O id deve ser um texto",
+      })
+      .uuid({ message: "O id deve ser UUID" })
+      .optional(),
+  }),
+});
+export type ListaProdutoPayload = z.infer<typeof ListaProdutoSchema>;
+export type ListaProdutoParams = ListaProdutoPayload["params"];
 
 /** retorna Produto */
-export const retornaProdutoSchema = z.object({
+export const RetornaProdutoSchema = z.object({
   params: z.object({
     id: z
       .string({
@@ -43,10 +55,12 @@ export const retornaProdutoSchema = z.object({
   }),
 });
 
-export type retornaProdutoPayload = z.infer<typeof retornaProdutoSchema>;
+export type RetornaProdutoPayload = z.infer<typeof RetornaProdutoSchema>;
+export type RetornaProdutoParams = RetornaProdutoPayload["params"];
+
 
 /** Deleta Produto */
-export const deletaProdutoSchema = z.object({
+export const DeletaProdutoSchema = z.object({
   params: z.object({
     id: z
       .string({
@@ -57,14 +71,15 @@ export const deletaProdutoSchema = z.object({
   }),
 });
 
-export type deletaProdutoPayload = z.infer<typeof deletaProdutoSchema>;
+export type DeletaProdutoPayload = z.infer<typeof DeletaProdutoSchema>;
+export type DeletaProdutoBody = DeletaProdutoPayload["params"];
 
 /** Edita Produto */
-export const editaProdutoSchema = z.object({
+export const EditaProdutoSchema = z.object({
   params: z.object({
     id: z
       .string({
-        required_error: "O id da Produto é obrigatório",
+        required_error: "O Id do produto é obrigatório",
         invalid_type_error: "O id deve ser um texto",
       })
       .uuid({ message: "O id deve ser UUID" }),
@@ -95,10 +110,13 @@ export const editaProdutoSchema = z.object({
   }),
 });
 
-export type editaProdutoPayload = z.infer<typeof editaProdutoSchema>;
+export type EditaProdutoPayload = z.infer<typeof EditaProdutoSchema>;
+export type EditaProdutoParams = EditaProdutoPayload["params"];
+export type EditaProdutoBody = EditaProdutoPayload["body"];
+
 
 /** Deleta imagem Produto */
-export const removeImagemSchema = z.object({
+export const RemoveImagemSchema = z.object({
   params: z.object({
     idProduto: z
       .string({
@@ -115,10 +133,11 @@ export const removeImagemSchema = z.object({
   }),
 });
 
-export type removeImagemPayload = z.infer<typeof removeImagemSchema>;
+export type RemoveImagemPayload = z.infer<typeof RemoveImagemSchema>;
+export type RemoveImagemParams = RemoveImagemPayload["params"];
 
 /** Edita Produto */
-export const adicionaImagenSchema = z.object({
+export const AdicionaImagenSchema = z.object({
   params: z.object({
     id: z
       .string({
@@ -132,4 +151,4 @@ export const adicionaImagenSchema = z.object({
   }),
 });
 
-export type adicionaImagenPayload = z.infer<typeof adicionaImagenSchema>;
+export type AdicionaImagenPayload = z.infer<typeof AdicionaImagenSchema>;

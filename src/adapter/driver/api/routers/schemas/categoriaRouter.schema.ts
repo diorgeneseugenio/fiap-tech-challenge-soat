@@ -1,21 +1,21 @@
 import { z } from "zod";
 
 /** Cria Categoria */
-export const criaCategoriaSchema = z.object({
+export const CriaCategoriaSchema = z.object({
   body: z.object({
     nome: z
       .string()
   }),
 });
 
-export type criaCategoriaPayload = z.infer<typeof criaCategoriaSchema>;
+export type CriaCategoriaPayload = z.infer<typeof CriaCategoriaSchema>;
 
 /** Lista Categoria */
-export const listaCategoriaSchema = z.object({});
-export type listaCategoriaPayload = z.infer<typeof listaCategoriaSchema>;
+export const ListaCategoriaSchema = z.object({});
+export type ListaCategoriaPayload = z.infer<typeof ListaCategoriaSchema>;
 
 /** retorna Categoria */
-export const retornaCategoriaSchema = z.object({
+export const RetornaCategoriaSchema = z.object({
   params: z.object({
     id: z
       .string({
@@ -26,10 +26,11 @@ export const retornaCategoriaSchema = z.object({
   }),
 });
 
-export type retornaCategoriaPayload = z.infer<typeof retornaCategoriaSchema>;
+export type RetornaCategoriaPayload = z.infer<typeof RetornaCategoriaSchema>;
+export type RetornaCategoriaParams = RetornaCategoriaPayload["params"];
 
 /** Deleta Categoria */
-export const deletaCategoriaSchema = z.object({
+export const DeletaCategoriaSchema = z.object({
   params: z.object({
     id: z
       .string({
@@ -40,10 +41,11 @@ export const deletaCategoriaSchema = z.object({
   }),
 });
 
-export type deletaCategoriaPayload = z.infer<typeof deletaCategoriaSchema>;
+export type DeletaCategoriaPayload = z.infer<typeof DeletaCategoriaSchema>;
+export type DeletaCategoriaParams = DeletaCategoriaPayload["params"];
 
 /** Edita Categoria */
-export const editaCategoriaSchema = z.object({
+export const EditaCategoriaSchema = z.object({
   params: z.object({
     id: z
       .string({
@@ -61,4 +63,6 @@ export const editaCategoriaSchema = z.object({
   }),
 });
 
-export type editaCategoriaPayload = z.infer<typeof editaCategoriaSchema>;
+export type EditaCategoriaPayload = z.infer<typeof EditaCategoriaSchema>;
+export type EditaCategoriaBody = EditaCategoriaPayload["body"];
+export type EditaCategoriaParams = EditaCategoriaPayload["params"];

@@ -3,9 +3,23 @@ import { Request, Response } from "express";
 import ProdutoService from "~core/applications/services/produtoService";
 import { ImagemProduto } from "~core/domain/produto";
 
+import { AdicionarItemBody, AdicionarItemParams } from "../routers/schemas/pedidoRouter.schema";
+import {
+  CriaProdutoBody,
+  DeletaProdutoBody,
+  EditaProdutoBody,
+  EditaProdutoParams,
+  ListaProdutoParams,
+  RemoveImagemParams,
+  RetornaProdutoParams
+} from "../routers/schemas/produtoRouter.schema";
+
 export default class ProdutoController {
-  constructor(private readonly produtoService: ProdutoService) {}
-  async adicionaImagens(req: Request, res: Response) {
+  constructor(private readonly produtoService: ProdutoService) { }
+  async adicionaImagens(
+    req: Request<AdicionarItemParams, AdicionarItemBody>,
+    res: Response
+  ) {
     try {
       const { id } = req.params;
       const body = req.body;
@@ -35,7 +49,10 @@ export default class ProdutoController {
     }
   }
 
-  async removeImagem(req: Request, res: Response) {
+  async removeImagem(
+    req: Request<RemoveImagemParams, unknown>,
+    res: Response
+  ) {
     try {
       const { idProduto } = req.params;
       const { idImagem } = req.params;
@@ -76,7 +93,10 @@ export default class ProdutoController {
     }
   }
 
-  async criaProduto(req: Request, res: Response) {
+  async criaProduto(
+    req: Request<unknown, CriaProdutoBody>,
+    res: Response
+  ) {
     try {
       const produto = req.body;
 
@@ -99,7 +119,10 @@ export default class ProdutoController {
     }
   }
 
-  async deletaProduto(req: Request, res: Response) {
+  async deletaProduto(
+    req: Request<DeletaProdutoBody, unknown>,
+    res: Response
+  ) {
     try {
       const { id } = req.params;
 
@@ -122,7 +145,10 @@ export default class ProdutoController {
     }
   }
 
-  async editaProduto(req: Request, res: Response) {
+  async editaProduto(
+    req: Request<EditaProdutoParams, EditaProdutoBody>,
+    res: Response
+  ) {
     try {
       const { id } = req.params;
       const produto = req.body;
@@ -157,7 +183,10 @@ export default class ProdutoController {
     }
   }
 
-  async listaProdutos(req: Request, res: Response) {
+  async listaProdutos(
+    req: Request<ListaProdutoParams, unknown>,
+    res: Response
+  ) {
     try {
       const categoriaId = req.query.categoriaId;
       const filtro: {
@@ -182,7 +211,10 @@ export default class ProdutoController {
     }
   }
 
-  async retornaProduto(req: Request, res: Response) {
+  async retornaProduto(
+    req: Request<RetornaProdutoParams, unknown>,
+    res: Response
+  ) {
     try {
       const { id } = req.params;
 

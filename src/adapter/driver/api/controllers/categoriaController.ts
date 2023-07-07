@@ -2,10 +2,19 @@ import { Request, Response } from "express";
 
 import CategoriaService from "~core/applications/services/categoriaService";
 
-export default class CategoriaController {
-  constructor(private readonly categoriaService: CategoriaService) {}
+import { 
+  CriaCategoriaPayload,
+  DeletaCategoriaParams,
+  EditaCategoriaParams,
+  EditaCategoriaPayload,
+  ListaCategoriaPayload,
+  RetornaCategoriaParams 
+} from "../routers/schemas/categoriaRouter.schema";
 
-  async criaCategoria(req: Request, res: Response) {
+export default class CategoriaController {
+  constructor(private readonly categoriaService: CategoriaService) { }
+
+  async criaCategoria(req: Request<unknown, CriaCategoriaPayload>, res: Response) {
     try {
       const categoria = req.body;
 
@@ -24,7 +33,7 @@ export default class CategoriaController {
     }
   }
 
-  async deletaCategoria(req: Request, res: Response) {
+  async deletaCategoria(req: Request<DeletaCategoriaParams, unknown>, res: Response) {
     try {
       const { id } = req.params;
 
@@ -47,7 +56,7 @@ export default class CategoriaController {
     }
   }
 
-  async editaCategoria(req: Request, res: Response) {
+  async editaCategoria(req: Request<EditaCategoriaParams, EditaCategoriaPayload>, res: Response) {
     try {
       const { id } = req.params;
       const categoria = req.body;
@@ -75,7 +84,7 @@ export default class CategoriaController {
     }
   }
 
-  async listaCategorias(req: Request, res: Response) {
+  async listaCategorias(req: Request<unknown, ListaCategoriaPayload>, res: Response) {
     try {
       const categorias = await this.categoriaService.listaCategorias();
 
@@ -91,7 +100,7 @@ export default class CategoriaController {
     }
   }
 
-  async retornaCategoria(req: Request, res: Response) {
+  async retornaCategoria(req: Request<RetornaCategoriaParams, unknown>, res: Response) {
     try {
       const { id } = req.params;
 
