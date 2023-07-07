@@ -40,6 +40,74 @@ Para executar em ambiente de desenvolvimento:
 
 Para derrubar o serviço, execute o comando `docker compose down`.
 
+## Utilizacao
+
+Os projeto cria o metodo de pagamento no banco(QR Code) e as categorias padroes quando iniciado.
+
+### 1. Cadastrar Produtos
+
+1.1 O projeto já cria as principais categorias(Lanche, Acompanhamento, Bebida, Sobremesa);
+1.2 - Cadastro do produto:
+```json
+{
+  "nome": "produto 1",
+  "preco": 0.1,
+  "descricao": "demo 1",
+  "categoriaId": "1c941831-c8cb-43a3-8d3f-2959a6fb7241",
+  "imagens": [
+    {
+      "url": "demo.png"
+    }
+  ]
+}
+```
+
+### 2. Cliente 
+
+1.1 - Cadastrar o cliente:
+    É possível cadastrar o cliente com os dados de e-mail, nome e CPF. O e-mail e o CPF não podem estar cadastrado por outro usuário.
+
+Com todos os dados:
+Body:
+```json
+{
+    "nome": "user_demo",
+    "cpf": "269.289.330-11",
+    "email": "test@test.com"
+}
+```
+
+    Com apenas um dos identificadores:
+Body:
+```json
+{
+    "nome": "user_demo",
+    "cpf": "269.289.330-11",
+}
+```
+Body:
+```json
+{
+    "nome": "user_demo",
+    "email": "test@test.com"
+}
+```
+
+Usuário Anonimo:
+    Cria um usuário anonimo para esse atendimento e retorna o id
+Body: null ou {}
+
+### 3. Pedido
+
+3.1 Crie um pedido vazio usando o ```/pedido/iniciar-pedido``` passando o id do usuário;
+3.2 Adiciona produto ao pedido usando o ```/pedido/{id}/adicionar-item```;
+3.2 Envia o pedido pro pagamento junto do metodo de pagamento(```/metodoPagamento```) e retorna o QR Code ```/pedido/realizar-pedido/{id}```(fake checkout muda o pedido para pago);
+
+### 4. Preparo
+4.1 Utilize o ```/pedido/iniciar-preparo/``` para pegar o próximo pedido da fila ou passar o id para furar a fila;
+4.2 Utilize o ```/pedido/finalizar-preparo/{id}``` para marcar como pronto;
+4.3 Utilize o ```/pedido/entregar-pedido/{id}``` para marcar como finalizado;
+
 ## Endpoints
 
 Esta API fornece documentação no padrão OpenAPI.
