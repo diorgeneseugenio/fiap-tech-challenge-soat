@@ -45,7 +45,7 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
         {
           ...produto,
           ...{
-            imagens: produto.imagens,
+            imagens: produto?.imagens ?? [],
           },
         },
         {
