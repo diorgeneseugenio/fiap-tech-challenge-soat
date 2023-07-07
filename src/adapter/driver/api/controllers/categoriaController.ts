@@ -46,7 +46,7 @@ export default class CategoriaController {
       }
       return res.status(404).json({
         status: "error",
-        message: "Category not found!",
+        message: "Categoria não encontrada!",
       });
     } catch (err: unknown) {
       return res.status(500).json({
@@ -74,7 +74,7 @@ export default class CategoriaController {
       }
       return res.status(404).json({
         status: "error",
-        message: "Category not found!",
+        message: "Categoria não encontrada!",
       });
     } catch (err: unknown) {
       return res.status(500).json({
@@ -114,7 +114,7 @@ export default class CategoriaController {
       }
       return res.status(404).json({
         status: "error",
-        message: "Category not found!",
+        message: "Categoria não encontrada!",
       });
     } catch (err: unknown) {
       return res.status(500).json({

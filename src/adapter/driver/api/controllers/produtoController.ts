@@ -39,7 +39,7 @@ export default class ProdutoController {
       if (err.message === "produto_inexistente") {
         return res.status(404).json({
           status: "error",
-          message: "Product not found!",
+          message: "Produto não encontrado!",
         });
       }
       return res.status(500).json({
@@ -60,14 +60,14 @@ export default class ProdutoController {
       if (!idProduto) {
         return res.status(404).json({
           status: "error",
-          message: "productId not found!",
+          message: "Produto não encontrado!",
         });
       }
 
       if (!idImagem) {
         return res.status(404).json({
           status: "error",
-          message: "productId not found!",
+          message: "Imagem não encontrada!",
         });
       }
 
@@ -83,7 +83,7 @@ export default class ProdutoController {
       }
       return res.status(404).json({
         status: "error",
-        message: "images or product not found!",
+        message: "Imagem ou produto não encontrado!",
       });
     } catch (err: any) {
       return res.status(500).json({
@@ -109,14 +109,14 @@ export default class ProdutoController {
       if (err.message === "categoria_inexistente") {
         return res.status(404).json({
           status: "error",
-          message: "Category not found!",
+          message: "Catetgoria não encontrada!",
         });
       }
 
       if (err.message === "preco_zerado") {
         return res.status(400).json({
           status: "error",
-          message: "Price has to be greater than 0!",
+          message: "O preço deve ser maior que zero!",
         });
       }
       return res.status(500).json({
@@ -142,7 +142,7 @@ export default class ProdutoController {
       }
       return res.status(404).json({
         status: "error",
-        message: "product not found!",
+        message: "produto não encontrado!",
       });
     } catch (err: any) {
       return res.status(500).json({
@@ -173,13 +173,13 @@ export default class ProdutoController {
       }
       return res.status(404).json({
         status: "error",
-        message: "product not found!",
+        message: "Produto não encontrado!",
       });
     } catch (err: any) {
       if (err.message === "categoria_inexistente") {
         return res.status(404).json({
           status: "error",
-          message: "Category not found!",
+          message: "Catetgoria não encontrada!",
         });
       }
 
@@ -235,7 +235,7 @@ export default class ProdutoController {
       }
       return res.status(404).json({
         status: "error",
-        message: "Product not found!",
+        message: "Produto não encontrado!",
       });
     } catch (err: any) {
       return res.status(500).json({

@@ -74,7 +74,7 @@ describe("ProdutoController", () => {
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         status: 'error',
-        message: 'Category not found!',
+        message: 'Catetgoria não encontrada!',
       });
     });
   });
@@ -187,7 +187,7 @@ describe("ProdutoController", () => {
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         status: 'error',
-        message: 'Category not found!',
+        message: 'Catetgoria não encontrada!',
       });
     });
   });
