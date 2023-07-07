@@ -58,13 +58,6 @@ export default class UsuarioController {
     try {
       const { body } = req;
 
-      if (!body?.cpf) {
-        return res.status(400).json({
-          status: "error",
-          message: "Faltando cpf no body",
-        });
-      }
-
       const usuario = await this.usuarioService.retornaUsuario(body.cpf);
 
       if (usuario) {
@@ -79,7 +72,7 @@ export default class UsuarioController {
       });
 
     } catch (err: any) {
-      return res.status(400).json({
+      return res.status(500).json({
         status: "error",
         message: err.message,
       });

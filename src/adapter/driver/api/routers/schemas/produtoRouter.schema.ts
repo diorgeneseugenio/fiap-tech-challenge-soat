@@ -6,12 +6,12 @@ export const CriaProdutoSchema = z.object({
     nome: z
       .string({
         required_error: "O nome é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       }),
     preco: z
       .number({
         required_error: "O preco é obrigatório",
-        invalid_type_error: "O id deve ser um numero",
+        invalid_type_error: "O preço deve ser um numero",
       })
       .positive({ message: "valor deve ser maior que zero" }),
     descricao: z
@@ -19,7 +19,7 @@ export const CriaProdutoSchema = z.object({
     categoriaId: z
       .string({
         required_error: "O id da categoria é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "categoriaId deve ser UUID" }),
     //images - TODO 
@@ -35,7 +35,7 @@ export const ListaProdutoSchema = z.object({
   params: z.object({
     categoriaId: z
       .string({
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" })
       .optional(),
@@ -50,7 +50,7 @@ export const RetornaProdutoSchema = z.object({
     id: z
       .string({
         required_error: "O id do Produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
@@ -66,7 +66,7 @@ export const DeletaProdutoSchema = z.object({
     id: z
       .string({
         required_error: "O id do Produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
@@ -81,7 +81,7 @@ export const EditaProdutoSchema = z.object({
     id: z
       .string({
         required_error: "O Id do produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
@@ -89,7 +89,7 @@ export const EditaProdutoSchema = z.object({
     nome: z
       .string({
         required_error: "O nome é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .optional(),
     preco: z
@@ -104,7 +104,7 @@ export const EditaProdutoSchema = z.object({
     categoriaId: z
       .string({
         required_error: "O id da categoria é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "categoriaId deve ser UUID" })
     //images - TODO 
@@ -122,13 +122,13 @@ export const RemoveImagemSchema = z.object({
     idProduto: z
       .string({
         required_error: "O id do Produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
     idImagem: z
       .string({
         required_error: "O id da imagem é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id da imagem deve ser UUID" }),
   }),
@@ -143,7 +143,7 @@ export const AdicionaImagenSchema = z.object({
     id: z
       .string({
         required_error: "O id do produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),

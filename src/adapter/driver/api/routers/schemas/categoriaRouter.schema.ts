@@ -20,7 +20,7 @@ export const RetornaCategoriaSchema = z.object({
     id: z
       .string({
         required_error: "O id da categoria é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
@@ -35,7 +35,7 @@ export const DeletaCategoriaSchema = z.object({
     id: z
       .string({
         required_error: "O id da categoria é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),
@@ -50,7 +50,7 @@ export const EditaCategoriaSchema = z.object({
     id: z
       .string({
         required_error: "O id da categoria é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id deve ser UUID" }),
   }),

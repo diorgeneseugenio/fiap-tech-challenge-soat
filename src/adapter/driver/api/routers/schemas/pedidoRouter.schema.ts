@@ -26,7 +26,7 @@ export const adicionarItemSchema = z.object({
     produtoId: z
       .string({
         required_error: "O id do produto é obrigatório",
-        invalid_type_error: "O id deve ser um texto",
+        invalid_type_error: "id inválido",
       })
       .uuid({ message: "O id do produto deve ser UUID" }),
     quantidade: z
