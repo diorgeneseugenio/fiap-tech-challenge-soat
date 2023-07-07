@@ -1,5 +1,6 @@
 import MetodoPagamentoRepository from "~core/applications/repositories/metodoPagamentoRepository";
 import { MetodoDePagamento } from "~core/domain/metodoDePagamento";
+
 import MetodoDePagamentoModel from "../models/metodoDePagamentoModel";
 
 export default class MetodoPagamentoDatabaseRepository implements MetodoPagamentoRepository {

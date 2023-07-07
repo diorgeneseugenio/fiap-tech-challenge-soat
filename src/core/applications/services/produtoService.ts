@@ -5,7 +5,10 @@ import ProdutoRepository from "../repositories/produtoRepository";
 export default class ProdutoService {
   constructor(private readonly produtoRepository: ProdutoRepository) {}
   async adicionaImagens(imagens: ImagemProduto[]) {
-    return this.produtoRepository.adicionaImagens(imagens);
+    if (imagens.length > 0) {
+      return this.produtoRepository.adicionaImagens(imagens);
+    }
+    return null;
   }
 
   async removeImagem(idProduto: string, idImagem: string): Promise<number> {

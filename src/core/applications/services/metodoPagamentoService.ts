@@ -1,4 +1,5 @@
 import { MetodoDePagamento } from "~core/domain/metodoDePagamento";
+
 import MetodoPagamentoRepository from "../repositories/metodoPagamentoRepository";
 
 export default class MetodoPagamentoService {

@@ -1,5 +1,6 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
 import Usuario from 'core/domain/usuarios';
+import { DataTypes, Model, Sequelize } from 'sequelize';
+
 import PedidoModel from './pedidoModel';
 
 class UsuarioModel extends Model<Usuario> implements Usuario {
