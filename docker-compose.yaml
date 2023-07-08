@@ -1,11 +1,9 @@
 version: '3.4'
 
 services:
-  dev:
+  app:
     build: .
-    container_name: fiap-soat-project_api_dev
-    command: yarn run dev
-    working_dir: /app
+    container_name: fiap-soat-project_project_api
     environment:
       - DB_HOST=db
       - DB_USERNAME=root
@@ -13,8 +11,6 @@ services:
       - DB_NAME=fiap-soat-project_db
     ports:
       - "3000:3000"
-    volumes:
-      - ./:/app:cached
     depends_on:
       - db
     networks:

@@ -34,7 +34,7 @@ Para executar em ambiente de desenvolvimento:
 
 * Faça o `fork` e `clone` este repositório em seu computador;
 * Entre no diretório local onde o repositório foi clonado;
-* Utilize o comando `docker compose up dev` para "construir" (*build*) e subir o servidor local, expondo a porta 3000 em `localhost`. Além de `dev` também subirá o serviço `db` com o banco de dados de desenvolvimento.
+* Utilize o comando `docker compose up` para "construir" (*build*) e subir o servidor local, expondo a porta 3000 em `localhost`. Além do container da `api` também subirá o serviço `db` com o banco de dados de desenvolvimento.
 
 **IMPORTANTE:** Esta API está programada para ser acessada a partir de `http://localhost:3000` e o banco de dados utiliza a porta `3306`. Certifique-se de que não existam outros recursos ocupando as portas `3000` e `3306` antes de subir o projeto.
 
