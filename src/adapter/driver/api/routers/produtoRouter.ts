@@ -22,6 +22,52 @@ const dbProdutosRepository = new DBProdutosRepository();
 const produtoService = new ProdutoService(dbProdutosRepository);
 const produtoController = new ProdutoController(produtoService);
 
+/** 
+ * @openapi
+ * components:
+ *   schemas:
+ *     Produto:
+ *       type: object
+ *       properties:
+ *         nome:
+ *           type: string
+ *           example: Produto Exemplo
+ *         preco:
+ *           type: number
+ *           minimum: 0
+ *           exclusiveMinimum: true
+ *           example: 10
+ *         descricao:
+ *           type: string
+ *           example: Descrição do produto
+ *         categoriaId:
+ *           type: string
+ *           format: uuid
+ *           example: 64ada07b-7c8e-46df-815c-c7d485595bee
+ *         deletedAt:
+ *           type: null
+ *           example: null
+ *         updatedAt:
+ *           type: string
+ *           example: string
+ *         createdAt:
+ *           type: string
+ *           example: string
+ *         imagens:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               url:
+ *                 type: string
+ *       required:
+ *         - nome
+ *         - preco
+ *         - descricao
+ *         - categoriaId
+ *   parameters: {} 
+ */
+
 /**
  * @openapi
  * /produto:
@@ -57,9 +103,48 @@ const produtoController = new ProdutoController(produtoService);
  *               - categoriaId
  *     responses:
  *       201:
- *         description: Retorna a produto criada.
+ *         description: Retorna o produto criado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   $ref: "#/components/schemas/Produto"
+ *               required:
+ *                 - body
+ *             status: success
+ *       404:
+ *         description: Categoria nao identificada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Categoria não encontrada!
+ *       400:
+ *         description: Preço abaixo do mínimo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: O preço deve ser maior que zero!
  *       500:
- *         description: Erro na criacao da produto.
+ *         description: Erro na criacao do produto.
  */
 produtoRouter.post("/",
   validaRequisicao(CriaProdutoSchema),
@@ -76,13 +161,27 @@ produtoRouter.post("/",
  *         name: categoriaId
  *         schema:
  *           type: string
- *         required: false
+ *         required: true
  *         description: Id da categoria
  *     tags:
  *       - produto
  *     responses:
  *       200:
  *         description: Retorna a lista de produtos.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 produtos:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/Produto" 
+ *               required:
+ *                 - params
  *       500:
  *         description: Erro na criacao da produto.
  */
@@ -107,9 +206,32 @@ produtoRouter.get("/",
  *         description: Id do produto
  *     responses:
  *       200:
- *         description: Retorna produtos.
+ *         description: Retorna um produto por id.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 produto:
+ *                   $ref: "#/components/schemas/Produto"
+ *               required:
+ *                 - params
  *       404:
  *         description: produto nao identificado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Produto não encontrado!
  *       500:
  *         description: Erro na api.
  */
@@ -134,9 +256,30 @@ produtoRouter.get("/:id",
  *         description: Id do produto
  *     responses:
  *       200:
- *         description: Retorna status de sucesso.
+ *         description: Retorna sucesso na requisição.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *               required:
+ *                 - params
  *       404:
  *         description: produto nao identificado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: produto não encontrado!
  *       500:
  *         description: Erro na api.
  */
@@ -149,7 +292,7 @@ produtoRouter.delete("/:id",
  * @openapi
  * /produto/{id}:
  *   put:
- *     summary: Atualiza uma produto
+ *     summary: Atualiza um produto
  *     tags:
  *       - produto
  *     parameters:
@@ -176,9 +319,32 @@ produtoRouter.delete("/:id",
  *                 type: string
  *     responses:
  *       200:
- *         description: Retorna produto atualizada.
+ *         description: Retorna produto atualizado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   $ref: "#/components/schemas/Produto"
+ *               required:
+ *                 - params
  *       404:
  *         description: produto nao identificado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Produto não encontrado!
  *       500:
  *         description: Erro na api.
  */
@@ -210,8 +376,55 @@ produtoRouter.put("/:id",
  *     responses:
  *       200:
  *         description: Retorna sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *               required:
+ *                 - params
  *       404:
  *         description: produto ou imagem nao identificado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Imagem ou produto não encontrado!
+ *       404:
+ *         description: produto não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Produto não encontrado!
+ *       404:
+ *         description: imagem não encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Imagem não encontrada!
  *       500:
  *         description: Erro na api.
  */
@@ -250,10 +463,54 @@ produtoRouter.delete(
  *                     url:
  *                       type: string
  *     responses:
- *       200:
- *         description: Retorna produto atualizada com as novas imagens.
+ *       201:
+ *         description: Adiciona uma imagem a um produto
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: string
+ *                       url:
+ *                         type: string
+ *                         example: string
+ *                       produtoId:
+ *                         type: string
+ *                         format: uuid
+ *                         example: string
+ *                       deletedAt:
+ *                         type: null
+ *                         example: null
+ *                       updatedAt:
+ *                         type: string
+ *                         example: string
+ *                       createdAt:
+ *                         type: string
+ *               required:
+ *                 - params
  *       404:
  *         description: produto nao identificado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Produto não encontrado!
  *       500:
  *         description: Erro na api.
  */
