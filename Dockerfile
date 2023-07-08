@@ -2,7 +2,7 @@ FROM node:16-alpine AS build
 
 WORKDIR /app
 
-COPY package.json yarn.lock tsconfig.json tsconfig.build.json ./
+COPY package.json yarn.lock tsconfig.json ./
 RUN yarn install --frozen-lockfile
 
 COPY src ./src
