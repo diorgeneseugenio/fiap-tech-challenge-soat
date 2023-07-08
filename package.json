@@ -13,7 +13,7 @@
   "scripts": {
     "prepare": "husky install",
     "commit": "git-cz",
-    "build": "npx tsc --project tsconfig.build.json && npx tsc-alias -p tsconfig.json",
+    "build": "npx tsc && npx tsc-alias -p tsconfig.json",
     "start": "node dist/index.js",
     "dev": "node -r ts-node/register src/index.ts",
     "lint": "eslint . --ext .ts"
