@@ -5,7 +5,7 @@ const options = {
     info: {
       title: 'Fiap Tech Challenge Soat',
       version: '1.0.0',
-      description: 'Projeto pos arquitetura de software',
+      description: 'Projeto Fase I - SOAT turma I',
     },
     servers: [
       { url: 'http://localhost:3000/api' }

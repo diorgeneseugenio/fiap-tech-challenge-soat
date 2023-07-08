@@ -20,6 +20,33 @@ const dbCategoriasRepository = new DBCategoriasRepository();
 const categoriaService = new CategoriaService(dbCategoriasRepository);
 const categoriaController = new CategoriaController(categoriaService);
 
+/** 
+ * @openapi
+ * components:
+ *   schemas:
+ *     Categoria:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: string
+ *         nome:
+ *           type: string
+ *           example: Categoria Exemplo
+ *         deletedAt:
+ *           type: null
+ *           example: null
+ *         updatedAt:
+ *           type: string
+ *           example: string
+ *         createdAt:
+ *           type: string
+ *           example: string
+ *       required:
+ *         - nome
+ *   parameters: {} 
+ */
+
 /**
  * @openapi
  * /categoria:
@@ -41,6 +68,19 @@ const categoriaController = new CategoriaController(categoriaService);
  *     responses:
  *       201:
  *         description: Retorna a categoria criada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   $ref: "#/components/schemas/Categoria"
+ *               required:
+ *                 - body
+ *             status: success
  *       500:
  *         description: Erro na criacao da categoria.
  */
@@ -48,6 +88,7 @@ categoriaRouter.post("/",
   validaRequisicao(CriaCategoriaSchema),
   categoriaController.criaCategoria.bind(categoriaController)
 );
+
 /**
  * @openapi
  * /categoria:
@@ -58,8 +99,20 @@ categoriaRouter.post("/",
  *     responses:
  *       200:
  *         description: Retorna a lista de categorias.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 categorias:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/Categoria" 
  *       500:
- *         description: Erro na criacao da categoria.
+ *         description: Erro.
  */
 categoriaRouter.get("/",
   validaRequisicao(ListaCategoriaSchema),
@@ -81,9 +134,32 @@ categoriaRouter.get("/",
  *         description: Id da categoria
  *     responses:
  *       200:
- *         description: Retorna categorias.
+ *         description: Retorna uma categoria.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 categoria:
+ *                   $ref: "#/components/schemas/Categoria"
+ *               required:
+ *                 - params
  *       404:
  *         description: Categoria nao identificada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Categoria não encontrada!
  *       500:
  *         description: Erro na api.
  */
@@ -107,9 +183,30 @@ categoriaRouter.get("/:id",
  *         description: Id da categoria
  *     responses:
  *       200:
- *         description: Retorna status de sucesso.
+ *         description: Retorna sucesso na requisição.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *               required:
+ *                 - params
  *       404:
  *         description: Categoria nao identificada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Categoria não encontrada!
  *       500:
  *         description: Erro na api.
  */
@@ -145,8 +242,31 @@ categoriaRouter.delete("/:id",
  *     responses:
  *       200:
  *         description: Retorna categoria atualizada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   $ref: "#/components/schemas/Categoria"
+ *               required:
+ *                 - params
  *       404:
  *         description: Categoria nao identificada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Categoria não encontrada!
  *       500:
  *         description: Erro na api.
  */
