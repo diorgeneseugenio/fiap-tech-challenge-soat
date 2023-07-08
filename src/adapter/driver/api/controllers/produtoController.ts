@@ -109,7 +109,7 @@ export default class ProdutoController {
       if (err.message === "categoria_inexistente") {
         return res.status(404).json({
           status: "error",
-          message: "Catetgoria não encontrada!",
+          message: "Categoria não encontrada!",
         });
       }
 
@@ -179,7 +179,7 @@ export default class ProdutoController {
       if (err.message === "categoria_inexistente") {
         return res.status(404).json({
           status: "error",
-          message: "Catetgoria não encontrada!",
+          message: "Categoria não encontrada!",
         });
       }
 

@@ -68,7 +68,7 @@ export default class UsuarioController {
       }
       return res.status(404).json({
         status: "error",
-        message: "Usuãrio não encontrado!",
+        message: "Usuário não encontrado!",
       });
 
     } catch (err: any) {
