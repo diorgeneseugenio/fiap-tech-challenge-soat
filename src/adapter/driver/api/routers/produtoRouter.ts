@@ -395,36 +395,17 @@ produtoRouter.put("/:id",
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
  *                 message:
  *                   type: string
- *                   example: Imagem ou produto não encontrado!
- *       404:
- *         description: produto não encontrado
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: error
- *                 message:
- *                   type: string
- *                   example: Produto não encontrado!
- *       404:
- *         description: imagem não encontrada
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: error
- *                 message:
- *                   type: string
- *                   example: Imagem não encontrada!
+ *             examples:
+ *               erroImagem:
+ *                 value:
+ *                   status: error
+ *                   message: Imagem não encontrada!
+ *               erroProduto:
+ *                 value:
+ *                   status: error
+ *                   message: Produto não encontrado!
  *       500:
  *         description: Erro na api.
  */
