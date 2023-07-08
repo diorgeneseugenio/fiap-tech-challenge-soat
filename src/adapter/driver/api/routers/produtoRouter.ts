@@ -161,7 +161,7 @@ produtoRouter.post("/",
  *         name: categoriaId
  *         schema:
  *           type: string
- *         required: true
+ *         required: false
  *         description: Id da categoria
  *     tags:
  *       - produto
