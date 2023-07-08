@@ -19,17 +19,6 @@ services:
       - db
     networks:
       - fiap-project-network
-  test:
-    build: .
-    container_name: fiap-soat-project_api_test
-    command: yarn test
-    working_dir: /app
-    ports:
-      - "4000:4000"
-    volumes:
-      - ./:/app:cached
-    networks:
-      - fiap-project-network
   db:
     image: mysql
     container_name: fiap-soat-project_db

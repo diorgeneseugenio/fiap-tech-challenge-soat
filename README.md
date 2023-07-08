@@ -163,16 +163,6 @@ O projeto foi estruturado seguindo o padrão de *ports & adapters*. O `core` con
     │   │   └── services
     │   └── domain
     │       └── valueObjects
-    └── tests
-        ├── adapter
-        │   ├── driven
-        │   │   └── infra
-        │   │       └── repository
-        │   └── driver
-        │       └── api
-        │           └── controllers
-        └── core
-            └── domain
 ```
 
 ### Core
@@ -253,28 +243,3 @@ O diretório `adapter` contém as lógicas responsáveis pela interação do `co
 O subdiretório `driven` é responsável pela conexão com elementos externos ao core. Este projeto utiliza este padrão para a conexão com a camada de dados através do uso do padrão `model` para definição de campos e tipos de dados de cada entidade.
 
 O subdiretório `driver` é responsável por definir as interfaces que farão contato com os recursos externos definidos em `driven`. Neste projeto, o diretório `driver` define os pontos de contato através de uma API REST com rotas e controladores para gerenciamento de cada rota.
-
-### tests
-
-```shell
- └── tests
-     ├── adapter
-     │   ├── driven
-     │   │   └── infra
-     │   │       └── repository
-     │   │           ├── categoriaDatabaseRepository.test.ts
-     │   │           └── produtoDatabaseRepository.test.ts
-     │   └── driver
-     │       └── api
-     │           └── controllers
-     │               ├── categoriaController.test.ts
-     │               └── produtoController.test.ts
-     └── core
-         └── domain
-             ├── categoria.test.ts
-             └── produto.test.ts
-```
-
-A camada de testes está separada do código-fonte (agrupado em `src`) e os testes mantém a estrutura e nomenclatura de diretórios e arquivos para fácil visualização e acesso.
-
-Os testes podem ser executados em um serviço próprio e independente do ambiente `dev`, através do comando `docker compose up test`.
