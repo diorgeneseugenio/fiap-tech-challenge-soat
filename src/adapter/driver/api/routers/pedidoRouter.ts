@@ -265,7 +265,7 @@ pedidoRouter.patch(
  * @openapi
  * /pedido/:
  *   get:
- *     summary: Lista os pedidos
+ *     summary: Lista os pedidos e filtra a fila por status
  *     parameters:
  *       - in: query
  *         name: status
