@@ -118,11 +118,15 @@ Os endpoints disponíveis, suas descrições e dados necessários para requisiç
 ### Diagramas de fluxo
 
 Foram utilizadas técnicas de Domain Driven Design para definição dos fluxos:
+
 - Realização do pedido e pagamento
 ![diagrama do fluxo de pedido e pagamento](docs/domain-storytelling/images/pedido-pagamento.png)
 
 - Preparação e entrega do pedido
 ![diagrama do fluxo de preparação e entrega](docs/domain-storytelling/images/preparo-retirada.png)
+
+- Diagrama com a separação dos contextos delimitados
+![diagrama dos contextos delimitados](docs/domain-storytelling/images/contextos-delimitados.png)
 
 ### Dicionário
 
