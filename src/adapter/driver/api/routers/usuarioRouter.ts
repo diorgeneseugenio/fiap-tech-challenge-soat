@@ -1,6 +1,6 @@
 import express from "express";
 
-import DBUsuariosRepository from "~adapter/driven/infra/repository/usuarioDatabaseRepository";
+import DBUsuariosRepository from "~adapter/driven/database/repository/usuarioDatabaseRepository";
 
 import UsuarioAPIController from "../controllers/usuarioController";
 

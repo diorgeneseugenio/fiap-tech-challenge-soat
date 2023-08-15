@@ -1,6 +1,6 @@
 import express from "express";
 
-import MetodoPagamentoDatabaseRepository from "~adapter/driven/infra/repository/metodoPagamentoDatabaseRepository";
+import MetodoPagamentoDatabaseRepository from "~adapter/driven/database/repository/metodoPagamentoDatabaseRepository";
 
 import MetodoPagamentoController from "../controllers/metodoPagamentoController";
 

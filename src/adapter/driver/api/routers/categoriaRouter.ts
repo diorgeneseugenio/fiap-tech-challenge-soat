@@ -1,6 +1,6 @@
 import express from "express";
 
-import DBCategoriasRepository from "~adapter/driven/infra/repository/categoriaDatabaseRepository";
+import DBCategoriasRepository from "~adapter/driven/database/repository/categoriaDatabaseRepository";
 
 import CategoriaAPIController from "../controllers/categoriaController";
 

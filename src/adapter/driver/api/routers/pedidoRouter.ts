@@ -1,9 +1,9 @@
 import express from "express";
 
 import FakeCheckout from "~adapter/driven/checkout/repository/checkoutRepository";
-import FaturaDataBaseRepository from "~adapter/driven/infra/repository/faturaDatabaseRepository";
-import PedidoDataBaseRepository from "~adapter/driven/infra/repository/pedidoDatabaseRepository";
-import ProdutosDataBaseRepository from "~adapter/driven/infra/repository/produtoDatabaseRepository";
+import FaturaDataBaseRepository from "~adapter/driven/database/repository/faturaDatabaseRepository";
+import PedidoDataBaseRepository from "~adapter/driven/database/repository/pedidoDatabaseRepository";
+import ProdutosDataBaseRepository from "~adapter/driven/database/repository/produtoDatabaseRepository";
 
 import PedidoAPIController from "../controllers/pedidoController";
 

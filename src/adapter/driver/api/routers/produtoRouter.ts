@@ -1,6 +1,6 @@
 import express from "express";
 
-import DBProdutosRepository from "~adapter/driven/infra/repository/produtoDatabaseRepository";
+import DBProdutosRepository from "~adapter/driven/database/repository/produtoDatabaseRepository";
 
 import ProdutoAPIController from "../controllers/produtoController";
 

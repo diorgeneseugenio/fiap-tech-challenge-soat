@@ -51,8 +51,8 @@
 
 import dotenv from "dotenv";
 
-import { DataBaseConfig } from "~adapter/driven/infra/config/db.config";
-import Modelos from "~adapter/driven/infra/models";
+import { DataBaseConfig } from "~adapter/driven/database/config/db.config";
+import Modelos from "~adapter/driven/database/models";
 import API from "~adapter/driver/api";
 
 
