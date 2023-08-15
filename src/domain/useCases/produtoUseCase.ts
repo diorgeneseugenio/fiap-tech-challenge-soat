@@ -1,40 +1,38 @@
-import { ProdutoGateway } from "interfaces/gateways/produtoGateway";
-
 import ImagemProduto from "~domain/entities/ImagemProduto";
 import Produto from "~domain/entities/produto";
 import { ImagemProdutoInput, ProdutoDTO, ProdutoInput } from "~domain/entities/types/produtoType";
+import ProdutoRepository from "~domain/repositories/produtoRepository";
 
 
 export default class ProdutoUseCase {
-  // constructor(private readonly produtoRepository: ProdutoRepository) {}
-  static async adicionaImagens(produtoGateway: ProdutoGateway, imagens: ImagemProdutoInput[]) {
+  static async adicionaImagens(produtoRepository: ProdutoRepository, imagens: ImagemProdutoInput[]) {
     const novasImagens = imagens.map(i => new ImagemProduto(i));
-    return produtoGateway.adicionaImagens(novasImagens);
+    return produtoRepository.adicionaImagens(novasImagens);
   }
 
-  static async removeImagem(produtoGateway: ProdutoGateway, idProduto: string, idImagem: string) {
-    return produtoGateway.removeImagem(idProduto, idImagem);
+  static async removeImagem(produtoRepository: ProdutoRepository, idProduto: string, idImagem: string) {
+    return produtoRepository.removeImagem(idProduto, idImagem);
 
   }
 
-  static async criaProduto(produtoGateway: ProdutoGateway, produtoInput: ProdutoInput): Promise<ProdutoDTO> {
+  static async criaProduto(produtoRepository: ProdutoRepository, produtoInput: ProdutoInput): Promise<ProdutoDTO> {
     const images = produtoInput?.imagens?.map((image: ImagemProdutoInput) => new ImagemProduto(image));
     const produto = new Produto(produtoInput, images);
 
-    return produtoGateway.criaProduto(produto);
+    return produtoRepository.criaProduto(produto);
 
   }
 
-  static async deletaProduto(produtoGateway: ProdutoGateway, idProduto: string): Promise<number> {
-    return produtoGateway.deletaProduto(idProduto);
+  static async deletaProduto(produtoRepository: ProdutoRepository, idProduto: string): Promise<number> {
+    return produtoRepository.deletaProduto(idProduto);
   }
 
   static async editaProduto(
-    produtoGateway: ProdutoGateway,
+    produtoRepository: ProdutoRepository,
     idProduto: string,
     produtoInput: ProdutoInput
   ): Promise<ProdutoDTO | null> {
-    const produto = await ProdutoUseCase.retornaProduto(produtoGateway, idProduto);
+    const produto = await ProdutoUseCase.retornaProduto(produtoRepository, idProduto);
 
     if (produto) {
       produto.nome = produtoInput.nome ?? produto.nome;
@@ -42,19 +40,19 @@ export default class ProdutoUseCase {
       produto.preco = produtoInput.preco ?? produto.preco;
       produto.descricao = produtoInput.descricao ?? produto.descricao;
 
-      return produtoGateway.editaProduto(idProduto, produto);
+      return produtoRepository.editaProduto(idProduto, produto);
     }
 
     return null;
 
   }
 
-  static async listaProdutos(produtoGateway: ProdutoGateway, filtro: object): Promise<ProdutoDTO[]> {
-    const produtos = produtoGateway.listaProdutos(filtro);
+  static async listaProdutos(produtoRepository: ProdutoRepository, filtro: object): Promise<ProdutoDTO[]> {
+    const produtos = produtoRepository.listaProdutos(filtro);
     return produtos;
   }
 
-  static async retornaProduto(produtoGateway: ProdutoGateway, idProduto: string): Promise<ProdutoDTO | null> {
-    return produtoGateway.retornaProduto(idProduto);
+  static async retornaProduto(produtoRepository: ProdutoRepository, idProduto: string): Promise<ProdutoDTO | null> {
+    return produtoRepository.retornaProduto(idProduto);
   }
 }

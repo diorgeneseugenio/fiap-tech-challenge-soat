@@ -1,7 +1,3 @@
-import { CheckoutGateway } from "interfaces/gateways/checkoutGateway";
-import { PedidoGateway } from "interfaces/gateways/pedidoGateway";
-import { ProdutoGateway } from "interfaces/gateways/produtoGateway";
-
 import { RealizaPedidoInput } from "~domain/entities/types/pedidoService.type";
 import { PedidoDTO, PedidoInput } from "~domain/entities/types/pedidoType";
 import CheckoutRepository from "~domain/repositories/checkoutRepository";
@@ -12,90 +8,73 @@ import PedidoUseCase from "~domain/useCases/pedidoUseCase";
 export class PedidoController {
 
   static async iniciaPedido(
-    dbPedido: PedidoRepository,
+    pedidoRepository: PedidoRepository,
     pedido: PedidoInput
   ): Promise<PedidoDTO | null> {
-    const pedidoGateway = new PedidoGateway(dbPedido);
     const pedidoCriada = await PedidoUseCase.iniciaPedido(
-      pedidoGateway, pedido
+      pedidoRepository, pedido
     );
     return pedidoCriada;
   }
 
   static async realizaPedido(
-    checkout: CheckoutRepository,
-    dbPedido: PedidoRepository,
-    dbProduto: ProdutoRepository,
+    checkoutRepository: CheckoutRepository,
+    pedidoRepository: PedidoRepository,
+    produtoRepository: ProdutoRepository,
     realizaPedidoInput: RealizaPedidoInput
   ): Promise<PedidoDTO | null> {
-    const checkoutGateway = new CheckoutGateway(checkout);
-    const pedidoGateway = new PedidoGateway(dbPedido);
-    const produtoGateway = new ProdutoGateway(dbProduto);
     return await PedidoUseCase.realizaPedido(
-        checkoutGateway, pedidoGateway, produtoGateway, realizaPedidoInput
+      checkoutRepository, pedidoRepository, produtoRepository, realizaPedidoInput
     );
   }
 
   static async iniciaPreparo(
-    dbPedido: PedidoRepository,
-    dbProduto: ProdutoRepository,
+    pedidoRepository: PedidoRepository,
+    produtoRepository: ProdutoRepository,
     id: string,
   ): Promise<PedidoDTO | null> {
-    const pedidoGateway = new PedidoGateway(dbPedido);
-    const produtoGateway = new ProdutoGateway(dbProduto);
-
     return await PedidoUseCase.iniciaPreparo(
-      pedidoGateway, produtoGateway, id
+      pedidoRepository, produtoRepository, id
     );
   }
 
   static async finalizaPreparo(
-    dbPedido: PedidoRepository,
-    dbProduto: ProdutoRepository,
+    pedidoRepository: PedidoRepository,
+    produtoRepository: ProdutoRepository,
     id: string,
   ): Promise<PedidoDTO> {
-    const pedidoGateway = new PedidoGateway(dbPedido);
-    const produtoGateway = new ProdutoGateway(dbProduto);
-
-    return await PedidoUseCase.finalizaPreparo(pedidoGateway, produtoGateway, id);
+    return await PedidoUseCase.finalizaPreparo(pedidoRepository, produtoRepository, id);
   }
 
   static async adicionaItem(
-    dbPedido: PedidoRepository,
-    dbProduto: ProdutoRepository,
+    pedidoRepository: PedidoRepository,
+    produtoRepository: ProdutoRepository,
     adicionaItemInput: AdicionaItemInput,
   ): Promise<PedidoDTO | null> {
-    const pedidoGateway = new PedidoGateway(dbPedido);
-    const produtoGateway = new ProdutoGateway(dbProduto);
-    return await PedidoUseCase.adicionaItem(pedidoGateway, produtoGateway, adicionaItemInput);
+    return await PedidoUseCase.adicionaItem(pedidoRepository, produtoRepository, adicionaItemInput);
   }
 
   static async removeItem(
-    dbPedido: PedidoRepository,
-    dbProduto: ProdutoRepository,
+    pedidoRepository: PedidoRepository,
+    produtoRepository: ProdutoRepository,
     removeItemInput: RemoveItemInput
   ): Promise<PedidoDTO | null> {
-    const pedidoGateway = new PedidoGateway(dbPedido);
-    const produtoGateway = new ProdutoGateway(dbProduto);
-    return await PedidoUseCase.removeItem(pedidoGateway, produtoGateway, removeItemInput);
+    return await PedidoUseCase.removeItem(pedidoRepository, produtoRepository, removeItemInput);
   }
 
   static async entregaPedido(
-    dbPedido: PedidoRepository,
-    dbProduto: ProdutoRepository,
+    pedidoRepository: PedidoRepository,
+    produtoRepository: ProdutoRepository,
     id: string
   ): Promise<PedidoDTO | null> {
-    const pedidoGateway = new PedidoGateway(dbPedido);
-    const produtoGateway = new ProdutoGateway(dbProduto);
-    return await PedidoUseCase.entregaPedido(pedidoGateway, produtoGateway, id);
+    return await PedidoUseCase.entregaPedido(pedidoRepository, produtoRepository, id);
   }
 
   static async listaPedidos(
-    dbPedido: PedidoRepository,
+    pedidoRepository: PedidoRepository,
     status: Array<string>,
     clienteId: string
   ): Promise<PedidoDTO[] | null> {
-    const pedidoGateway = new PedidoGateway(dbPedido);
-    return await PedidoUseCase.listaPedidos(pedidoGateway, status, clienteId);
+    return await PedidoUseCase.listaPedidos(pedidoRepository, status, clienteId);
   }
 }

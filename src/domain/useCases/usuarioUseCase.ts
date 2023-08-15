@@ -1,17 +1,17 @@
-import { UsuarioGateway } from "interfaces/gateways/usuarioGateway";
-
 import { UsuarioDTO } from "~domain/entities/types/UsuarioType";
 import Usuario from "~domain/entities/usuario";
 import CPF from "~domain/entities/valueObjects/cpf";
 import Email from "~domain/entities/valueObjects/email";
+import UsuarioRepository from "~domain/repositories/usuarioRepository";
 
 
 export default class UsuarioUseCase {
-  static async usuarioExiste(usuarioGateway: UsuarioGateway, email: string | null, cpf: string | null): Promise<boolean> {
-    return usuarioGateway.filtraUsuario(email, cpf);
+  static async usuarioExiste(usuarioRepository: UsuarioRepository, email: string | null, cpf: string | null): Promise<boolean> {
+    const usuario = await usuarioRepository.filtraUsuario(email, cpf);
+    return usuario ? true : false;
   }
 
-  static async criaUsuario(usuarioGateway: UsuarioGateway, usuario: UsuarioDTO) {
+  static async criaUsuario(usuarioRepository: UsuarioRepository, usuario: UsuarioDTO) {
     if (usuario.cpf || usuario.email) {
       if (usuario.cpf) {
         const cpfValidado = new CPF(usuario.cpf);
@@ -23,7 +23,7 @@ export default class UsuarioUseCase {
         usuario.email = emailValidado.retornaValor();
       }
 
-      const usuarioExiste = await UsuarioUseCase.usuarioExiste(usuarioGateway, usuario.email, usuario.cpf)
+      const usuarioExiste = await UsuarioUseCase.usuarioExiste(usuarioRepository, usuario.email, usuario.cpf)
 
       if (usuarioExiste) {
         throw new Error("usuario_duplicado");
@@ -32,16 +32,16 @@ export default class UsuarioUseCase {
     }
     const novoUsuario = new Usuario(usuario);
 
-    return usuarioGateway.criaUsuario(novoUsuario);
+    return usuarioRepository.criaUsuario(novoUsuario);
   }
 
-  static async listaUsuarios(usuarioGateway: UsuarioGateway): Promise<UsuarioDTO[]> {
-    return usuarioGateway.listaUsuarios();
+  static async listaUsuarios(usuarioRepository: UsuarioRepository): Promise<UsuarioDTO[]> {
+    return usuarioRepository.listaUsuarios();
   }
 
-  static async retornaUsuario(usuarioGateway: UsuarioGateway, cpf: string): Promise<UsuarioDTO | null> {
+  static async retornaUsuario(usuarioRepository: UsuarioRepository, cpf: string): Promise<UsuarioDTO | null> {
     const cpfValidado = new CPF(cpf);
-    return usuarioGateway.retornaUsuario(cpfValidado.retornaValor());
+    return usuarioRepository.retornaUsuario(cpfValidado.retornaValor());
   }
 
 }

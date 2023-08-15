@@ -1,12 +1,11 @@
-import { CheckoutGateway } from "interfaces/gateways/checkoutGateway";
-import { PedidoGateway } from "interfaces/gateways/pedidoGateway";
-import { ProdutoGateway } from "interfaces/gateways/produtoGateway";
-
 import ItemPedido from "~domain/entities/itemPedido";
 import Pedido from "~domain/entities/pedido";
 import Produto from "~domain/entities/produto";
 import { ItemDoPedidoInput } from "~domain/entities/types/itensPedidoType";
 import { PedidoDTO, PedidoInput } from "~domain/entities/types/pedidoType";
+import CheckoutRepository from "~domain/repositories/checkoutRepository";
+import PedidoRepository from "~domain/repositories/pedidoRepository";
+import ProdutoRepository from "~domain/repositories/produtoRepository";
 
 import {
   RealizaPedidoInput,
@@ -15,9 +14,9 @@ import {
 
 export default class PedidoUseCase {
 
-  static async buscaPedido(pedidoGateway: PedidoGateway, produtoGateway: ProdutoGateway, pedidoId: string) {
-    const itensAtuais = await PedidoUseCase.retornaItensPedido(pedidoGateway, produtoGateway, pedidoId)
-    const pedido = await pedidoGateway.retornaPedido(pedidoId);
+  static async buscaPedido(pedidoRepository: PedidoRepository, produtoRepository: ProdutoRepository, pedidoId: string) {
+    const itensAtuais = await PedidoUseCase.retornaItensPedido(pedidoRepository, produtoRepository, pedidoId)
+    const pedido = await pedidoRepository.retornaPedido(pedidoId);
 
     if (pedido) {
       return new Pedido(pedido, itensAtuais);
@@ -26,17 +25,17 @@ export default class PedidoUseCase {
     return null;
   }
 
-  static async iniciaPedido(pedidoGateway: PedidoGateway, pedidoInput: PedidoInput): Promise<PedidoDTO> {
+  static async iniciaPedido(pedidoRepository: PedidoRepository, pedidoInput: PedidoInput): Promise<PedidoDTO> {
     const pedido = new Pedido(pedidoInput);
-    return pedidoGateway.criaPedido(pedido);
+    return pedidoRepository.criaPedido(pedido);
   }
 
   static async realizaPedido(
-    checkoutGateway: CheckoutGateway,
-    pedidoGateway: PedidoGateway,
-    produtoGateway: ProdutoGateway,
+    checkoutRepository: CheckoutRepository,
+    pedidoRepository: PedidoRepository,
+    produtoRepository: ProdutoRepository,
     realizaPedidoInput: RealizaPedidoInput): Promise<PedidoDTO | null> {
-    const pedido = await PedidoUseCase.buscaPedido(pedidoGateway, produtoGateway, realizaPedidoInput.pedidoId);
+    const pedido = await PedidoUseCase.buscaPedido(pedidoRepository, produtoRepository, realizaPedidoInput.pedidoId);
 
     if (!pedido) {
       throw new Error('Pedido nao encontrado');
@@ -44,7 +43,7 @@ export default class PedidoUseCase {
 
     pedido.entregaRascunho();
 
-    const fatura = await checkoutGateway.geraPagamento({ metodoDePagamentoId: realizaPedidoInput.metodoDePagamentoId, pedido });
+    const fatura = await checkoutRepository.geraPagamento({ metodoDePagamentoId: realizaPedidoInput.metodoDePagamentoId, pedido });
 
     // if (fatura.statusDePagamento === statusDePagamento.AGUARDANDO_PAGAMENTO) { //  Adicionar quando nao tiver o fake checkout
     //   pedido.registrarFatura(fatura.id)
@@ -52,37 +51,37 @@ export default class PedidoUseCase {
 
     pedido.atualizaPagamento(fatura.statusDePagamento);
 
-    return pedidoGateway.atualizaPedido(pedido);
+    return pedidoRepository.atualizaPedido(pedido);
 
 
   }
 
-  static async retornaProximoPedidoFila(pedidoGateway: PedidoGateway, produtoGateway: ProdutoGateway) {
-    const proximoPedido = await pedidoGateway.retornaProximoPedidoFila();
+  static async retornaProximoPedidoFila(pedidoRepository: PedidoRepository, produtoRepository: ProdutoRepository) {
+    const proximoPedido = await pedidoRepository.retornaProximoPedidoFila();
     if (proximoPedido) {
-      const itensAtuais = await PedidoUseCase.retornaItensPedido(pedidoGateway, produtoGateway, proximoPedido.id)
+      const itensAtuais = await PedidoUseCase.retornaItensPedido(pedidoRepository, produtoRepository, proximoPedido.id)
       return new Pedido(proximoPedido, itensAtuais);
     }
 
     return null;
   }
 
-  static async iniciaPreparo(pedidoGateway: PedidoGateway, produtoGateway: ProdutoGateway, pedidoId?: string): Promise<PedidoDTO | null> {
+  static async iniciaPreparo(pedidoRepository: PedidoRepository, produtoRepository: ProdutoRepository, pedidoId?: string): Promise<PedidoDTO | null> {
     const pedido = pedidoId
-      ? await PedidoUseCase.buscaPedido(pedidoGateway, produtoGateway, pedidoId)
-      : await PedidoUseCase.retornaProximoPedidoFila(pedidoGateway, produtoGateway);
+      ? await PedidoUseCase.buscaPedido(pedidoRepository, produtoRepository, pedidoId)
+      : await PedidoUseCase.retornaProximoPedidoFila(pedidoRepository, produtoRepository);
 
 
     if (pedido) {
       pedido.emPreparo();
-      return pedidoGateway.atualizaPedido(pedido);
+      return pedidoRepository.atualizaPedido(pedido);
     }
 
     return null;
   }
 
-  static async finalizaPreparo(pedidoGateway: PedidoGateway, produtoGateway: ProdutoGateway, pedidoId: string): Promise<PedidoDTO> {
-    const pedido = await PedidoUseCase.buscaPedido(pedidoGateway, produtoGateway, pedidoId);
+  static async finalizaPreparo(pedidoRepository: PedidoRepository, produtoRepository: ProdutoRepository, pedidoId: string): Promise<PedidoDTO> {
+    const pedido = await PedidoUseCase.buscaPedido(pedidoRepository, produtoRepository, pedidoId);
 
     if (!pedido) {
       throw new Error('Pedido nao encontrado');
@@ -90,11 +89,11 @@ export default class PedidoUseCase {
 
     pedido.pronto();
 
-    return pedidoGateway.atualizaPedido(pedido);
+    return pedidoRepository.atualizaPedido(pedido);
   }
 
-  static async entregaPedido(pedidoGateway: PedidoGateway, produtoGateway: ProdutoGateway, pedidoId: string): Promise<PedidoDTO> {
-    const pedido = await PedidoUseCase.buscaPedido(pedidoGateway, produtoGateway, pedidoId);
+  static async entregaPedido(pedidoRepository: PedidoRepository, produtoRepository: ProdutoRepository, pedidoId: string): Promise<PedidoDTO> {
+    const pedido = await PedidoUseCase.buscaPedido(pedidoRepository, produtoRepository, pedidoId);
 
     if (!pedido) {
       throw new Error('Pedido nao encontrado');
@@ -102,21 +101,21 @@ export default class PedidoUseCase {
 
     pedido.entregue();
 
-    return pedidoGateway.atualizaPedido(pedido);
+    return pedidoRepository.atualizaPedido(pedido);
   }
 
   static async adicionaItem(
-    pedidoGateway: PedidoGateway,
-    produtoGateway: ProdutoGateway,
+    pedidoRepository: PedidoRepository,
+    produtoRepository: ProdutoRepository,
     itemDoPedidoInput: ItemDoPedidoInput
   ): Promise<PedidoDTO | null> {
-    const pedido = await PedidoUseCase.buscaPedido(pedidoGateway, produtoGateway, itemDoPedidoInput.pedidoId as string);
+    const pedido = await PedidoUseCase.buscaPedido(pedidoRepository, produtoRepository, itemDoPedidoInput.pedidoId as string);
 
     if (!pedido) {
       throw new Error('Pedido nao encontrado');
     }
 
-    const produtoEncontrado = await produtoGateway.retornaProduto(
+    const produtoEncontrado = await produtoRepository.retornaProduto(
       itemDoPedidoInput.produtoId as string
     );
 
@@ -132,15 +131,15 @@ export default class PedidoUseCase {
 
     pedido.adicionarItem(novoItem);
 
-    return pedidoGateway.atualizaPedido(pedido);
+    return pedidoRepository.atualizaPedido(pedido);
   }
 
-  static async retornaItensPedido(pedidoGateway: PedidoGateway, produtoGateway: ProdutoGateway, pedidoId: string): Promise<ItemPedido[] | null> {
-    const itensPedido = await pedidoGateway.retornaItensPedido(pedidoId);
+  static async retornaItensPedido(pedidoRepository: PedidoRepository, produtoRepository: ProdutoRepository, pedidoId: string): Promise<ItemPedido[] | null> {
+    const itensPedido = await pedidoRepository.retornaItensPedido(pedidoId);
 
     if (itensPedido) {
       const items = itensPedido?.map(async item => {
-        const produtoEncontrado = await produtoGateway.retornaProduto(item.produtoId);
+        const produtoEncontrado = await produtoRepository.retornaProduto(item.produtoId);
         
         if (!produtoEncontrado) {
           throw new Error('Produto nao encontrado');
@@ -159,8 +158,8 @@ export default class PedidoUseCase {
     return null
   }
 
-  static async removeItem(pedidoGateway: PedidoGateway, produtoGateway: ProdutoGateway, removeItemInput: RemoveItemInput): Promise<PedidoDTO | null> {
-    const pedido = await PedidoUseCase.buscaPedido(pedidoGateway, produtoGateway, removeItemInput.pedidoId as string);
+  static async removeItem(pedidoRepository: PedidoRepository, produtoRepository: ProdutoRepository, removeItemInput: RemoveItemInput): Promise<PedidoDTO | null> {
+    const pedido = await PedidoUseCase.buscaPedido(pedidoRepository, produtoRepository, removeItemInput.pedidoId as string);
 
     if (!pedido) {
       throw new Error('Pedido nao encontrado');
@@ -168,10 +167,10 @@ export default class PedidoUseCase {
 
     pedido.removeItem(removeItemInput.itemId)
 
-    return pedidoGateway.atualizaPedido(pedido);
+    return pedidoRepository.atualizaPedido(pedido);
   }
 
-  static async listaPedidos(pedidoGateway: PedidoGateway, status?: Array<string>, clienteId?: string): Promise<Array<PedidoDTO> | null> {
-    return pedidoGateway.listaPedidos(status, clienteId);
+  static async listaPedidos(pedidoRepository: PedidoRepository, status?: Array<string>, clienteId?: string): Promise<Array<PedidoDTO> | null> {
+    return pedidoRepository.listaPedidos(status, clienteId);
   }
 }

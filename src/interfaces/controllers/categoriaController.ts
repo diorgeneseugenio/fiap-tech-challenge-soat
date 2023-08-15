@@ -1,54 +1,47 @@
-import { CategoriaGateway } from "interfaces/gateways/categoriaGateway";
-
 import { CategoriaDTO, CategoriaInput } from "~domain/entities/types/CategoriaType";
 import CategoriaRepository from "~domain/repositories/categoriaRepository";
 import CategoriaUseCase from "~domain/useCases/categoriaUseCase";
 
 export class CategoriaController {
   static async criarCategoria(
-    dbCategoria: CategoriaRepository,
+    categoriaRepository: CategoriaRepository,
     categoria: CategoriaInput
   ): Promise<CategoriaDTO | null> {
-    const categoriaGateway = new CategoriaGateway(dbCategoria);
     const categoriaCriada = await CategoriaUseCase.criaCategoria(
-      categoriaGateway, categoria
+      categoriaRepository, categoria
     );
     return categoriaCriada;
   }
 
   static async deletaCategoria(
-    dbCategoria: CategoriaRepository,
+    categoriaRepository: CategoriaRepository,
     id: string
   ): Promise<number> {
-    const categoriaGateway = new CategoriaGateway(dbCategoria);
     return await CategoriaUseCase.deletaCategoria(
-      categoriaGateway, id
+      categoriaRepository, id
     );
   }
 
   static async editaCategoria(
-    dbCategoria: CategoriaRepository,
+    categoriaRepository: CategoriaRepository,
     id: string,
     categoria: CategoriaInput
   ): Promise<CategoriaDTO | null> {
-    const categoriaGateway = new CategoriaGateway(dbCategoria);
     return await CategoriaUseCase.editaCategoria(
-      categoriaGateway, id, categoria
+      categoriaRepository, id, categoria
     );
   }
 
   static async listaCategorias(
-    dbCategoria: CategoriaRepository
+    categoriaRepository: CategoriaRepository
   ): Promise<CategoriaDTO[]> {
-    const categoriaGateway = new CategoriaGateway(dbCategoria);
-    return await CategoriaUseCase.listaCategorias(categoriaGateway);
+    return await CategoriaUseCase.listaCategorias(categoriaRepository);
   }
 
   static async retornaCategoria(
-    dbCategoria: CategoriaRepository,
+    categoriaRepository: CategoriaRepository,
     id: string
   ): Promise<CategoriaDTO | null> {
-    const categoriaGateway = new CategoriaGateway(dbCategoria);
-    return await CategoriaUseCase.retornaCategoria(categoriaGateway, id);
+    return await CategoriaUseCase.retornaCategoria(categoriaRepository, id);
   }
 }
