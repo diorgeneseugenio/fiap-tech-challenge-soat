@@ -1,9 +1,8 @@
 import express from "express";
 
-import CategoriaService from "~core/applications/services/categoriaService";
-import DBCategoriasRepository from "~driven/infra/repository/categoriaDatabaseRepository";
+import DBCategoriasRepository from "~adapter/driven/infra/repository/categoriaDatabaseRepository";
 
-import CategoriaController from "../controllers/categoriaController";
+import CategoriaAPIController from "../controllers/categoriaController";
 
 import {
   CriaCategoriaSchema,
@@ -17,8 +16,7 @@ import { validaRequisicao } from "./utils";
 const categoriaRouter = express.Router();
 
 const dbCategoriasRepository = new DBCategoriasRepository();
-const categoriaService = new CategoriaService(dbCategoriasRepository);
-const categoriaController = new CategoriaController(categoriaService);
+const categoriaAPIController = new CategoriaAPIController(dbCategoriasRepository);
 
 /** 
  * @openapi
@@ -86,7 +84,7 @@ const categoriaController = new CategoriaController(categoriaService);
  */
 categoriaRouter.post("/",
   validaRequisicao(CriaCategoriaSchema),
-  categoriaController.criaCategoria.bind(categoriaController)
+  categoriaAPIController.criaCategoria.bind(categoriaAPIController)
 );
 
 /**
@@ -116,7 +114,7 @@ categoriaRouter.post("/",
  */
 categoriaRouter.get("/",
   validaRequisicao(ListaCategoriaSchema),
-  categoriaController.listaCategorias.bind(categoriaController)
+  categoriaAPIController.listaCategorias.bind(categoriaAPIController)
 );
 /**
  * @openapi
@@ -165,7 +163,7 @@ categoriaRouter.get("/",
  */
 categoriaRouter.get("/:id",
   validaRequisicao(RetornaCategoriaSchema),
-  categoriaController.retornaCategoria.bind(categoriaController)
+  categoriaAPIController.retornaCategoria.bind(categoriaAPIController)
 );
 /**
  * @openapi
@@ -212,7 +210,7 @@ categoriaRouter.get("/:id",
  */
 categoriaRouter.delete("/:id", 
   validaRequisicao(DeletaCategoriaSchema),
-  categoriaController.deletaCategoria.bind(categoriaController)
+  categoriaAPIController.deletaCategoria.bind(categoriaAPIController)
 );
 /**
  * @openapi
@@ -272,7 +270,7 @@ categoriaRouter.delete("/:id",
  */
 categoriaRouter.put("/:id",
   validaRequisicao(EditaCategoriaSchema), 
-  categoriaController.editaCategoria.bind(categoriaController)
+  categoriaAPIController.editaCategoria.bind(categoriaAPIController)
 );
 
 

@@ -1,20 +1,17 @@
+import { ItemDoPedidoDTO } from "entities/types/itensPedidoType";
 import { DataTypes, Model, Sequelize } from "sequelize";
-
-import { ItemDoPedido } from "~core/domain/itemPedido";
-import { Produto } from "~core/domain/produto";
 
 import PedidoModel from "./pedidoModel";
 import ProdutoModel from "./produtoModel";
 
-class ItemDoPedidoModel extends Model<ItemDoPedido> implements ItemDoPedido {
+class ItemDoPedidoModel extends Model<ItemDoPedidoDTO> implements ItemDoPedidoDTO {
   public id!: string;
   public produtoId!: string;
-  public produto?: Produto;
   public pedidoId!: string;
   public quantidade!: number;
   public valorUnitario!: number;
   public valorTotal!: number;
-  public observacao!: string;
+  public observacao!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public readonly deletedAt!: Date | null;

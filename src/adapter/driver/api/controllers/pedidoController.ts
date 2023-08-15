@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
-
-import PedidoService from "~core/applications/services/pedidoService";
+import { PedidoController } from "interfaces/controllers/pedidoController";
+import CheckoutRepository from "interfaces/repositories/checkoutRepository";
+import FaturaRepository from "interfaces/repositories/faturaRepository";
+import PedidoRepository from "interfaces/repositories/pedidoRepository";
+import ProdutoRepository from "interfaces/repositories/produtoRepository";
 
 import {
   AdicionarItemBody,
@@ -15,8 +18,22 @@ import {
   RemoverItemParams,
 } from "../routers/schemas/pedidoRouter.schema";
 
-export default class PedidoController {
-  constructor(private readonly pedidoService: PedidoService) { }
+export default class PedidoAPIController {
+  private dbFaturaRepository: FaturaRepository;
+  private dbPedidosRepository: PedidoRepository;
+  private dbProdutoRepository: ProdutoRepository;
+  private checkoutRepository: CheckoutRepository;
+
+  constructor(
+    dbFaturaRepository: FaturaRepository,
+    dbPedidosRepository: PedidoRepository,
+    dbProdutoRepository: ProdutoRepository,
+    checkoutRepository: CheckoutRepository) { 
+      this.dbFaturaRepository = dbFaturaRepository;
+      this.dbPedidosRepository = dbPedidosRepository;
+      this.dbProdutoRepository = dbProdutoRepository;
+      this.checkoutRepository = checkoutRepository;
+    }
 
   async iniciaPedido(
     req: Request<unknown, IniciaPedidoPayload>,
@@ -25,7 +42,7 @@ export default class PedidoController {
     try {
       const { body } = req;
 
-      const pedidoCriado = await this.pedidoService.iniciaPedido(body);
+      const pedidoCriado = await PedidoController.iniciaPedido(this.dbPedidosRepository, body);
 
       return res.status(201).json({
         status: "success",
@@ -46,7 +63,7 @@ export default class PedidoController {
     try {
       const { params, body } = req;
 
-      const pedidoCriado = await this.pedidoService.realizaPedido({
+      const pedidoCriado = await PedidoController.realizaPedido(this.checkoutRepository, this.dbPedidosRepository, this.dbProdutoRepository, {
         pedidoId: params.id,
         metodoDePagamentoId: body.metodoDePagamentoId,
       });
@@ -67,7 +84,7 @@ export default class PedidoController {
     try {
       const { pedidoId } = req.query;
 
-      const pedido = await this.pedidoService.iniciaPreparo(pedidoId as string);
+      const pedido = await PedidoController.iniciaPreparo(this.dbPedidosRepository, this.dbProdutoRepository, pedidoId as string);
 
       if (pedido) {
         return res.status(201).json({
@@ -93,7 +110,7 @@ export default class PedidoController {
     try {
       const { params } = req;
 
-      const pedido = await this.pedidoService.finalizaPreparo(params.id);
+      const pedido = await PedidoController.finalizaPreparo(this.dbPedidosRepository, this.dbProdutoRepository, params.id);
 
       return res.status(201).json({
         status: "success",
@@ -111,7 +128,7 @@ export default class PedidoController {
     try {
       const { params } = req;
 
-      const pedido = await this.pedidoService.entregaPedido(params.id);
+      const pedido = await PedidoController.entregaPedido(this.dbPedidosRepository, this.dbProdutoRepository, params.id);
 
       return res.status(201).json({
         status: "success",
@@ -132,7 +149,7 @@ export default class PedidoController {
     try {
       const { body, params } = req;
 
-      const pedido = await this.pedidoService.adicionaItem({
+      const pedido = await PedidoController.adicionaItem(this.dbPedidosRepository, this.dbProdutoRepository, {
         ...body,
         pedidoId: params.id,
       });
@@ -153,7 +170,7 @@ export default class PedidoController {
     try {
       const { params } = req;
 
-      const pedido = await this.pedidoService.removeItem({
+      const pedido = await PedidoController.removeItem(this.dbPedidosRepository,this.dbProdutoRepository, {
         pedidoId: params.id,
         itemId: params.idItem,
       });
@@ -183,7 +200,7 @@ export default class PedidoController {
         status = query.status.split(",");
       }
 
-      const pedidos = await this.pedidoService.listaPedidos(status, clienteId);
+      const pedidos = await PedidoController.listaPedidos(this.dbPedidosRepository, status, clienteId);
 
       return res.status(200).json({
         status: "success",

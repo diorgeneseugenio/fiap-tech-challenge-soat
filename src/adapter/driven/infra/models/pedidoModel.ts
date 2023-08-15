@@ -1,22 +1,20 @@
+import { Fatura } from "entities/fatura";
+import { ItemDoPedidoDTO } from "entities/types/itensPedidoType";
+import { PedidoDTO, StatusDoPedido, statusDoPedido } from "entities/types/pedidoType";
 import { DataTypes, Model, Sequelize } from "sequelize";
-
-import { Fatura } from "~core/domain/fatura";
-import { ItensDoPedido } from "~core/domain/itemPedido";
-import { Pedido, StatusDoPedido, statusDoPedido } from "~core/domain/pedido";
 
 import FaturaModel from "./faturaModel";
 import ItemDoPedidoModel from "./itemPedidoModel";
 import UsuarioModel from "./usuarioModel";
 
-class PedidoModel extends Model<Pedido> implements Pedido {
+class PedidoModel extends Model<PedidoDTO> implements PedidoDTO {
   public id!: string;
-  public clienteId!: string | null;
-  public cliente?: any;
-  public faturaId?: string;
+  public clienteId!: string;
+  public faturaId!: string;
   public fatura?: Fatura;
   public status!: StatusDoPedido;
   public valor!: number;
-  public itens?: ItensDoPedido;
+  public itens?: ItemDoPedidoDTO[];
   public retiradoEm!: Date | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;

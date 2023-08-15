@@ -1,78 +1,92 @@
-import { WhereOptions } from "sequelize";
-import { v4 as uuidv4 } from "uuid";
 
+import { ItemDoPedidoDTO } from "entities/types/itensPedidoType";
+import { PedidoDTO, statusDoPedido } from "entities/types/pedidoType";
 import PedidoRepository, {
   AdicionaItemInput,
-  AtualizaPedidoInput,
-  CriaPedidoInput,
   RemoveItemInput,
-} from "~core/applications/repositories/pedidoRepository";
-import { ItemDoPedido } from "~core/domain/itemPedido";
-import { Pedido, statusDoPedido } from "~core/domain/pedido";
+} from "interfaces/repositories/pedidoRepository";
+import { WhereOptions } from "sequelize";
+import { v4 as uuidv4 } from "uuid";
 
 import ItemDoPedidoModel from "../models/itemPedidoModel";
 import PedidoModel from "../models/pedidoModel";
 
 class PedidoDataBaseRepository implements PedidoRepository {
-  async criaPedido({
-    status,
-    valor,
-    clienteId = null,
-  }: CriaPedidoInput): Promise<Pedido> {
+  async retornaItensPedido(pedidoId: string): Promise<ItemDoPedidoDTO[] | null> {
     try {
-      return PedidoModel.create({
-        id: uuidv4(),
-        clienteId,
-        status,
-        valor,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      return await ItemDoPedidoModel.findAll({
+        where: { pedidoId }
       });
     } catch (err: any) {
       console.error("Erro ao criar Pedido: ", err);
       throw new Error(err);
     }
   }
-
-  async atualizaPedido({
-    id,
-    status,
-    retiradoEm,
-    faturaId,
-  }: AtualizaPedidoInput): Promise<Pedido> {
+  async criaPedido(pedido: PedidoDTO): Promise<PedidoDTO> {
     try {
-      return (await PedidoModel.update(
-        { status, retiradoEm, faturaId },
-        { where: { id } }
-      ).then(() =>
-        PedidoModel.findOne({
-          where: { id },
-          include: ["itens", "fatura"],
-        })
-      )) as Pedido;
+      return await PedidoModel.create(pedido) as PedidoDTO;
+    } catch (err: any) {
+      console.error("Erro ao criar Pedido: ", err);
+      throw new Error(err);
+    }
+  }
+
+  async atualizaPedido(pedido: PedidoDTO): Promise<PedidoDTO> {
+    try { // TODO - refatorar
+
+      const pedidoAtual = await PedidoModel.findByPk(pedido.id, {
+        include: ['itens']
+      });
+
+      const idsPostsExistentes = pedidoAtual?.itens?.map(item => item.id) as [];
+
+      if (idsPostsExistentes) {
+        const idsPostsParaRemover = idsPostsExistentes?.filter(id => !pedido?.itens?.some(item => item.id === id));
+        await ItemDoPedidoModel.destroy({ where: { id: idsPostsParaRemover } });
+      }
+
+      if (pedido.itens) {
+        await ItemDoPedidoModel.bulkCreate(pedido.itens, {
+          updateOnDuplicate: ['id']
+        });
+      }
+
+      if (pedidoAtual) {
+        Object.assign(pedidoAtual, pedido);
+        await pedidoAtual.save();
+      }
+
+      return pedido;
     } catch (err: any) {
       console.error("Erro ao atualizar Pedido: ", err);
       throw new Error(err);
     }
   }
 
-  async retornaPedido(id: string): Promise<Pedido | null> {
+  async retornaPedido(id: string): Promise<PedidoDTO | null> {
     try {
-      return PedidoModel.findOne({
+
+      return await PedidoModel.findOne({
+        include: [
+          {
+            model: ItemDoPedidoModel,
+            as: "itens",
+          },
+        ],
         where: { id },
-      });
+      }) as PedidoDTO;
     } catch (err: any) {
       console.error("Erro ao retornar pedido: ", err);
       throw new Error(err);
     }
   }
 
-  async retornaProximoPedidoFila(): Promise<Pedido | null> {
+  async retornaProximoPedidoFila(): Promise<PedidoDTO | null> {
     try {
       return await PedidoModel.findOne({
         where: { status: statusDoPedido.AGUARDANDO_PREPARO },
         order: [['updatedAt', 'ASC']]
-      });
+      }) as PedidoDTO;
 
     } catch (err: any) {
       console.error("Erro ao retornar proximo pedido da fila: ", err);
@@ -80,7 +94,7 @@ class PedidoDataBaseRepository implements PedidoRepository {
     }
   }
 
-  async adicionaItem(adicionaItem: AdicionaItemInput): Promise<Pedido | null> {
+  async adicionaItem(adicionaItem: AdicionaItemInput): Promise<PedidoDTO | null> {
     try {
       await ItemDoPedidoModel.create({
         ...adicionaItem,
@@ -105,48 +119,49 @@ class PedidoDataBaseRepository implements PedidoRepository {
           where: { id: adicionaItem.pedidoId },
           include: "itens",
         })
-      )) as Pedido;
+      )) as PedidoDTO;
     } catch (err: any) {
       console.error("Erro ao adicionar item: ", err);
       throw new Error(err);
     }
   }
 
-  async removeItem(removeItemInput: RemoveItemInput): Promise<Pedido | null> {
+  async removeItem(removeItemInput: RemoveItemInput): Promise<PedidoDTO | null> {
     try {
       await ItemDoPedidoModel.destroy({
         where: { id: removeItemInput.itemId },
       });
 
       return (await PedidoModel.update(
-        { valor: removeItemInput.valorPedido },
+        // { valor: removeItemInput.valorPedido }, // todo
+        { valor: 0 }, // todo
         { where: { id: removeItemInput.pedidoId } }
       ).then(() =>
         PedidoModel.findOne({
           where: { id: removeItemInput.pedidoId },
-          include: "itens",
+          include: ["itens"],
         })
-      )) as Pedido;
+      )) as PedidoDTO;
     } catch (err: any) {
       console.error("Erro ao remover item: ", err);
       throw new Error(err);
     }
   }
 
-  async retornaItem(id: string): Promise<ItemDoPedido | null> {
+  async retornaItem(id: string): Promise<ItemDoPedidoDTO | null> {
     try {
-      return ItemDoPedidoModel.findOne({
+      return await ItemDoPedidoModel.findOne({
         where: { id },
-      });
+      }) as ItemDoPedidoDTO;
     } catch (err: any) {
       console.error("Erro ao retornar item: ", err);
       throw new Error(err);
     }
   }
 
-  async listaPedidos(status?: Array<string>, clienteId?: string): Promise<Array<Pedido> | null> {
+  async listaPedidos(status?: Array<string>, clienteId?: string): Promise<Array<PedidoDTO> | null> {
     try {
-      let where: WhereOptions<Pedido> = { deletedAt: null };
+      let where: WhereOptions<PedidoDTO> = { deletedAt: null };
 
       if (status && status.length > 0) {
         where = { ...where, status };
@@ -156,14 +171,14 @@ class PedidoDataBaseRepository implements PedidoRepository {
         where = { ...where, clienteId };
       }
 
-      return PedidoModel.findAll({
+      return await PedidoModel.findAll({
         where,
         order: [
           ["updatedAt", "ASC"],
           ["status", "ASC"],
         ],
         include: ["itens", "fatura"],
-      });
+      }) as PedidoDTO[];
     } catch (err: any) {
       console.error("Erro ao listar pedidos: ", err);
       throw new Error(err);

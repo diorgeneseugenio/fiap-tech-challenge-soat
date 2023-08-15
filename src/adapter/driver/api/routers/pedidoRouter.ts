@@ -1,12 +1,11 @@
 import express from "express";
 
-import PedidoService from "~core/applications/services/pedidoService";
-import FakeCheckout from "~driven/checkout/repository/checkoutRepository";
-import FaturaDataBaseRepository from "~driven/infra/repository/faturaDatabaseRepository";
-import PedidoDataBaseRepository from "~driven/infra/repository/pedidoDatabaseRepository";
-import ProdutosDataBaseRepository from "~driven/infra/repository/produtoDatabaseRepository";
+import FakeCheckout from "~adapter/driven/checkout/repository/checkoutRepository";
+import FaturaDataBaseRepository from "~adapter/driven/infra/repository/faturaDatabaseRepository";
+import PedidoDataBaseRepository from "~adapter/driven/infra/repository/pedidoDatabaseRepository";
+import ProdutosDataBaseRepository from "~adapter/driven/infra/repository/produtoDatabaseRepository";
 
-import PedidoController from "../controllers/pedidoController";
+import PedidoAPIController from "../controllers/pedidoController";
 
 import {
   adicionarItemSchema,
@@ -25,15 +24,10 @@ const pedidoRouter = express.Router({});
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
 const dbFaturaRepository = new FaturaDataBaseRepository();
-const checkoutRepository = new FakeCheckout(dbFaturaRepository);
+const checkoutRepository = new FakeCheckout(dbFaturaRepository); // TODO
 
-const pedidoService = new PedidoService(
-  dbPedidosRepository,
-  dbProdutoRepository,
-  checkoutRepository
-);
 
-const pedidoController = new PedidoController(pedidoService);
+const pedidoAPIController = new PedidoAPIController(dbFaturaRepository, dbPedidosRepository, dbProdutoRepository, checkoutRepository );
 
 /**
  * @openapi
@@ -73,7 +67,7 @@ const pedidoController = new PedidoController(pedidoService);
 pedidoRouter.post(
   "/:id/adicionar-item",
   validaRequisicao(adicionarItemSchema),
-  pedidoController.adicionaItem.bind(pedidoController)
+  pedidoAPIController.adicionaItem.bind(pedidoAPIController)
 );
 
 /**
@@ -107,7 +101,7 @@ pedidoRouter.post(
 pedidoRouter.delete(
   "/:id/remover-item/:idItem",
   validaRequisicao(removerItemSchema),
-  pedidoController.removeItem.bind(pedidoController)
+  pedidoAPIController.removeItem.bind(pedidoAPIController)
 );
 
 /**
@@ -137,7 +131,7 @@ pedidoRouter.delete(
 pedidoRouter.post(
   "/iniciar-pedido",
   validaRequisicao(iniciaPedidoSchema),
-  pedidoController.iniciaPedido.bind(pedidoController)
+  pedidoAPIController.iniciaPedido.bind(pedidoAPIController)
 );
 
 /**
@@ -174,7 +168,7 @@ pedidoRouter.post(
 pedidoRouter.patch(
   "/realizar-pedido/:id",
   validaRequisicao(realizarPedidoSchema),
-  pedidoController.realizaPedido.bind(pedidoController)
+  pedidoAPIController.realizaPedido.bind(pedidoAPIController)
 );
 
 /**
@@ -202,7 +196,7 @@ pedidoRouter.patch(
 pedidoRouter.patch(
   "/iniciar-preparo/",
   validaRequisicao(iniciarPreparoSchema),
-  pedidoController.iniciaPreparo.bind(pedidoController)
+  pedidoAPIController.iniciaPreparo.bind(pedidoAPIController)
 );
 
 /**
@@ -230,7 +224,7 @@ pedidoRouter.patch(
 pedidoRouter.patch(
   "/finalizar-preparo/:id",
   validaRequisicao(finalizarPreparoSchema),
-  pedidoController.finalizaPreparo.bind(pedidoController)
+  pedidoAPIController.finalizaPreparo.bind(pedidoAPIController)
 );
 
 /**
@@ -258,7 +252,7 @@ pedidoRouter.patch(
 pedidoRouter.patch(
   "/entregar-pedido/:id",
   validaRequisicao(entregarPedidoSchema),
-  pedidoController.entregaPedido.bind(pedidoController)
+  pedidoAPIController.entregaPedido.bind(pedidoAPIController)
 );
 
 /**
@@ -292,7 +286,7 @@ pedidoRouter.patch(
 pedidoRouter.get(
   "/",
   validaRequisicao(listarPedidosSchema),
-  pedidoController.listaPedidos.bind(pedidoController)
+  pedidoAPIController.listaPedidos.bind(pedidoAPIController)
 );
 
 export default pedidoRouter;

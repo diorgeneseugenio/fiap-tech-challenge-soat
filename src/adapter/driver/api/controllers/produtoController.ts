@@ -1,7 +1,7 @@
+import { ImagemProdutoInput } from "entities/types/produtoType";
 import { Request, Response } from "express";
-
-import ProdutoService from "~core/applications/services/produtoService";
-import { ImagemProduto } from "~core/domain/produto";
+import { ProdutoController } from "interfaces/controllers/produtoController";
+import ProdutoRepository from "interfaces/repositories/produtoRepository";
 
 import { AdicionarItemBody, AdicionarItemParams } from "../routers/schemas/pedidoRouter.schema";
 import {
@@ -14,8 +14,12 @@ import {
   RetornaProdutoParams
 } from "../routers/schemas/produtoRouter.schema";
 
-export default class ProdutoController {
-  constructor(private readonly produtoService: ProdutoService) { }
+export default class ProdutoAPIController {
+  private dbProdutosRepository: ProdutoRepository;
+
+  constructor(dbProdutosRepository: ProdutoRepository) {
+    this.dbProdutosRepository = dbProdutosRepository;
+  }
   async adicionaImagens(
     req: Request<AdicionarItemParams, AdicionarItemBody>,
     res: Response
@@ -24,11 +28,11 @@ export default class ProdutoController {
       const { id } = req.params;
       const body = req.body;
 
-      const imagens = body?.imagens.map((imagem: ImagemProduto) => {
+      const imagens = body?.imagens.map((imagem: ImagemProdutoInput) => {
         return { ...imagem, produtoId: id };
       });
 
-      const imagensAdicionadas = await this.produtoService.adicionaImagens(
+      const imagensAdicionadas = await ProdutoController.adicionaImagens(this.dbProdutosRepository,
         imagens
       );
       return res.status(201).json({
@@ -71,7 +75,7 @@ export default class ProdutoController {
         });
       }
 
-      const imagemDeletada = await this.produtoService.removeImagem(
+      const imagemDeletada = await ProdutoController.removeImagem(this.dbProdutosRepository,
         idProduto,
         idImagem
       );
@@ -100,7 +104,7 @@ export default class ProdutoController {
     try {
       const produto = req.body;
 
-      const produtoCriado = await this.produtoService.criaProduto(produto);
+      const produtoCriado = await ProdutoController.criaProduto(this.dbProdutosRepository, produto);
       return res.status(201).json({
         status: "success",
         message: produtoCriado,
@@ -133,7 +137,7 @@ export default class ProdutoController {
     try {
       const { id } = req.params;
 
-      const produtoDeletado = await this.produtoService.deletaProduto(id);
+      const produtoDeletado = await ProdutoController.deletaProduto(this.dbProdutosRepository, id);
 
       if (produtoDeletado > 0) {
         return res.status(200).json({
@@ -160,7 +164,7 @@ export default class ProdutoController {
       const { id } = req.params;
       const produto = req.body;
 
-      const produtoAtualizado = await this.produtoService.editaProduto(
+      const produtoAtualizado = await ProdutoController.editaProduto(this.dbProdutosRepository,
         id,
         produto
       );
@@ -204,7 +208,7 @@ export default class ProdutoController {
         filtro.categoriaId = categoriaId as string;
       }
 
-      const produtos = await this.produtoService.listaProdutos(filtro);
+      const produtos = await ProdutoController.listaProdutos(this.dbProdutosRepository, filtro);
 
       return res.status(200).json({
         status: "success",
@@ -225,7 +229,7 @@ export default class ProdutoController {
     try {
       const { id } = req.params;
 
-      const produto = await this.produtoService.retornaProduto(id);
+      const produto = await ProdutoController.retornaProduto(this.dbProdutosRepository, id);
 
       if (produto) {
         return res.status(200).json({

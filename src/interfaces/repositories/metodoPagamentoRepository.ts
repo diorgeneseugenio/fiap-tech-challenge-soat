@@ -1,4 +1,4 @@
-import { MetodoDePagamento } from "~core/domain/metodoDePagamento";
+import { MetodoDePagamento } from "entities/metodoDePagamento";
 
 export default interface MetodoPagamentoRepository {
     listaPagamentos(): Promise<MetodoDePagamento[]>;

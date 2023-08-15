@@ -1,9 +1,8 @@
 import express from "express";
 
-import ProdutoService from "~core/applications/services/produtoService";
-import DBProdutosRepository from "~driven/infra/repository/produtoDatabaseRepository";
+import DBProdutosRepository from "~adapter/driven/infra/repository/produtoDatabaseRepository";
 
-import ProdutoController from "../controllers/produtoController";
+import ProdutoAPIController from "../controllers/produtoController";
 
 import {
   AdicionaImagenSchema,
@@ -19,8 +18,7 @@ import { validaRequisicao } from "./utils";
 const produtoRouter = express.Router();
 
 const dbProdutosRepository = new DBProdutosRepository();
-const produtoService = new ProdutoService(dbProdutosRepository);
-const produtoController = new ProdutoController(produtoService);
+const produtoAPIController = new ProdutoAPIController(dbProdutosRepository);
 
 /** 
  * @openapi
@@ -148,7 +146,7 @@ const produtoController = new ProdutoController(produtoService);
  */
 produtoRouter.post("/",
   validaRequisicao(CriaProdutoSchema),
-  produtoController.criaProduto.bind(produtoController)
+  produtoAPIController.criaProduto.bind(produtoAPIController)
 );
 
 /**
@@ -187,7 +185,7 @@ produtoRouter.post("/",
  */
 produtoRouter.get("/",
   validaRequisicao(ListaProdutoSchema),
-  produtoController.listaProdutos.bind(produtoController)
+  produtoAPIController.listaProdutos.bind(produtoAPIController)
 );
 
 /**
@@ -237,7 +235,7 @@ produtoRouter.get("/",
  */
 produtoRouter.get("/:id",
   validaRequisicao(RetornaProdutoSchema),
-  produtoController.retornaProduto.bind(produtoController)
+  produtoAPIController.retornaProduto.bind(produtoAPIController)
 );
 
 /**
@@ -285,7 +283,7 @@ produtoRouter.get("/:id",
  */
 produtoRouter.delete("/:id",
   validaRequisicao(DeletaProdutoSchema),
-  produtoController.deletaProduto.bind(produtoController)
+  produtoAPIController.deletaProduto.bind(produtoAPIController)
 );
 
 /**
@@ -350,7 +348,7 @@ produtoRouter.delete("/:id",
  */
 produtoRouter.put("/:id",
   validaRequisicao(EditaProdutoSchema),
-  produtoController.editaProduto.bind(produtoController)
+  produtoAPIController.editaProduto.bind(produtoAPIController)
 );
 
 /**
@@ -412,7 +410,7 @@ produtoRouter.put("/:id",
 produtoRouter.delete(
   "/:idProduto/imagem/:idImagem",
   validaRequisicao(RemoveImagemSchema),
-  produtoController.removeImagem.bind(produtoController)
+  produtoAPIController.removeImagem.bind(produtoAPIController)
 );
 
 /**
@@ -498,7 +496,7 @@ produtoRouter.delete(
 produtoRouter.post(
   "/:id/imagens",
   validaRequisicao(AdicionaImagenSchema),
-  produtoController.adicionaImagens.bind(produtoController)
+  produtoAPIController.adicionaImagens.bind(produtoAPIController)
 );
 
 export default produtoRouter;

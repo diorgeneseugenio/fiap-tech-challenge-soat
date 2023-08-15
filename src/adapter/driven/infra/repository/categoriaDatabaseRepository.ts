@@ -1,12 +1,13 @@
-import CategoriaRepository from "~core/applications/repositories/categoriaRepository";
-import Categoria from "~core/domain/categoria";
+import { CategoriaDTO } from "entities/types/CategoriaType";
+import CategoriaRepository from "interfaces/repositories/categoriaRepository";
 
 import CategoriaModel from "../models/categoriaModel";
 
+
 class CategoriasDataBaseRepository implements CategoriaRepository {
-  async criaCategoria(categoria: Categoria): Promise<Categoria> {
+  async criaCategoria(categoria: CategoriaDTO): Promise<CategoriaDTO> {
     try {
-      return await CategoriaModel.create(categoria);
+      return await CategoriaModel.create(categoria) as CategoriaDTO;
     } catch (err: any) {
       console.error("Erro ao criar Categoria: ", err);
       throw new Error(err);
@@ -22,8 +23,8 @@ class CategoriasDataBaseRepository implements CategoriaRepository {
   }
   async editaCategoria(
     idCategoria: string,
-    categoria: Categoria
-  ): Promise<Categoria | null> {
+    categoria: CategoriaDTO
+  ): Promise<CategoriaDTO | null> {
     try {
       const categoriaAtual = await CategoriaModel.findByPk(idCategoria);
 
@@ -31,14 +32,14 @@ class CategoriasDataBaseRepository implements CategoriaRepository {
         Object.assign(categoriaAtual, categoria);
         await categoriaAtual.save();
       }
-      return categoriaAtual;
+      return categoriaAtual as CategoriaDTO;
     } catch (err: any) {
       console.error("Erro ao editar Categoria: ", err);
       throw new Error(err);
     }
   }
 
-  async listaCategorias(): Promise<Categoria[]> {
+  async listaCategorias(): Promise<CategoriaDTO[]> {
     try {
       return await CategoriaModel.findAll();
     } catch (err: any) {
@@ -47,7 +48,7 @@ class CategoriasDataBaseRepository implements CategoriaRepository {
     }
   }
 
-  async retornaCategoria(idCategoria: string): Promise<Categoria | null> {
+  async retornaCategoria(idCategoria: string): Promise<CategoriaDTO | null> {
     try {
       return await CategoriaModel.findByPk(idCategoria);
     } catch (err: any) {

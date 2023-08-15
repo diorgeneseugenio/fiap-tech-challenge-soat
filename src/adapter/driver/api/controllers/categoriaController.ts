@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-
-import CategoriaService from "~core/applications/services/categoriaService";
+import { CategoriaController } from "interfaces/controllers/categoriaController";
+import CategoriaRepository from "interfaces/repositories/categoriaRepository";
 
 import { 
   CriaCategoriaPayload,
@@ -11,14 +11,18 @@ import {
   RetornaCategoriaParams 
 } from "../routers/schemas/categoriaRouter.schema";
 
-export default class CategoriaController {
-  constructor(private readonly categoriaService: CategoriaService) { }
+export default class CategoriaAPIController {
+  private dbCategoriasRepository: CategoriaRepository;
+
+  constructor(dbCategoriasRepository: CategoriaRepository) { 
+    this.dbCategoriasRepository = dbCategoriasRepository;
+  }
 
   async criaCategoria(req: Request<unknown, CriaCategoriaPayload>, res: Response) {
     try {
       const categoria = req.body;
 
-      const categoriaCriado = await this.categoriaService.criaCategoria(
+      const categoriaCriado = await CategoriaController.criarCategoria(this.dbCategoriasRepository,
         categoria
       );
       return res.status(201).json({
@@ -37,7 +41,7 @@ export default class CategoriaController {
     try {
       const { id } = req.params;
 
-      const categoriaDeletado = await this.categoriaService.deletaCategoria(id);
+      const categoriaDeletado = await CategoriaController.deletaCategoria(this.dbCategoriasRepository, id);
 
       if (categoriaDeletado > 0) {
         return res.status(200).json({
@@ -61,7 +65,7 @@ export default class CategoriaController {
       const { id } = req.params;
       const categoria = req.body;
 
-      const categoriaAtualizada = await this.categoriaService.editaCategoria(
+      const categoriaAtualizada = await CategoriaController.editaCategoria(this.dbCategoriasRepository,
         id,
         categoria
       );
@@ -86,7 +90,7 @@ export default class CategoriaController {
 
   async listaCategorias(req: Request<unknown, ListaCategoriaPayload>, res: Response) {
     try {
-      const categorias = await this.categoriaService.listaCategorias();
+      const categorias = await CategoriaController.listaCategorias(this.dbCategoriasRepository);
 
       return res.status(200).json({
         status: "success",
@@ -104,7 +108,7 @@ export default class CategoriaController {
     try {
       const { id } = req.params;
 
-      const categoria = await this.categoriaService.retornaCategoria(id);
+      const categoria = await CategoriaController.retornaCategoria(this.dbCategoriasRepository,id);
 
       if (categoria) {
         return res.status(200).json({

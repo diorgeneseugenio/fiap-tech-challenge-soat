@@ -1,7 +1,7 @@
 import express from "express";
+import MetodoPagamentoService from "useCases/metodoPagamentoService";
 
-import MetodoPagamentoService from "~core/applications/services/metodoPagamentoService";
-import MetodoPagamentoDatabaseRepository from "~driven/infra/repository/metodoPagamentoDatabaseRepository";
+import MetodoPagamentoDatabaseRepository from "~adapter/driven/infra/repository/metodoPagamentoDatabaseRepository";
 
 import MetodoPagamentoController from "../controllers/metodoPagamentoController";
 

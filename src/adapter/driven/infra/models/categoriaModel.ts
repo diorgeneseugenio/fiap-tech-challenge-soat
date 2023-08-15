@@ -1,14 +1,14 @@
+import { CategoriaDTO } from "entities/types/CategoriaType";
 import { DataTypes, Model, Sequelize } from "sequelize";
-
-import Categoria from "~core/domain/categoria";
 
 import ProdutoModel from "./produtoModel";
 
-class CategoriaModel extends Model<Categoria> implements Categoria {
+class CategoriaModel extends Model<CategoriaDTO> implements CategoriaDTO {
   public id!: string;
   public nome!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 
   static initialize(sequelize: Sequelize): void {
     CategoriaModel.init(
@@ -22,12 +22,21 @@ class CategoriaModel extends Model<Categoria> implements Categoria {
           type: DataTypes.STRING,
           allowNull: false,
         },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+        },
         deletedAt: {
           type: DataTypes.DATE,
           allowNull: true,
           defaultValue: null,
         },
       },
+      
       {
         paranoid: true,
         sequelize,

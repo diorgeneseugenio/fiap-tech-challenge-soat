@@ -1,11 +1,10 @@
+import { ProdutoDTO } from "entities/types/produtoType";
 import { DataTypes, Model, Sequelize } from "sequelize";
-
-import { Produto } from "~core/domain/produto";
 
 import CategoriaModel from "./categoriaModel";
 import ImagensProdutoModel from "./produtoImagensModel";
 
-class ProdutoModel extends Model<Produto> implements Produto {
+class ProdutoModel extends Model<ProdutoDTO> implements ProdutoDTO {
   public id!: string;
   public nome!: string;
   public categoriaId!: string;
@@ -45,6 +44,16 @@ class ProdutoModel extends Model<Produto> implements Produto {
           allowNull: false,
         },
         deletedAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+          defaultValue: null,
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+          defaultValue: null,
+        },
+        updatedAt: {
           type: DataTypes.DATE,
           allowNull: true,
           defaultValue: null,

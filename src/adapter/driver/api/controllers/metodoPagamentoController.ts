@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import MetodoPagamentoService from "~core/applications/services/metodoPagamentoService";
+import MetodoPagamentoService from "useCases/metodoPagamentoService";
 
 import { ListaPagamentosParams, ListaPagamentosPayload } from "../routers/schemas/pagamentoRouter.schema";
 

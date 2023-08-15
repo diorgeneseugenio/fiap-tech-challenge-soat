@@ -1,10 +1,15 @@
-import UsuarioService from "core/applications/services/usuarioService";
 import { Request, Response } from "express";
+import { UsuarioController } from "interfaces/controllers/usuarioController";
+import UsuarioRepository from "interfaces/repositories/usuarioRepository";
 
 import { CriaUsuarioBody, RetornaUsuarioBody } from "../routers/schemas/usuarioRouter.schema";
 
-export default class UsuarioController {
-  constructor(private readonly usuarioService: UsuarioService) { }
+export default class UsuarioAPIController {
+  private dbUsuarioRepository: UsuarioRepository;
+
+  constructor(dbUsuarioRepository: UsuarioRepository) {
+    this.dbUsuarioRepository = dbUsuarioRepository;
+   }
 
   async criaUsuario(
     req: Request<unknown, CriaUsuarioBody>,
@@ -13,7 +18,7 @@ export default class UsuarioController {
     try {
       const usuario = req.body;
 
-      const usuarioCriado = await this.usuarioService.criaUsuario(usuario);
+      const usuarioCriado = await UsuarioController.criaUsuario(this.dbUsuarioRepository, usuario);
       return res.status(201).json({
         status: "success",
         message: usuarioCriado,
@@ -37,7 +42,7 @@ export default class UsuarioController {
     res: Response
   ) {
     try {
-      const usuarios = await this.usuarioService.listaUsuarios();
+      const usuarios = await UsuarioController.listaUsuarios(this.dbUsuarioRepository);
 
       return res.status(200).json({
         status: "success",
@@ -58,7 +63,7 @@ export default class UsuarioController {
     try {
       const { body } = req;
 
-      const usuario = await this.usuarioService.retornaUsuario(body.cpf);
+      const usuario = await UsuarioController.retornaUsuario(this.dbUsuarioRepository, body.cpf);
 
       if (usuario) {
         return res.status(200).json({

@@ -1,18 +1,14 @@
-import { Fatura } from "./fatura";
-import { ItensDoPedido } from "./itemPedido";
+import { ItemDoPedidoDTO } from "./itensPedidoType";
 
-export interface Pedido {
-  id: string;
-  clienteId: string | null /** Todo: Vincular ao cliente */;
-  cliente?: any /** Todo: Vincular ao cliente */;
-  faturaId?: string;
-  fatura?: Fatura;
+export interface PedidoInput {
+  id?: string;
+  clienteId: string;
+  faturaId: string | null;
   status: StatusDoPedido;
   valor: number;
-  itens?: ItensDoPedido;
   retiradoEm: Date | null;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt: Date | null;
   deletedAt: Date | null;
 }
 
@@ -28,3 +24,16 @@ export const statusDoPedido = {
 
 export type StatusDoPedido =
   (typeof statusDoPedido)[keyof typeof statusDoPedido];
+
+export interface PedidoDTO {
+  id: string;
+  clienteId: string;
+  faturaId: string | null;
+  status: StatusDoPedido;
+  valor: number;
+  itens?: ItemDoPedidoDTO[];
+  retiradoEm: Date | null;
+  createdAt: Date;
+  deletedAt: Date | null;
+  updatedAt: Date | null;
+}

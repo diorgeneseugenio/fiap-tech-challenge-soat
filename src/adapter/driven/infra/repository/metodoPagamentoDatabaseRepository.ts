@@ -1,5 +1,5 @@
-import MetodoPagamentoRepository from "~core/applications/repositories/metodoPagamentoRepository";
-import { MetodoDePagamento } from "~core/domain/metodoDePagamento";
+import { MetodoDePagamento } from "entities/metodoDePagamento";
+import MetodoPagamentoRepository from "interfaces/repositories/metodoPagamentoRepository";
 
 import MetodoDePagamentoModel from "../models/metodoDePagamentoModel";
 

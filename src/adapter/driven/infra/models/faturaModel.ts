@@ -1,12 +1,11 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
-
 import {
   Fatura,
   StatusDePagamento,
   statusDePagamento,
-} from "~core/domain/fatura";
-import { MetodoDePagamento } from "~core/domain/metodoDePagamento";
-import { Pedido } from "~core/domain/pedido";
+} from "entities/fatura";
+import { MetodoDePagamento } from "entities/metodoDePagamento";
+import { PedidoDTO } from "entities/types/pedidoType";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
 import MetodoDePagamentoModel from "./metodoDePagamentoModel";
 import PedidoModel from "./pedidoModel";
@@ -14,7 +13,7 @@ import PedidoModel from "./pedidoModel";
 class FaturaModel extends Model<Fatura> implements Fatura {
   public id!: string;
   public pedidoId!: string;
-  public pedido?: Pedido;
+  public pedido?: PedidoDTO;
   public metodoDePagamentoId!: string;
   public metodoDePagamento?: MetodoDePagamento;
   public statusDePagamento!: StatusDePagamento;

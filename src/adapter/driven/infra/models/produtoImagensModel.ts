@@ -1,12 +1,11 @@
+import { ImagemProdutoDTO } from "entities/types/produtoType";
 import { DataTypes, Model, Sequelize } from "sequelize";
-
-import { ImagemProduto } from "~core/domain/produto";
 
 import ProdutoModel from "./produtoModel";
 
 class ImagensProdutoModel
-  extends Model<ImagemProduto>
-  implements ImagemProduto
+  extends Model<ImagemProdutoDTO>
+  implements ImagemProdutoDTO
 {
   public id!: string;
   public url!: string;
@@ -33,6 +32,16 @@ class ImagensProdutoModel
           onDelete: "CASCADE",
         },
         deletedAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+          defaultValue: null,
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+          defaultValue: null,
+        },
+        updatedAt: {
           type: DataTypes.DATE,
           allowNull: true,
           defaultValue: null,

@@ -1,5 +1,5 @@
-import ProdutoRepository from "~core/applications/repositories/produtoRepository";
-import { ImagemProduto, Produto } from "~core/domain/produto";
+import { ImagemProdutoDTO, ProdutoDTO } from "entities/types/produtoType";
+import ProdutoRepository from "interfaces/repositories/produtoRepository";
 
 import CategoriaModel from "../models/categoriaModel";
 import ImagensProdutoModel from "../models/produtoImagensModel";
@@ -7,10 +7,10 @@ import ProdutoModel from "../models/produtoModel";
 
 class ProdutosDataBaseRepository implements ProdutoRepository {
   async adicionaImagens(
-    imagensProduto: ImagemProduto[]
-  ): Promise<ImagemProduto[]> {
+    imagensProduto: ImagemProdutoDTO[]
+  ): Promise<ImagemProdutoDTO[]> {
     try {
-      const produtoExiste = ProdutoModel.findByPk(imagensProduto[0]?.produtoId);
+      const produtoExiste = ProdutoModel.findByPk(imagensProduto[0]?.produtoId as string);
       if (!produtoExiste) {
         throw new Error("produto_inexistente");
       }
@@ -31,10 +31,10 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
     }
   }
 
-  async criaProduto(produto: Produto): Promise<Produto> {
+  async criaProduto(produto: ProdutoDTO): Promise<ProdutoDTO> {
     try {
       const categoriaExiste = await CategoriaModel.findByPk(
-        produto.categoriaId
+        produto?.categoriaId as string
       );
 
       if (!categoriaExiste) {
@@ -75,11 +75,11 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
 
   async editaProduto(
     idProduto: string,
-    produto: Produto
-  ): Promise<Produto | null> {
+    produto: ProdutoDTO
+  ): Promise<ProdutoDTO | null> {
     try {
       const categoriaExiste = await CategoriaModel.findByPk(
-        produto.categoriaId
+        produto?.categoriaId as string
       );
 
       if (!categoriaExiste) {
@@ -99,7 +99,7 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
     }
   }
 
-  async listaProdutos(filtro: object): Promise<Produto[]> {
+  async listaProdutos(filtro: object): Promise<ProdutoDTO[]> {
     try {
       const produtos = await ProdutoModel.findAll({
         attributes: {
@@ -124,7 +124,7 @@ class ProdutosDataBaseRepository implements ProdutoRepository {
     }
   }
 
-  async retornaProduto(idProduto: string): Promise<Produto | null> {
+  async retornaProduto(idProduto: string): Promise<ProdutoDTO | null> {
     try {
       const produto = await ProdutoModel.findOne({
         attributes: {

@@ -1,8 +1,8 @@
 import express from "express";
 
-import UsuarioService from "../../../../core/applications/services/usuarioService";
-import DBUsuariosRepository from "../../../driven/infra/repository/usuarioDatabaseRepository";
-import UsuarioController from "../controllers/usuarioController";
+import DBUsuariosRepository from "~adapter/driven/infra/repository/usuarioDatabaseRepository";
+
+import UsuarioAPIController from "../controllers/usuarioController";
 
 import { ListaPagamentosSchema } from "./schemas/pagamentoRouter.schema";
 import { CriaUsuarioSchema, RetornaUsuarioSchema } from "./schemas/usuarioRouter.schema";
@@ -11,8 +11,7 @@ import { validaRequisicao } from "./utils";
 const usuarioRouter = express.Router();
 
 const dbUsuariosRepository = new DBUsuariosRepository();
-const usuarioService = new UsuarioService(dbUsuariosRepository);
-const usuarioController = new UsuarioController(usuarioService);
+const usuarioAPIController = new UsuarioAPIController(dbUsuariosRepository);
 
 /** 
  * @openapi
@@ -99,7 +98,7 @@ const usuarioController = new UsuarioController(usuarioService);
  */
 usuarioRouter.post("/",
   validaRequisicao(CriaUsuarioSchema),
-  usuarioController.criaUsuario.bind(usuarioController)
+  usuarioAPIController.criaUsuario.bind(usuarioAPIController)
 );
 
 /**
@@ -129,7 +128,7 @@ usuarioRouter.post("/",
  */
 usuarioRouter.get("/",
   validaRequisicao(ListaPagamentosSchema),
-  usuarioController.listaUsuarios.bind(usuarioController)
+  usuarioAPIController.listaUsuarios.bind(usuarioAPIController)
 );
 
 /**
@@ -181,7 +180,7 @@ usuarioRouter.get("/",
  */
 usuarioRouter.post("/query",
   validaRequisicao(RetornaUsuarioSchema),
-  usuarioController.retornaUsuario.bind(usuarioController)
+  usuarioAPIController.retornaUsuario.bind(usuarioAPIController)
 );
 
 export default usuarioRouter;

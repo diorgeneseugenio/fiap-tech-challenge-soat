@@ -1,6 +1,6 @@
-import { MetodoDePagamento } from "~core/domain/metodoDePagamento";
+import { MetodoDePagamento } from "entities/metodoDePagamento";
+import MetodoPagamentoRepository from "interfaces/repositories/metodoPagamentoRepository";
 
-import MetodoPagamentoRepository from "../repositories/metodoPagamentoRepository";
 
 export default class MetodoPagamentoService {
     constructor(

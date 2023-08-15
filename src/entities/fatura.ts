@@ -1,5 +1,4 @@
 import { MetodoDePagamento } from "./metodoDePagamento";
-import { Pedido } from "./pedido";
 
 export const statusDePagamento = {
   AGUARDANDO_PAGAMENTO: "Aguardando pagamento",
@@ -14,7 +13,6 @@ export type StatusDePagamento =
 export interface Fatura {
   id: string;
   pedidoId: string;
-  pedido?: Pedido;
   metodoDePagamentoId: string;
   metodoDePagamento?: MetodoDePagamento;
   statusDePagamento: StatusDePagamento;
