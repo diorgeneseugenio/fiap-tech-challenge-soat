@@ -1,8 +1,9 @@
-import { UsuarioDTO } from "entities/types/UsuarioType";
-import Usuario from "entities/usuario";
-import CPF from "entities/valueObjects/cpf";
-import Email from "entities/valueObjects/email";
 import { UsuarioGateway } from "interfaces/gateways/usuarioGateway";
+
+import { UsuarioDTO } from "~domain/entities/types/UsuarioType";
+import Usuario from "~domain/entities/usuario";
+import CPF from "~domain/entities/valueObjects/cpf";
+import Email from "~domain/entities/valueObjects/email";
 
 
 export default class UsuarioUseCase {

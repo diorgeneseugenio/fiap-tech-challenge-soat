@@ -1,7 +1,8 @@
-import { CategoriaDTO, CategoriaInput } from "entities/types/CategoriaType";
 import { CategoriaGateway } from "interfaces/gateways/categoriaGateway";
-import CategoriaRepository from "interfaces/repositories/categoriaRepository";
-import CategoriaUseCase from "useCases/categoriaUseCase";
+
+import { CategoriaDTO, CategoriaInput } from "~domain/entities/types/CategoriaType";
+import CategoriaRepository from "~domain/repositories/categoriaRepository";
+import CategoriaUseCase from "~domain/useCases/categoriaUseCase";
 
 export class CategoriaController {
   static async criarCategoria(

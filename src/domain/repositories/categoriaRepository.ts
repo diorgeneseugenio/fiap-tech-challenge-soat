@@ -1,4 +1,4 @@
-import { CategoriaDTO } from "entities/types/CategoriaType";
+import { CategoriaDTO } from "~domain/entities/types/CategoriaType";
 
 export default interface CategoriaRepository {
   criaCategoria(Categoria: CategoriaDTO): Promise<CategoriaDTO>;

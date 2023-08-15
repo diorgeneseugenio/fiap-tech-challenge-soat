@@ -1,9 +1,8 @@
-
-import UsuarioInput, { UsuarioDTO } from "entities/types/UsuarioType";
 import { UsuarioGateway } from "interfaces/gateways/usuarioGateway";
-import UsuarioRepository from "interfaces/repositories/usuarioRepository";
 
-import UsuarioUseCase from "useCases/usuarioUseCase";
+import UsuarioInput, { UsuarioDTO } from "~domain/entities/types/UsuarioType";
+import UsuarioRepository from "~domain/repositories/usuarioRepository";
+import UsuarioUseCase from "~domain/useCases/usuarioUseCase";
 
 export class UsuarioController {
   static async criaUsuario(

@@ -1,5 +1,5 @@
-import { ImagemProdutoDTO, ProdutoDTO } from "entities/types/produtoType";
-import ProdutoRepository from "interfaces/repositories/produtoRepository";
+import { ImagemProdutoDTO, ProdutoDTO } from "~domain/entities/types/produtoType";
+import ProdutoRepository from "~domain/repositories/produtoRepository";
 
 export class ProdutoGateway implements ProdutoRepository {
   private produtoRepository: ProdutoRepository;

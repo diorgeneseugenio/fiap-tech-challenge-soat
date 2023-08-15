@@ -1,12 +1,13 @@
 
-import { ItemDoPedidoDTO } from "entities/types/itensPedidoType";
-import { PedidoDTO, statusDoPedido } from "entities/types/pedidoType";
+import { WhereOptions } from "sequelize";
+import { v4 as uuidv4 } from "uuid";
+
+import { ItemDoPedidoDTO } from "~domain/entities/types/itensPedidoType";
+import { PedidoDTO, statusDoPedido } from "~domain/entities/types/pedidoType";
 import PedidoRepository, {
   AdicionaItemInput,
   RemoveItemInput,
-} from "interfaces/repositories/pedidoRepository";
-import { WhereOptions } from "sequelize";
-import { v4 as uuidv4 } from "uuid";
+} from "~domain/repositories/pedidoRepository";
 
 import ItemDoPedidoModel from "../models/itemPedidoModel";
 import PedidoModel from "../models/pedidoModel";

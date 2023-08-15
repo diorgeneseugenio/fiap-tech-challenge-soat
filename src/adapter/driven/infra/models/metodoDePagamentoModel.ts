@@ -1,5 +1,6 @@
-import { MetodoDePagamento } from "entities/metodoDePagamento";
 import { DataTypes, Model, Sequelize } from "sequelize";
+
+import MetodoDePagamento from "~domain/entities/metodoDePagamento";
 
 class MetodoDePagamentoModel
   extends Model<MetodoDePagamento>

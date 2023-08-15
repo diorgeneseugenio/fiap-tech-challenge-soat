@@ -1,4 +1,4 @@
-import CheckoutRepository, { GeraPagamentoInput } from "interfaces/repositories/checkoutRepository";
+import CheckoutRepository, { GeraPagamentoInput } from "~domain/repositories/checkoutRepository";
 
 export class CheckoutGateway implements CheckoutRepository {
   private checkoutRepository: CheckoutRepository;

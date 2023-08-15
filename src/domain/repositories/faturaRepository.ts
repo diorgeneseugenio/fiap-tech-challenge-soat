@@ -1,4 +1,4 @@
-import { Fatura, StatusDePagamento } from "entities/fatura";
+import { Fatura, StatusDePagamento } from "~domain/entities/fatura";
 
 export type CriaFaturaInput = {
   pedidoId: string;

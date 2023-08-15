@@ -1,5 +1,5 @@
-import { Fatura, StatusDePagamento } from "entities/fatura";
-import Pedido  from "entities/pedido";
+import { Fatura, StatusDePagamento } from "~domain/entities/fatura";
+import Pedido  from "~domain/entities/pedido";
 
 export interface Pagamento {
   qrCode?: string;

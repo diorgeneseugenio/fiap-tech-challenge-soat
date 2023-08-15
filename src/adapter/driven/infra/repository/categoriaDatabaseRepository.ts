@@ -1,5 +1,5 @@
-import { CategoriaDTO } from "entities/types/CategoriaType";
-import CategoriaRepository from "interfaces/repositories/categoriaRepository";
+import { CategoriaDTO } from "~domain/entities/types/CategoriaType";
+import CategoriaRepository from "~domain/repositories/categoriaRepository";
 
 import CategoriaModel from "../models/categoriaModel";
 

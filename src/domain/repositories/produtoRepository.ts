@@ -1,4 +1,4 @@
-import { ImagemProdutoDTO, ProdutoDTO } from "entities/types/produtoType";
+import { ImagemProdutoDTO, ProdutoDTO } from "~domain/entities/types/produtoType";
 
 export default interface ProdutoRepository {
   adicionaImagens(imagens: ImagemProdutoDTO[]): Promise<ImagemProdutoDTO[]>; // TODO

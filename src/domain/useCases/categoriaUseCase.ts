@@ -1,6 +1,7 @@
-import Categoria from "entities/categoria";
-import { CategoriaDTO, CategoriaInput } from "entities/types/CategoriaType";
 import { CategoriaGateway } from "interfaces/gateways/categoriaGateway";
+
+import Categoria from "~domain/entities/categoria";
+import { CategoriaDTO, CategoriaInput } from "~domain/entities/types/CategoriaType";
 
 export default class CategoriaUseCase {
   static async criaCategoria(categoriaGateway: CategoriaGateway, categoriaInput: CategoriaInput): Promise<CategoriaDTO> {

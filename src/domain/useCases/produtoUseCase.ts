@@ -1,7 +1,8 @@
-import ImagemProduto from "entities/ImagemProduto";
-import Produto from "entities/produto";
-import { ImagemProdutoInput, ProdutoDTO, ProdutoInput } from "entities/types/produtoType";
 import { ProdutoGateway } from "interfaces/gateways/produtoGateway";
+
+import ImagemProduto from "~domain/entities/ImagemProduto";
+import Produto from "~domain/entities/produto";
+import { ImagemProdutoInput, ProdutoDTO, ProdutoInput } from "~domain/entities/types/produtoType";
 
 
 export default class ProdutoUseCase {

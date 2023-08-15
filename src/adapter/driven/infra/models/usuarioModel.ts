@@ -1,5 +1,6 @@
-import { UsuarioDTO } from 'entities/types/UsuarioType';
 import { DataTypes, Model, Sequelize } from 'sequelize';
+
+import { UsuarioDTO } from '~domain/entities/types/UsuarioType';
 
 import PedidoModel from './pedidoModel';
 

@@ -1,4 +1,4 @@
-import { MetodoDePagamento } from "./metodoDePagamento";
+import MetodoDePagamento from "./metodoDePagamento";
 
 export const statusDePagamento = {
   AGUARDANDO_PAGAMENTO: "Aguardando pagamento",

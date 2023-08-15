@@ -1,8 +1,8 @@
-import { ImagemProdutoInput, ProdutoDTO, ProdutoInput } from "entities/types/produtoType";
 import { ProdutoGateway } from "interfaces/gateways/produtoGateway";
-import ProdutoRepository from "interfaces/repositories/produtoRepository";
 
-import ProdutoUseCase from "useCases/produtoUseCase";
+import { ImagemProdutoInput, ProdutoDTO, ProdutoInput } from "~domain/entities/types/produtoType";
+import ProdutoRepository from "~domain/repositories/produtoRepository";
+import ProdutoUseCase from "~domain/useCases/produtoUseCase";
 
 export class ProdutoController {
   static async adicionaImagens(dbProduto: ProdutoRepository, imagens: ImagemProdutoInput[]) {

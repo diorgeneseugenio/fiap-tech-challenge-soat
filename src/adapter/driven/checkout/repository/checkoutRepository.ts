@@ -1,7 +1,8 @@
-import { Fatura, StatusDePagamento, statusDePagamento } from 'entities/fatura';
-import CheckoutRepository, { GeraPagamentoInput } from "interfaces/repositories/checkoutRepository";
-import FaturaRepository from 'interfaces/repositories/faturaRepository';
 import QRCode from 'qrcode';
+
+import { Fatura, StatusDePagamento, statusDePagamento } from '~domain/entities/fatura';
+import CheckoutRepository, { GeraPagamentoInput } from "~domain/repositories/checkoutRepository";
+import FaturaRepository from '~domain/repositories/faturaRepository';
 
 
 // FAKE CHECKOUT 

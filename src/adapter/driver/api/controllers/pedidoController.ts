@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { PedidoController } from "interfaces/controllers/pedidoController";
-import CheckoutRepository from "interfaces/repositories/checkoutRepository";
-import FaturaRepository from "interfaces/repositories/faturaRepository";
-import PedidoRepository from "interfaces/repositories/pedidoRepository";
-import ProdutoRepository from "interfaces/repositories/produtoRepository";
+
+import CheckoutRepository from "~domain/repositories/checkoutRepository";
+import FaturaRepository from "~domain/repositories/faturaRepository";
+import PedidoRepository from "~domain/repositories/pedidoRepository";
+import ProdutoRepository from "~domain/repositories/produtoRepository";
 
 import {
   AdicionarItemBody,

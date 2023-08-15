@@ -1,9 +1,10 @@
-import { Fatura } from "entities/fatura";
+import { v4 as uuidv4 } from "uuid";
+
+import { Fatura } from "~domain/entities/fatura";
 import FaturaRepository, {
   AtualizaFaturaInput,
   CriaFaturaInput,
-} from "interfaces/repositories/faturaRepository";
-import { v4 as uuidv4 } from "uuid";
+} from "~domain/repositories/faturaRepository";
 
 import FaturaModel from "../models/faturaModel";
 

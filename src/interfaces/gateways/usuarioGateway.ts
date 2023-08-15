@@ -1,5 +1,5 @@
-import { UsuarioDTO } from "entities/types/UsuarioType";
-import UsuarioRepository from "interfaces/repositories/usuarioRepository";
+import { UsuarioDTO } from "~domain/entities/types/UsuarioType";
+import UsuarioRepository from "~domain/repositories/usuarioRepository";
 
 export class UsuarioGateway implements UsuarioRepository {
   private usuarioRepository: UsuarioRepository;

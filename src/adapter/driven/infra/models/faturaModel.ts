@@ -1,11 +1,12 @@
+import { DataTypes, Model, Sequelize } from "sequelize";
+
 import {
   Fatura,
   StatusDePagamento,
   statusDePagamento,
-} from "entities/fatura";
-import { MetodoDePagamento } from "entities/metodoDePagamento";
-import { PedidoDTO } from "entities/types/pedidoType";
-import { DataTypes, Model, Sequelize } from "sequelize";
+} from "~domain/entities/fatura";
+import MetodoDePagamento from "~domain/entities/metodoDePagamento";
+import { PedidoDTO } from "~domain/entities/types/pedidoType";
 
 import MetodoDePagamentoModel from "./metodoDePagamentoModel";
 import PedidoModel from "./pedidoModel";

@@ -1,7 +1,8 @@
-import { Fatura } from "entities/fatura";
-import { ItemDoPedidoDTO } from "entities/types/itensPedidoType";
-import { PedidoDTO, StatusDoPedido, statusDoPedido } from "entities/types/pedidoType";
 import { DataTypes, Model, Sequelize } from "sequelize";
+
+import { Fatura } from "~domain/entities/fatura";
+import { ItemDoPedidoDTO } from "~domain/entities/types/itensPedidoType";
+import { PedidoDTO, StatusDoPedido, statusDoPedido } from "~domain/entities/types/pedidoType";
 
 import FaturaModel from "./faturaModel";
 import ItemDoPedidoModel from "./itemPedidoModel";

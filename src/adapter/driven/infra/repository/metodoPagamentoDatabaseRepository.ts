@@ -1,10 +1,10 @@
-import { MetodoDePagamento } from "entities/metodoDePagamento";
-import MetodoPagamentoRepository from "interfaces/repositories/metodoPagamentoRepository";
+import { MetodoPagamentoDTO } from "~domain/entities/types/metodoPagamentoType";
+import MetodoPagamentoRepository from "~domain/repositories/metodoPagamentoRepository";
 
 import MetodoDePagamentoModel from "../models/metodoDePagamentoModel";
 
 export default class MetodoPagamentoDatabaseRepository implements MetodoPagamentoRepository {
-    listaPagamentos(): Promise<MetodoDePagamento[]> {
+    listaPagamentos(): Promise<MetodoPagamentoDTO[]> {
         try {
             return MetodoDePagamentoModel.findAll({ where: { ativo: 1 } });
         } catch (err: any) {

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { CategoriaController } from "interfaces/controllers/categoriaController";
-import CategoriaRepository from "interfaces/repositories/categoriaRepository";
+
+import CategoriaRepository from "~domain/repositories/categoriaRepository";
 
 import { 
   CriaCategoriaPayload,

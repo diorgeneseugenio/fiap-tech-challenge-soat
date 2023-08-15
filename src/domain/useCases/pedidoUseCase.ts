@@ -1,11 +1,12 @@
-import ItemPedido from "entities/itemPedido";
-import Pedido from "entities/pedido";
-import Produto from "entities/produto";
-import { ItemDoPedidoInput } from "entities/types/itensPedidoType";
-import { PedidoDTO, PedidoInput } from "entities/types/pedidoType";
 import { CheckoutGateway } from "interfaces/gateways/checkoutGateway";
 import { PedidoGateway } from "interfaces/gateways/pedidoGateway";
 import { ProdutoGateway } from "interfaces/gateways/produtoGateway";
+
+import ItemPedido from "~domain/entities/itemPedido";
+import Pedido from "~domain/entities/pedido";
+import Produto from "~domain/entities/produto";
+import { ItemDoPedidoInput } from "~domain/entities/types/itensPedidoType";
+import { PedidoDTO, PedidoInput } from "~domain/entities/types/pedidoType";
 
 import {
   RealizaPedidoInput,

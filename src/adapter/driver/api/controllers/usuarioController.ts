@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UsuarioController } from "interfaces/controllers/usuarioController";
-import UsuarioRepository from "interfaces/repositories/usuarioRepository";
+
+import UsuarioRepository from "~domain/repositories/usuarioRepository";
 
 import { CriaUsuarioBody, RetornaUsuarioBody } from "../routers/schemas/usuarioRouter.schema";
 

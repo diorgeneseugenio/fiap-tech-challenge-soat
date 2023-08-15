@@ -1,6 +1,6 @@
-import Pedido from "entities/pedido";
-import { ItemDoPedidoDTO } from "entities/types/itensPedidoType";
-import { PedidoDTO, StatusDoPedido } from "entities/types/pedidoType";
+import Pedido from "~domain/entities/pedido";
+import { ItemDoPedidoDTO } from "~domain/entities/types/itensPedidoType";
+import { PedidoDTO, StatusDoPedido } from "~domain/entities/types/pedidoType";
 
 export type CriaPedidoInput = {
   clienteId?: string | null;

@@ -1,4 +1,4 @@
-import { UsuarioDTO } from "entities/types/UsuarioType";
+import { UsuarioDTO } from "~domain/entities/types/UsuarioType";
 
 export default interface UsuarioRepository {
     criaUsuario(Usuario: UsuarioDTO): Promise<UsuarioDTO>;

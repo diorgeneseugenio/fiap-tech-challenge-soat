@@ -1,5 +1,4 @@
 import express from "express";
-import MetodoPagamentoService from "useCases/metodoPagamentoService";
 
 import MetodoPagamentoDatabaseRepository from "~adapter/driven/infra/repository/metodoPagamentoDatabaseRepository";
 
@@ -11,8 +10,7 @@ import { validaRequisicao } from "./utils";
 const metodoPagamento = express.Router();
 
 const dbMetodoPagamentoRepository = new MetodoPagamentoDatabaseRepository();
-const metodoPagamentoService = new MetodoPagamentoService(dbMetodoPagamentoRepository);
-const metodoPagamentoController = new MetodoPagamentoController(metodoPagamentoService);
+const metodoPagamentoController = new MetodoPagamentoController(dbMetodoPagamentoRepository);
 
 /**
  * @openapi

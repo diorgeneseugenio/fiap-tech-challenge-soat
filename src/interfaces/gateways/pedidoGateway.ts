@@ -1,7 +1,7 @@
-import Pedido from "entities/pedido";
-import { ItemDoPedidoDTO } from "entities/types/itensPedidoType";
-import { PedidoDTO } from "entities/types/pedidoType";
-import PedidoRepository, { AdicionaItemInput, RemoveItemInput } from "interfaces/repositories/pedidoRepository";
+import Pedido from "~domain/entities/pedido";
+import { ItemDoPedidoDTO } from "~domain/entities/types/itensPedidoType";
+import { PedidoDTO } from "~domain/entities/types/pedidoType";
+import PedidoRepository, { AdicionaItemInput, RemoveItemInput } from "~domain/repositories/pedidoRepository";
 
 export class PedidoGateway implements PedidoRepository {
   private pedidoRepository: PedidoRepository;

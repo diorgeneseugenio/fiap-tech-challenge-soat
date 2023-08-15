@@ -1,5 +1,6 @@
-import { ImagemProdutoDTO } from "entities/types/produtoType";
 import { DataTypes, Model, Sequelize } from "sequelize";
+
+import { ImagemProdutoDTO } from "~domain/entities/types/produtoType";
 
 import ProdutoModel from "./produtoModel";
 

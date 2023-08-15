@@ -1,7 +1,8 @@
-import { ImagemProdutoInput } from "entities/types/produtoType";
 import { Request, Response } from "express";
 import { ProdutoController } from "interfaces/controllers/produtoController";
-import ProdutoRepository from "interfaces/repositories/produtoRepository";
+
+import { ImagemProdutoInput } from "~domain/entities/types/produtoType";
+import ProdutoRepository from "~domain/repositories/produtoRepository";
 
 import { AdicionarItemBody, AdicionarItemParams } from "../routers/schemas/pedidoRouter.schema";
 import {

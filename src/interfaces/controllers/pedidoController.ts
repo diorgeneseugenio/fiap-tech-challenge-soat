@@ -1,12 +1,13 @@
-import { RealizaPedidoInput } from "entities/types/pedidoService.type";
-import { PedidoDTO, PedidoInput } from "entities/types/pedidoType";
 import { CheckoutGateway } from "interfaces/gateways/checkoutGateway";
 import { PedidoGateway } from "interfaces/gateways/pedidoGateway";
 import { ProdutoGateway } from "interfaces/gateways/produtoGateway";
-import CheckoutRepository from "interfaces/repositories/checkoutRepository";
-import PedidoRepository, { AdicionaItemInput, RemoveItemInput } from "interfaces/repositories/pedidoRepository";
-import ProdutoRepository from "interfaces/repositories/produtoRepository";
-import PedidoUseCase from "useCases/pedidoUseCase";
+
+import { RealizaPedidoInput } from "~domain/entities/types/pedidoService.type";
+import { PedidoDTO, PedidoInput } from "~domain/entities/types/pedidoType";
+import CheckoutRepository from "~domain/repositories/checkoutRepository";
+import PedidoRepository, { AdicionaItemInput, RemoveItemInput } from "~domain/repositories/pedidoRepository";
+import ProdutoRepository from "~domain/repositories/produtoRepository";
+import PedidoUseCase from "~domain/useCases/pedidoUseCase";
 
 export class PedidoController {
 

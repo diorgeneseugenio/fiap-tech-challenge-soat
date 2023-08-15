@@ -1,6 +1,7 @@
-import { UsuarioDTO } from "entities/types/UsuarioType";
-import usuarioRepository from "interfaces/repositories/usuarioRepository";
 import { Op } from "sequelize";
+
+import { UsuarioDTO } from "~domain/entities/types/UsuarioType";
+import usuarioRepository from "~domain/repositories/usuarioRepository";
 
 import UsuarioModel from "../models/usuarioModel";
 
