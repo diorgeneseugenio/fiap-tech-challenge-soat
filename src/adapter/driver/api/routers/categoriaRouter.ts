@@ -1,14 +1,20 @@
 import express from "express";
+import { Request, Response } from "express";
+import { CategoriaController } from "interfaces/controllers/categoriaController";
 
 import DBCategoriasRepository from "~adapter/driven/database/repository/categoriaDatabaseRepository";
 
-import CategoriaAPIController from "../controllers/categoriaController";
-
 import {
+  CriaCategoriaPayload,
   CriaCategoriaSchema,
+  DeletaCategoriaParams,
   DeletaCategoriaSchema,
+  EditaCategoriaParams,
+  EditaCategoriaPayload,
   EditaCategoriaSchema,
+  ListaCategoriaPayload,
   ListaCategoriaSchema,
+  RetornaCategoriaParams,
   RetornaCategoriaSchema,
 } from "./schemas/categoriaRouter.schema";
 import { validaRequisicao } from "./utils";
@@ -16,7 +22,6 @@ import { validaRequisicao } from "./utils";
 const categoriaRouter = express.Router();
 
 const dbCategoriasRepository = new DBCategoriasRepository();
-const categoriaAPIController = new CategoriaAPIController(dbCategoriasRepository);
 
 /** 
  * @openapi
@@ -84,7 +89,24 @@ const categoriaAPIController = new CategoriaAPIController(dbCategoriasRepository
  */
 categoriaRouter.post("/",
   validaRequisicao(CriaCategoriaSchema),
-  categoriaAPIController.criaCategoria.bind(categoriaAPIController)
+  async (req: Request<unknown, CriaCategoriaPayload>, res: Response) => {
+    try {
+      const categoria = req.body;
+
+      const categoriaCriado = await CategoriaController.criarCategoria(dbCategoriasRepository,
+        categoria
+      );
+      return res.status(201).json({
+        status: "success",
+        message: categoriaCriado,
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 /**
@@ -114,7 +136,21 @@ categoriaRouter.post("/",
  */
 categoriaRouter.get("/",
   validaRequisicao(ListaCategoriaSchema),
-  categoriaAPIController.listaCategorias.bind(categoriaAPIController)
+  async (req: Request<unknown, ListaCategoriaPayload>, res: Response) => {
+    try {
+      const categorias = await CategoriaController.listaCategorias(dbCategoriasRepository);
+
+      return res.status(200).json({
+        status: "success",
+        categorias,
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 /**
  * @openapi
@@ -163,7 +199,29 @@ categoriaRouter.get("/",
  */
 categoriaRouter.get("/:id",
   validaRequisicao(RetornaCategoriaSchema),
-  categoriaAPIController.retornaCategoria.bind(categoriaAPIController)
+  async (req: Request<RetornaCategoriaParams, unknown>, res: Response) => {
+    try {
+      const { id } = req.params;
+
+      const categoria = await CategoriaController.retornaCategoria(dbCategoriasRepository,id);
+
+      if (categoria) {
+        return res.status(200).json({
+          status: "success",
+          categoria,
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Categoria não encontrada!",
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 /**
  * @openapi
@@ -210,7 +268,28 @@ categoriaRouter.get("/:id",
  */
 categoriaRouter.delete("/:id", 
   validaRequisicao(DeletaCategoriaSchema),
-  categoriaAPIController.deletaCategoria.bind(categoriaAPIController)
+  async (req: Request<DeletaCategoriaParams, unknown>, res: Response) => {
+    try {
+      const { id } = req.params;
+
+      const categoriaDeletado = await CategoriaController.deletaCategoria(dbCategoriasRepository, id);
+
+      if (categoriaDeletado > 0) {
+        return res.status(200).json({
+          status: "success",
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Categoria não encontrada!",
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 /**
  * @openapi
@@ -270,7 +349,33 @@ categoriaRouter.delete("/:id",
  */
 categoriaRouter.put("/:id",
   validaRequisicao(EditaCategoriaSchema), 
-  categoriaAPIController.editaCategoria.bind(categoriaAPIController)
+  async (req: Request<EditaCategoriaParams, EditaCategoriaPayload>, res: Response) => {
+    try {
+      const { id } = req.params;
+      const categoria = req.body;
+
+      const categoriaAtualizada = await CategoriaController.editaCategoria(dbCategoriasRepository,
+        id,
+        categoria
+      );
+
+      if (categoriaAtualizada) {
+        return res.status(200).json({
+          status: "success",
+          message: categoriaAtualizada,
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Categoria não encontrada!",
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 

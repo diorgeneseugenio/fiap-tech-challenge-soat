@@ -1,20 +1,30 @@
 import express from "express";
+import { Request, Response } from "express";
+import { PedidoController } from "interfaces/controllers/pedidoController";
 
 import FakeCheckout from "~adapter/driven/checkout/repository/checkoutRepository";
 import FaturaDataBaseRepository from "~adapter/driven/database/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~adapter/driven/database/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~adapter/driven/database/repository/produtoDatabaseRepository";
 
-import PedidoAPIController from "../controllers/pedidoController";
-
 import {
+  AdicionarItemBody,
+  AdicionarItemParams,
   adicionarItemSchema,
+  EntregarPedidoParams,
   entregarPedidoSchema,
+  FinalizarPreparoParams,
   finalizarPreparoSchema,
+  IniciaPedidoPayload,
   iniciaPedidoSchema,
+  IniciarPreparoParams,
   iniciarPreparoSchema,
+  ListaPedidosQuery,
   listarPedidosSchema,
+  RealizarPedidoBody,
+  RealizarPedidoParams,
   realizarPedidoSchema,
+  RemoverItemParams,
   removerItemSchema,
 } from "./schemas/pedidoRouter.schema";
 import { validaRequisicao } from "./utils";
@@ -26,8 +36,6 @@ const dbProdutoRepository = new ProdutosDataBaseRepository();
 const dbFaturaRepository = new FaturaDataBaseRepository();
 const checkoutRepository = new FakeCheckout(dbFaturaRepository); // TODO
 
-
-const pedidoAPIController = new PedidoAPIController(dbFaturaRepository, dbPedidosRepository, dbProdutoRepository, checkoutRepository );
 
 /**
  * @openapi
@@ -67,7 +75,29 @@ const pedidoAPIController = new PedidoAPIController(dbFaturaRepository, dbPedido
 pedidoRouter.post(
   "/:id/adicionar-item",
   validaRequisicao(adicionarItemSchema),
-  pedidoAPIController.adicionaItem.bind(pedidoAPIController)
+  async (
+    req: Request<AdicionarItemParams, AdicionarItemBody>,
+    res: Response
+  ) => {
+    try {
+      const { body, params } = req;
+
+      const pedido = await PedidoController.adicionaItem(dbPedidosRepository, dbProdutoRepository, {
+        ...body,
+        pedidoId: params.id,
+      });
+
+      return res.status(201).json({
+        status: "success",
+        message: pedido,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 /**
@@ -101,7 +131,26 @@ pedidoRouter.post(
 pedidoRouter.delete(
   "/:id/remover-item/:idItem",
   validaRequisicao(removerItemSchema),
-  pedidoAPIController.removeItem.bind(pedidoAPIController)
+  async (req: Request<RemoverItemParams>, res: Response) => {
+    try {
+      const { params } = req;
+
+      const pedido = await PedidoController.removeItem(dbPedidosRepository, dbProdutoRepository, {
+        pedidoId: params.id,
+        itemId: params.idItem,
+      });
+
+      return res.status(201).json({
+        status: "success",
+        message: pedido,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 /**
@@ -131,7 +180,26 @@ pedidoRouter.delete(
 pedidoRouter.post(
   "/iniciar-pedido",
   validaRequisicao(iniciaPedidoSchema),
-  pedidoAPIController.iniciaPedido.bind(pedidoAPIController)
+  async (
+    req: Request<unknown, IniciaPedidoPayload>,
+    res: Response
+  ) => {
+    try {
+      const { body } = req;
+
+      const pedidoCriado = await PedidoController.iniciaPedido(dbPedidosRepository, body);
+
+      return res.status(201).json({
+        status: "success",
+        message: pedidoCriado,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 /**
@@ -168,7 +236,30 @@ pedidoRouter.post(
 pedidoRouter.patch(
   "/realizar-pedido/:id",
   validaRequisicao(realizarPedidoSchema),
-  pedidoAPIController.realizaPedido.bind(pedidoAPIController)
+  async (
+    req: Request<RealizarPedidoParams, RealizarPedidoBody>,
+    res: Response
+  ) => {
+    try {
+      const { params, body } = req;
+
+      const pedidoCriado = await PedidoController.realizaPedido(checkoutRepository, dbPedidosRepository, dbProdutoRepository, {
+        pedidoId: params.id,
+        metodoDePagamentoId: body.metodoDePagamentoId,
+      });
+
+      return res.status(201).json({
+        status: "success",
+        message: pedidoCriado,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
+
 );
 
 /**
@@ -196,7 +287,31 @@ pedidoRouter.patch(
 pedidoRouter.patch(
   "/iniciar-preparo/",
   validaRequisicao(iniciarPreparoSchema),
-  pedidoAPIController.iniciaPreparo.bind(pedidoAPIController)
+  async (req: Request<IniciarPreparoParams>, res: Response) => {
+    try {
+      const { pedidoId } = req.query;
+
+      const pedido = await PedidoController.iniciaPreparo(dbPedidosRepository, dbProdutoRepository, pedidoId as string);
+
+      if (pedido) {
+        return res.status(201).json({
+          status: "success",
+          message: pedido,
+        });
+      }
+
+      return res.status(200).json({
+        status: "success",
+        message: "Nenhum pedido na fila",
+      })
+
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 /**
@@ -224,7 +339,23 @@ pedidoRouter.patch(
 pedidoRouter.patch(
   "/finalizar-preparo/:id",
   validaRequisicao(finalizarPreparoSchema),
-  pedidoAPIController.finalizaPreparo.bind(pedidoAPIController)
+  async (req: Request<FinalizarPreparoParams>, res: Response) => {
+    try {
+      const { params } = req;
+
+      const pedido = await PedidoController.finalizaPreparo(dbPedidosRepository, dbProdutoRepository, params.id);
+
+      return res.status(201).json({
+        status: "success",
+        message: pedido,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 /**
@@ -252,7 +383,23 @@ pedidoRouter.patch(
 pedidoRouter.patch(
   "/entregar-pedido/:id",
   validaRequisicao(entregarPedidoSchema),
-  pedidoAPIController.entregaPedido.bind(pedidoAPIController)
+  async (req: Request<EntregarPedidoParams>, res: Response) => {
+    try {
+      const { params } = req;
+
+      const pedido = await PedidoController.entregaPedido(dbPedidosRepository, dbProdutoRepository, params.id);
+
+      return res.status(201).json({
+        status: "success",
+        message: pedido,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 /**
@@ -286,7 +433,32 @@ pedidoRouter.patch(
 pedidoRouter.get(
   "/",
   validaRequisicao(listarPedidosSchema),
-  pedidoAPIController.listaPedidos.bind(pedidoAPIController)
+  async (
+    req: Request<unknown, unknown, ListaPedidosQuery>,
+    res: Response
+  ) => {
+    try {
+      const { query } = req;
+
+      let status: Array<string> = [];
+      const clienteId = query.clienteId as string;
+      if (query?.status && typeof query.status === "string") {
+        status = query.status.split(",");
+      }
+
+      const pedidos = await PedidoController.listaPedidos(dbPedidosRepository, status, clienteId);
+
+      return res.status(200).json({
+        status: "success",
+        message: pedidos,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 export default pedidoRouter;

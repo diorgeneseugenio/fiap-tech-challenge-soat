@@ -1,16 +1,25 @@
 import express from "express";
+import { Request, Response } from "express";
+import { ProdutoController } from "interfaces/controllers/produtoController";
 
 import DBProdutosRepository from "~adapter/driven/database/repository/produtoDatabaseRepository";
+import { ImagemProdutoInput } from "~domain/entities/types/produtoType";
 
-import ProdutoAPIController from "../controllers/produtoController";
-
+import { AdicionarItemBody, AdicionarItemParams } from "./schemas/pedidoRouter.schema";
 import {
   AdicionaImagenSchema,
+  CriaProdutoBody,
   CriaProdutoSchema,
+  DeletaProdutoBody,
   DeletaProdutoSchema,
+  EditaProdutoBody,
+  EditaProdutoParams,
   EditaProdutoSchema,
+  ListaProdutoParams,
   ListaProdutoSchema,
+  RemoveImagemParams,
   RemoveImagemSchema,
+  RetornaProdutoParams,
   RetornaProdutoSchema
 } from "./schemas/produtoRouter.schema";
 import { validaRequisicao } from "./utils";
@@ -18,7 +27,6 @@ import { validaRequisicao } from "./utils";
 const produtoRouter = express.Router();
 
 const dbProdutosRepository = new DBProdutosRepository();
-const produtoAPIController = new ProdutoAPIController(dbProdutosRepository);
 
 /** 
  * @openapi
@@ -146,7 +154,38 @@ const produtoAPIController = new ProdutoAPIController(dbProdutosRepository);
  */
 produtoRouter.post("/",
   validaRequisicao(CriaProdutoSchema),
-  produtoAPIController.criaProduto.bind(produtoAPIController)
+  async (
+    req: Request<unknown, CriaProdutoBody>,
+    res: Response
+  ) => {
+    try {
+      const produto = req.body;
+
+      const produtoCriado = await ProdutoController.criaProduto(dbProdutosRepository, produto);
+      return res.status(201).json({
+        status: "success",
+        message: produtoCriado,
+      });
+    } catch (err: any) {
+      if (err.message === "categoria_inexistente") {
+        return res.status(404).json({
+          status: "error",
+          message: "Categoria não encontrada!",
+        });
+      }
+
+      if (err.message === "preco_zerado") {
+        return res.status(400).json({
+          status: "error",
+          message: "O preço deve ser maior que zero!",
+        });
+      }
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 /**
@@ -185,7 +224,33 @@ produtoRouter.post("/",
  */
 produtoRouter.get("/",
   validaRequisicao(ListaProdutoSchema),
-  produtoAPIController.listaProdutos.bind(produtoAPIController)
+  async (
+    req: Request<ListaProdutoParams, unknown>,
+    res: Response
+  ) => {
+    try {
+      const categoriaId = req.query.categoriaId;
+      const filtro: {
+        categoriaId?: string;
+      } = {};
+
+      if (categoriaId) {
+        filtro.categoriaId = categoriaId as string;
+      }
+
+      const produtos = await ProdutoController.listaProdutos(dbProdutosRepository, filtro);
+
+      return res.status(200).json({
+        status: "success",
+        produtos,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 /**
@@ -235,7 +300,32 @@ produtoRouter.get("/",
  */
 produtoRouter.get("/:id",
   validaRequisicao(RetornaProdutoSchema),
-  produtoAPIController.retornaProduto.bind(produtoAPIController)
+  async (
+    req: Request<RetornaProdutoParams, unknown>,
+    res: Response
+  ) => {
+    try {
+      const { id } = req.params;
+
+      const produto = await ProdutoController.retornaProduto(dbProdutosRepository, id);
+
+      if (produto) {
+        return res.status(200).json({
+          status: "success",
+          produto,
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Produto não encontrado!",
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 /**
@@ -283,7 +373,31 @@ produtoRouter.get("/:id",
  */
 produtoRouter.delete("/:id",
   validaRequisicao(DeletaProdutoSchema),
-  produtoAPIController.deletaProduto.bind(produtoAPIController)
+  async (
+    req: Request<DeletaProdutoBody, unknown>,
+    res: Response
+  ) => {
+    try {
+      const { id } = req.params;
+
+      const produtoDeletado = await ProdutoController.deletaProduto(dbProdutosRepository, id);
+
+      if (produtoDeletado > 0) {
+        return res.status(200).json({
+          status: "success",
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "produto não encontrado!",
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 /**
@@ -348,7 +462,43 @@ produtoRouter.delete("/:id",
  */
 produtoRouter.put("/:id",
   validaRequisicao(EditaProdutoSchema),
-  produtoAPIController.editaProduto.bind(produtoAPIController)
+  async (
+    req: Request<EditaProdutoParams, EditaProdutoBody>,
+    res: Response
+  ) => {
+    try {
+      const { id } = req.params;
+      const produto = req.body;
+
+      const produtoAtualizado = await ProdutoController.editaProduto(dbProdutosRepository,
+        id,
+        produto
+      );
+
+      if (produtoAtualizado) {
+        return res.status(200).json({
+          status: "success",
+          message: produtoAtualizado,
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Produto não encontrado!",
+      });
+    } catch (err: any) {
+      if (err.message === "categoria_inexistente") {
+        return res.status(404).json({
+          status: "error",
+          message: "Categoria não encontrada!",
+        });
+      }
+
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 /**
@@ -410,7 +560,49 @@ produtoRouter.put("/:id",
 produtoRouter.delete(
   "/:idProduto/imagem/:idImagem",
   validaRequisicao(RemoveImagemSchema),
-  produtoAPIController.removeImagem.bind(produtoAPIController)
+  async (
+    req: Request<RemoveImagemParams, unknown>,
+    res: Response
+  ) => {
+    try {
+      const { idProduto } = req.params;
+      const { idImagem } = req.params;
+
+      if (!idProduto) {
+        return res.status(404).json({
+          status: "error",
+          message: "Produto não encontrado!",
+        });
+      }
+
+      if (!idImagem) {
+        return res.status(404).json({
+          status: "error",
+          message: "Imagem não encontrada!",
+        });
+      }
+
+      const imagemDeletada = await ProdutoController.removeImagem(dbProdutosRepository,
+        idProduto,
+        idImagem
+      );
+
+      if (imagemDeletada > 0) {
+        return res.status(200).json({
+          status: "success",
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Imagem ou produto não encontrado!",
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 /**
@@ -496,7 +688,38 @@ produtoRouter.delete(
 produtoRouter.post(
   "/:id/imagens",
   validaRequisicao(AdicionaImagenSchema),
-  produtoAPIController.adicionaImagens.bind(produtoAPIController)
+  async (
+    req: Request<AdicionarItemParams, AdicionarItemBody>,
+    res: Response
+  ) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+
+      const imagens = body?.imagens.map((imagem: ImagemProdutoInput) => {
+        return { ...imagem, produtoId: id };
+      });
+
+      const imagensAdicionadas = await ProdutoController.adicionaImagens(dbProdutosRepository,
+        imagens
+      );
+      return res.status(201).json({
+        status: "success",
+        message: imagensAdicionadas,
+      });
+    } catch (err: any) {
+      if (err.message === "produto_inexistente") {
+        return res.status(404).json({
+          status: "error",
+          message: "Produto não encontrado!",
+        });
+      }
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 export default produtoRouter;

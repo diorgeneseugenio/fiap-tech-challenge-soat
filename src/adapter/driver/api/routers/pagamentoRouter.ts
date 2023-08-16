@@ -1,16 +1,15 @@
 import express from "express";
+import { Request, Response } from "express";
 
 import MetodoPagamentoDatabaseRepository from "~adapter/driven/database/repository/metodoPagamentoDatabaseRepository";
+import MetodoPagamentoUseCase from "~domain/useCases/metodoPagamentoUseCase";
 
-import MetodoPagamentoController from "../controllers/metodoPagamentoController";
-
-import { ListaPagamentosSchema } from "./schemas/pagamentoRouter.schema";
+import { ListaPagamentosParams, ListaPagamentosPayload, ListaPagamentosSchema } from "./schemas/pagamentoRouter.schema";
 import { validaRequisicao } from "./utils";
 
 const metodoPagamento = express.Router();
 
 const dbMetodoPagamentoRepository = new MetodoPagamentoDatabaseRepository();
-const metodoPagamentoController = new MetodoPagamentoController(dbMetodoPagamentoRepository);
 
 /**
  * @openapi
@@ -27,7 +26,23 @@ const metodoPagamentoController = new MetodoPagamentoController(dbMetodoPagament
  */
 metodoPagamento.get("/",
   validaRequisicao(ListaPagamentosSchema),
-  metodoPagamentoController.listaPagamentos.bind(metodoPagamentoController)
+  async (
+    req: Request<ListaPagamentosParams, ListaPagamentosPayload>, 
+    res: Response
+  ) => {
+    try {
+      const pagamentos = await MetodoPagamentoUseCase.listaPagamentos(dbMetodoPagamentoRepository);
+      return res.status(201).json({
+        status: "success",
+        message: pagamentos,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 export default metodoPagamento;
