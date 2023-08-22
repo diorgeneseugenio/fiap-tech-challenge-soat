@@ -1,8 +1,8 @@
 import QRCode from 'qrcode';
 
-import CheckoutRepository, { GeraPagamentoInput } from "~core/applications/repositories/checkoutRepository";
-import FaturaRepository from '~core/applications/repositories/faturaRepository';
-import { Fatura, StatusDePagamento, statusDePagamento } from '~core/domain/fatura';
+import { Fatura, StatusDePagamento, statusDePagamento } from '~domain/entities/fatura';
+import CheckoutRepository, { GeraPagamentoInput } from "~domain/repositories/checkoutRepository";
+import FaturaRepository from '~domain/repositories/faturaRepository';
 
 
 // FAKE CHECKOUT 
@@ -13,9 +13,8 @@ export default class FakeCheckout implements CheckoutRepository {
   async geraPagamento(geraPagamentoInput: GeraPagamentoInput): Promise<Fatura> {
     // Deve validar a forma de pagamento e enviar o valor do pedido para o pagamento externo
     // O Fake checkout apenas vai gerar o fake qrcode e automaticamente mudar o status para aguardando preparo
-    let qrCode: string | null = null;
     let status: StatusDePagamento = statusDePagamento.PAGAMENTO_APROVADO; // FIXADO
- 
+    let qrCode = "";
     try {
      qrCode = await QRCode.toDataURL('FAKE CHECKOUT') as string // Em um checkout real aqui seria a chamada externa
       

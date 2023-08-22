@@ -1,15 +1,20 @@
 import express from "express";
+import { Request, Response } from "express";
+import { CategoriaController } from "interfaces/controllers/categoriaController";
 
-import CategoriaService from "~core/applications/services/categoriaService";
-import DBCategoriasRepository from "~driven/infra/repository/categoriaDatabaseRepository";
-
-import CategoriaController from "../controllers/categoriaController";
+import DBCategoriasRepository from "~adapter/driven/database/repository/categoriaDatabaseRepository";
 
 import {
+  CriaCategoriaPayload,
   CriaCategoriaSchema,
+  DeletaCategoriaParams,
   DeletaCategoriaSchema,
+  EditaCategoriaParams,
+  EditaCategoriaPayload,
   EditaCategoriaSchema,
+  ListaCategoriaPayload,
   ListaCategoriaSchema,
+  RetornaCategoriaParams,
   RetornaCategoriaSchema,
 } from "./schemas/categoriaRouter.schema";
 import { validaRequisicao } from "./utils";
@@ -17,8 +22,6 @@ import { validaRequisicao } from "./utils";
 const categoriaRouter = express.Router();
 
 const dbCategoriasRepository = new DBCategoriasRepository();
-const categoriaService = new CategoriaService(dbCategoriasRepository);
-const categoriaController = new CategoriaController(categoriaService);
 
 /** 
  * @openapi
@@ -86,7 +89,24 @@ const categoriaController = new CategoriaController(categoriaService);
  */
 categoriaRouter.post("/",
   validaRequisicao(CriaCategoriaSchema),
-  categoriaController.criaCategoria.bind(categoriaController)
+  async (req: Request<unknown, CriaCategoriaPayload>, res: Response) => {
+    try {
+      const categoria = req.body;
+
+      const categoriaCriado = await CategoriaController.criarCategoria(dbCategoriasRepository,
+        categoria
+      );
+      return res.status(201).json({
+        status: "success",
+        message: categoriaCriado,
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 /**
@@ -116,7 +136,21 @@ categoriaRouter.post("/",
  */
 categoriaRouter.get("/",
   validaRequisicao(ListaCategoriaSchema),
-  categoriaController.listaCategorias.bind(categoriaController)
+  async (req: Request<unknown, ListaCategoriaPayload>, res: Response) => {
+    try {
+      const categorias = await CategoriaController.listaCategorias(dbCategoriasRepository);
+
+      return res.status(200).json({
+        status: "success",
+        categorias,
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 /**
  * @openapi
@@ -165,7 +199,29 @@ categoriaRouter.get("/",
  */
 categoriaRouter.get("/:id",
   validaRequisicao(RetornaCategoriaSchema),
-  categoriaController.retornaCategoria.bind(categoriaController)
+  async (req: Request<RetornaCategoriaParams, unknown>, res: Response) => {
+    try {
+      const { id } = req.params;
+
+      const categoria = await CategoriaController.retornaCategoria(dbCategoriasRepository,id);
+
+      if (categoria) {
+        return res.status(200).json({
+          status: "success",
+          categoria,
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Categoria não encontrada!",
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 /**
  * @openapi
@@ -212,7 +268,28 @@ categoriaRouter.get("/:id",
  */
 categoriaRouter.delete("/:id", 
   validaRequisicao(DeletaCategoriaSchema),
-  categoriaController.deletaCategoria.bind(categoriaController)
+  async (req: Request<DeletaCategoriaParams, unknown>, res: Response) => {
+    try {
+      const { id } = req.params;
+
+      const categoriaDeletado = await CategoriaController.deletaCategoria(dbCategoriasRepository, id);
+
+      if (categoriaDeletado > 0) {
+        return res.status(200).json({
+          status: "success",
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Categoria não encontrada!",
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 /**
  * @openapi
@@ -272,7 +349,33 @@ categoriaRouter.delete("/:id",
  */
 categoriaRouter.put("/:id",
   validaRequisicao(EditaCategoriaSchema), 
-  categoriaController.editaCategoria.bind(categoriaController)
+  async (req: Request<EditaCategoriaParams, EditaCategoriaPayload>, res: Response) => {
+    try {
+      const { id } = req.params;
+      const categoria = req.body;
+
+      const categoriaAtualizada = await CategoriaController.editaCategoria(dbCategoriasRepository,
+        id,
+        categoria
+      );
+
+      if (categoriaAtualizada) {
+        return res.status(200).json({
+          status: "success",
+          message: categoriaAtualizada,
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Categoria não encontrada!",
+      });
+    } catch (err: unknown) {
+      return res.status(500).json({
+        status: "error",
+        message: err,
+      });
+    }
+  }
 );
 
 

@@ -1,18 +1,16 @@
 import express from "express";
+import { Request, Response } from "express";
+import { UsuarioController } from "interfaces/controllers/usuarioController";
 
-import UsuarioService from "../../../../core/applications/services/usuarioService";
-import DBUsuariosRepository from "../../../driven/infra/repository/usuarioDatabaseRepository";
-import UsuarioController from "../controllers/usuarioController";
+import DBUsuariosRepository from "~adapter/driven/database/repository/usuarioDatabaseRepository";
 
 import { ListaPagamentosSchema } from "./schemas/pagamentoRouter.schema";
-import { CriaUsuarioSchema, RetornaUsuarioSchema } from "./schemas/usuarioRouter.schema";
+import { CriaUsuarioBody, CriaUsuarioSchema, RetornaUsuarioBody, RetornaUsuarioSchema } from "./schemas/usuarioRouter.schema";
 import { validaRequisicao } from "./utils";
 
 const usuarioRouter = express.Router();
 
-const dbUsuariosRepository = new DBUsuariosRepository();
-const usuarioService = new UsuarioService(dbUsuariosRepository);
-const usuarioController = new UsuarioController(usuarioService);
+const dbUsuarioRepository = new DBUsuariosRepository();
 
 /** 
  * @openapi
@@ -99,7 +97,32 @@ const usuarioController = new UsuarioController(usuarioService);
  */
 usuarioRouter.post("/",
   validaRequisicao(CriaUsuarioSchema),
-  usuarioController.criaUsuario.bind(usuarioController)
+  async (
+    req: Request<unknown, CriaUsuarioBody>,
+    res: Response
+  ) => {
+    try {
+      const usuario = req.body;
+
+      const usuarioCriado = await UsuarioController.criaUsuario(dbUsuarioRepository, usuario);
+      return res.status(201).json({
+        status: "success",
+        message: usuarioCriado,
+      });
+    } catch (err: any) {
+      if (err.message === "usuario_duplicado") {
+        return res.status(400).json({
+          status: "error",
+          message: "Email ou CPF já em uso!"
+        })
+      }
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
+
 );
 
 /**
@@ -129,7 +152,24 @@ usuarioRouter.post("/",
  */
 usuarioRouter.get("/",
   validaRequisicao(ListaPagamentosSchema),
-  usuarioController.listaUsuarios.bind(usuarioController)
+  async (
+    req: Request,
+    res: Response
+  ) => {
+    try {
+      const usuarios = await UsuarioController.listaUsuarios(dbUsuarioRepository);
+
+      return res.status(200).json({
+        status: "success",
+        usuarios,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 /**
@@ -181,7 +221,33 @@ usuarioRouter.get("/",
  */
 usuarioRouter.post("/query",
   validaRequisicao(RetornaUsuarioSchema),
-  usuarioController.retornaUsuario.bind(usuarioController)
+  async (
+    req: Request<unknown, RetornaUsuarioBody>,
+    res: Response
+  ) => {
+    try {
+      const { body } = req;
+
+      const usuario = await UsuarioController.retornaUsuario(dbUsuarioRepository, body.cpf);
+
+      if (usuario) {
+        return res.status(200).json({
+          status: "success",
+          usuario,
+        });
+      }
+      return res.status(404).json({
+        status: "error",
+        message: "Usuário não encontrado!",
+      });
+
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
 );
 
 export default usuarioRouter;

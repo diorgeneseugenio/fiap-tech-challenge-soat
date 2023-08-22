@@ -14,8 +14,9 @@
     "outDir": "./dist",
     "moduleResolution": "node",
     "paths": {
-      "~driven/*": ["adapter/driven/*"],
-      "~driver/*": ["adapter/driver/*"],
+      "~adapter/*": ["adapter/*"],
+      "~domain/*": ["domain/*"],
+      "~driver/*": ["driver/*"],
       "~core/*": ["core/*"]
     }
   },
