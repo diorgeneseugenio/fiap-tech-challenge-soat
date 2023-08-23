@@ -1,8 +1,8 @@
 import express from "express";
 import { Request, Response } from "express";
-import { CategoriaController } from "interfaces/controllers/categoriaController";
 
-import DBCategoriasRepository from "~adapter/driven/database/repository/categoriaDatabaseRepository";
+import DBCategoriasRepository from "~datasources/database/repository/categoriaDatabaseRepository";
+import { CategoriaController } from "~interfaceAdapters/controllers/categoriaController";
 
 import {
   CriaCategoriaPayload,

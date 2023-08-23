@@ -1,8 +1,8 @@
 import express from "express";
 import { Request, Response } from "express";
-import { UsuarioController } from "interfaces/controllers/usuarioController";
 
-import DBUsuariosRepository from "~adapter/driven/database/repository/usuarioDatabaseRepository";
+import DBUsuariosRepository from "~datasources/database/repository/usuarioDatabaseRepository";
+import { UsuarioController } from "~interfaceAdapters/controllers/usuarioController";
 
 import { ListaPagamentosSchema } from "./schemas/pagamentoRouter.schema";
 import { CriaUsuarioBody, CriaUsuarioSchema, RetornaUsuarioBody, RetornaUsuarioSchema } from "./schemas/usuarioRouter.schema";

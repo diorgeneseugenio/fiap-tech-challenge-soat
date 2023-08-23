@@ -14,10 +14,10 @@
     "outDir": "./dist",
     "moduleResolution": "node",
     "paths": {
-      "~adapter/*": ["adapter/*"],
-      "~domain/*": ["domain/*"],
-      "~driver/*": ["driver/*"],
-      "~core/*": ["core/*"]
+      "~datasources/*": ["datasources/*"],
+      "~interfaceAdapters/*": ["interfaceAdapters/*"],
+      "~presenters/*": ["presenters/*"],
+      "~domain/*": ["domain/*"]
     }
   },
   "ts-node": {
