@@ -3,3 +3,5 @@ dist
 coverage
 
 .env
+secret.yaml
+secret.yml
