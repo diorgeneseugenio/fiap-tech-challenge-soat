@@ -24,9 +24,10 @@ Fornecer um sistema para gerenciamento de pedidos para uma empresa do ramo de se
 * Sequelize
 * Docker
 
+
 ## Instalação do projeto
 
-Este projeto está pronto para ser executado em um ambiente Docker. Por este motivo, será necessária apenas a instalação do Docker, não sendo necessária a instalação manual do projeto. Também não será necessária a instalação manual do banco de dados (MySQL).
+Este projeto está pronto para ser executado em um ambiente Docker. Por este motivo, será necessária apenas a instalação do Docker e ou Kubernetes, não sendo necessária a instalação manual do projeto. Também não será necessária a instalação manual do banco de dados (MySQL).
 
 Caso não tenha o Docker instalado, siga as instruções para seu sistema operacional na [documentação oficial do Docker](https://docs.docker.com/get-docker/).
 
@@ -34,7 +35,47 @@ Para executar em ambiente de desenvolvimento:
 
 * Faça o `fork` e `clone` este repositório em seu computador;
 * Entre no diretório local onde o repositório foi clonado;
-* Utilize o comando `docker compose up` para "construir" (*build*) e subir o servidor local, expondo a porta 3000 em `localhost`. Além do container da `api` também subirá o serviço `db` com o banco de dados de desenvolvimento.
+
+### Kubernetes
+
+Os arquivos para o kubernetes se encontram no diretorio ```k8s/```:
+
+Crie o secrets como o exemplo abaixo um de terceiros:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fiap-tech-secrets
+type: Opaque
+data: # value = Base64
+  db_host: 
+  db_username: {VALOR_BASE64}
+  db_password: {VALOR_BASE64}
+  db_root_password: {VALOR_BASE64}
+  db_name: {VALOR_BASE64}
+  jwt_secret: {VALOR_BASE64}
+```
+
+
+Banco de dados:
+```
+kubectl apply -f k8s/db/db.pvc.yaml
+kubectl apply -f k8s/db/db.deployment.yaml
+kubectl apply -f k8s/db/db.svc.yaml
+```
+
+API:
+```
+kubectl apply -f k8s/api/api.deployment.yaml
+kubectl apply -f k8s/api/api.svc.yaml
+```
+
+
+
+### Docker Compose
+
+Utilize o comando `docker compose up` para "construir" (*build*) e subir o servidor local, expondo a porta 3000 em `localhost`. Além do container da `api` também subirá o serviço `db` com o banco de dados de desenvolvimento.
 
 **IMPORTANTE:** Esta API está programada para ser acessada a partir de `http://localhost:3000` e o banco de dados utiliza a porta `3306`. Certifique-se de que não existam outros recursos ocupando as portas `3000` e `3306` antes de subir o projeto.
 
