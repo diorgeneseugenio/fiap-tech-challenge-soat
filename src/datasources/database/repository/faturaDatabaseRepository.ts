@@ -12,18 +12,20 @@ class FaturaDataBaseRepository implements FaturaRepository {
   async atualizaFatura({
     id,
     pagoEm,
-    qrCode, }: AtualizaFaturaInput): Promise<Fatura> {
+    qrCode,
+  }: AtualizaFaturaInput): Promise<Fatura> {
     try {
       return (await FaturaModel.update(
         {
           pagoEm,
           qrCode,
-        }, { where: { id: id } }).then(() =>
-          FaturaModel.findOne({
-            where: { id: id },
-          }))
-      ) as Fatura;
-
+        },
+        { where: { id: id } }
+      ).then(() =>
+        FaturaModel.findOne({
+          where: { id: id },
+        })
+      )) as Fatura;
     } catch (err: any) {
       console.error("Erro ao criar Fatura: ", err);
       throw new Error(err);
@@ -50,6 +52,19 @@ class FaturaDataBaseRepository implements FaturaRepository {
       return fatura.dataValues as Fatura;
     } catch (err: any) {
       console.error("Erro ao criar Fatura: ", err);
+      throw new Error(err);
+    }
+  }
+
+  async retornaFatura(faturaId: string): Promise<Fatura | null> {
+    try {
+      return await FaturaModel.findOne({
+        where: {
+          id: faturaId,
+        },
+      });
+    } catch (err: any) {
+      console.error("Erro ao retornar Fatura: ", err);
       throw new Error(err);
     }
   }
