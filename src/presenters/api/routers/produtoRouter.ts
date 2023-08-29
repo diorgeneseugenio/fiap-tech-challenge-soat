@@ -1,9 +1,9 @@
 import express from "express";
 import { Request, Response } from "express";
-import { ProdutoController } from "interfaces/controllers/produtoController";
 
-import DBProdutosRepository from "~adapter/driven/database/repository/produtoDatabaseRepository";
+import DBProdutosRepository from "~datasources/database/repository/produtoDatabaseRepository";
 import { ImagemProdutoInput } from "~domain/entities/types/produtoType";
+import { ProdutoController } from "~interfaceAdapters/controllers/produtoController";
 
 import { AdicionarItemBody, AdicionarItemParams } from "./schemas/pedidoRouter.schema";
 import {

@@ -1,7 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
 
-import MetodoPagamentoDatabaseRepository from "~adapter/driven/database/repository/metodoPagamentoDatabaseRepository";
+import MetodoPagamentoDatabaseRepository from "~datasources/database/repository/metodoPagamentoDatabaseRepository";
 import MetodoPagamentoUseCase from "~domain/useCases/metodoPagamentoUseCase";
 
 import { ListaPagamentosParams, ListaPagamentosPayload, ListaPagamentosSchema } from "./schemas/pagamentoRouter.schema";

@@ -1,11 +1,11 @@
 import express from "express";
 import { Request, Response } from "express";
-import { PedidoController } from "interfaces/controllers/pedidoController";
 
-import FakeCheckout from "~adapter/driven/checkout/repository/checkoutRepository";
-import FaturaDataBaseRepository from "~adapter/driven/database/repository/faturaDatabaseRepository";
-import PedidoDataBaseRepository from "~adapter/driven/database/repository/pedidoDatabaseRepository";
-import ProdutosDataBaseRepository from "~adapter/driven/database/repository/produtoDatabaseRepository";
+import FakeCheckout from "~datasources/checkout/repository/checkoutRepository";
+import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
+import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
+import ProdutosDataBaseRepository from "~datasources/database/repository/produtoDatabaseRepository";
+import { PedidoController } from "~interfaceAdapters/controllers/pedidoController";
 
 import {
   AdicionarItemBody,
