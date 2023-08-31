@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-challenge-api-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tech-challenge-api
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-api
+    spec:
+      containers:
+        - name: tech-challenge-api-container
+          image: eltonarodrigues/fiap-tech-challenge-soat-grupo-30:v1.0.1
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: tech-challenge-db-svc
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: db_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: db_password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: db_name
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: jwt_secret

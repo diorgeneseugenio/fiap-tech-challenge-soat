@@ -8,7 +8,7 @@ const options = {
       description: 'Projeto Fase I - SOAT turma I',
     },
     servers: [
-      { url: `http://localhost:${process.env.PORT ?? 3000}/api` }
+      { url: "/api" }
     ]
   },
   apis: ['**/routers/*.*'],

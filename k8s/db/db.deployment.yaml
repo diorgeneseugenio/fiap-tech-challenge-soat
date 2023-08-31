@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-challenge-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tech-challenge-db
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-db
+    spec:
+      containers:
+        - name: sql-db-container
+          image: mysql:8.1
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: db_name
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: db_username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: db_password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: db_root_password
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: tech-challenge-db-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: tech-challenge-db-persistent-storage
+          persistentVolumeClaim:
+            claimName: tech-challenge-db-pvc
