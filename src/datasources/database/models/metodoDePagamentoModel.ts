@@ -2,6 +2,8 @@ import { DataTypes, Model, Sequelize } from "sequelize";
 
 import MetodoDePagamento from "~domain/entities/metodoDePagamento";
 
+import FaturaModel from "./faturaModel";
+
 class MetodoDePagamentoModel
   extends Model<MetodoDePagamento>
   implements MetodoDePagamento
@@ -56,7 +58,9 @@ class MetodoDePagamentoModel
   }
 
   static associate(): void {
-    // Sem associação
+    this.hasMany(FaturaModel, {
+      foreignKey: "metodoDePagamentoId",
+    });
   }
 }
 
