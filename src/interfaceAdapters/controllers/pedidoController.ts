@@ -1,6 +1,5 @@
 import { RealizaPedidoInput } from "~domain/entities/types/pedidoService.type";
 import { PedidoDTO, PedidoInput } from "~domain/entities/types/pedidoType";
-import CheckoutRepository from "~domain/repositories/checkoutRepository";
 import PedidoRepository, { AdicionaItemInput, RemoveItemInput } from "~domain/repositories/pedidoRepository";
 import ProdutoRepository from "~domain/repositories/produtoRepository";
 import PedidoUseCase from "~domain/useCases/pedidoUseCase";
@@ -18,15 +17,12 @@ export class PedidoController {
   }
 
   static async realizaPedido(
-    checkoutRepository: CheckoutRepository,
     pedidoRepository: PedidoRepository,
     produtoRepository: ProdutoRepository,
     realizaPedidoInput: RealizaPedidoInput
   ): Promise<PedidoDTO | null> {
-    // verificação/decisão do checkoutRepository vai ser passado pra useCase dependendo do id recebido
-    // webhook fecha a fatura
     return await PedidoUseCase.realizaPedido(
-      checkoutRepository, pedidoRepository, produtoRepository, realizaPedidoInput
+      pedidoRepository, produtoRepository, realizaPedidoInput
     );
   }
 

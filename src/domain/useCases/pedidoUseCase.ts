@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import { statusDePagamento } from "~domain/entities/fatura";
 import ItemPedido from "~domain/entities/itemPedido";
 import Pedido from "~domain/entities/pedido";
@@ -6,15 +7,17 @@ import Produto from "~domain/entities/produto";
 import { ItemDoPedidoInput } from "~domain/entities/types/itensPedidoType";
 import { PagamentoDTO } from "~domain/entities/types/PagamentoType";
 import { PedidoDTO, PedidoInput, statusDoPedido } from "~domain/entities/types/pedidoType";
-import CheckoutRepository from "~domain/repositories/checkoutRepository";
 import FaturaRepository from "~domain/repositories/faturaRepository";
 import PedidoRepository from "~domain/repositories/pedidoRepository";
 import ProdutoRepository from "~domain/repositories/produtoRepository";
+import PagamentoGateway from "~interfaceAdapters/gateways/pagamentoGateway";
 
 import {
   RealizaPedidoInput,
   RemoveItemInput,
 } from "../entities/types/pedidoService.type";
+
+import FaturaUseCase from "./faturaUseCase";
 
 export default class PedidoUseCase {
 
@@ -35,7 +38,6 @@ export default class PedidoUseCase {
   }
 
   static async realizaPedido(
-    checkoutRepository: CheckoutRepository,
     pedidoRepository: PedidoRepository,
     produtoRepository: ProdutoRepository,
     realizaPedidoInput: RealizaPedidoInput): Promise<PedidoDTO | null> {
@@ -47,15 +49,10 @@ export default class PedidoUseCase {
 
     pedido.entregaRascunho();
 
-    // no controller tem que ter uma lógica para decidir o meio de pagamento e chamar o correto
-    const fatura = await checkoutRepository.geraPagamento({ metodoDePagamentoId: realizaPedidoInput.metodoDePagamentoId, pedido });
-
-    // if (fatura.statusDePagamento === statusDePagamento.AGUARDANDO_PAGAMENTO) { //  Adicionar quando nao tiver o fake checkout
-    //   pedido.registrarFatura(fatura.id)
-    // }
-
-    pedido.atualizaPagamento(fatura.statusDePagamento);
-    pedido.faturaId = fatura.id;
+    const fatura = await FaturaUseCase.geraFatura(realizaPedidoInput.metodoDePagamentoId, pedido);
+    const faturaRepository = new FaturaDataBaseRepository();
+    const faturaAtualizada = await PagamentoGateway.geraCobranca(fatura, faturaRepository);
+    pedido.faturaId = faturaAtualizada.id;
 
     return pedidoRepository.atualizaPedido(pedido);
   }

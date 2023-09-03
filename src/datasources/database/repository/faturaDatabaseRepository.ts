@@ -30,7 +30,7 @@ class FaturaDataBaseRepository implements FaturaRepository {
     }
   }
 
-  async criaFatura({
+  static async criaFatura({
     metodoDePagamentoId,
     pedidoId,
     qrCode,

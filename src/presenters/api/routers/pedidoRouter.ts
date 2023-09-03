@@ -1,8 +1,6 @@
 import express from "express";
 import { Request, Response } from "express";
 
-import FakeCheckout from "~datasources/checkout/repository/checkoutRepository";
-import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~datasources/database/repository/produtoDatabaseRepository";
 import { PedidoController } from "~interfaceAdapters/controllers/pedidoController";
@@ -33,9 +31,6 @@ const pedidoRouter = express.Router({});
 
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
-const dbFaturaRepository = new FaturaDataBaseRepository();
-const checkoutRepository = new FakeCheckout(dbFaturaRepository); // TODO
-
 
 /**
  * @openapi
@@ -206,7 +201,7 @@ pedidoRouter.post(
  * @openapi
  * /pedido/realizar-pedido/{id}:
  *   patch:
- *     summary: Finaliza a customizacao do pedido e envia para checkout (fake checkou já aprova)
+ *     summary: Finaliza a customizacao do pedido
  *     parameters:
  *       - in: path
  *         name: id
@@ -243,7 +238,7 @@ pedidoRouter.patch(
     try {
       const { params, body } = req;
 
-      const pedidoCriado = await PedidoController.realizaPedido(checkoutRepository, dbPedidosRepository, dbProdutoRepository, {
+      const pedidoCriado = await PedidoController.realizaPedido(dbPedidosRepository, dbProdutoRepository, {
         pedidoId: params.id,
         metodoDePagamentoId: body.metodoDePagamentoId,
       });

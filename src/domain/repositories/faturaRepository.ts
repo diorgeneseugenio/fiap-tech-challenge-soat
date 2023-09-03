@@ -9,13 +9,12 @@ export type CriaFaturaInput = {
 
 export type AtualizaFaturaInput = {
   id: string;
-  pagoEm: Date;
+  pagoEm?: Date;
   qrCode?: string
 };
 
 export default interface FaturaRepository {
   atualizaFatura(atualizaFatura: AtualizaFaturaInput): Promise<Fatura>;
   atualizaStatusPagamentoFatura(id: string, statusPagamento: StatusDePagamento): Promise<Fatura>;
-  criaFatura(criarFaturaInput: CriaFaturaInput): Promise<Fatura>;
   pegaFatura(id: string): Promise<Fatura>;
 }
