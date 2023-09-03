@@ -1,6 +1,6 @@
 # Tech Challenge - Pós-Tech SOAT - FIAP
 
-Este é o projeto desenvolvido durante a fase I do curso de pós-graduação em arquitetura de software da FIAP - turma II/2023.
+Este é o projeto desenvolvido durante a fase I e atualizado durante a fase II do curso de pós-graduação em arquitetura de software da FIAP - turma II/2023.
 
 Repositório:
 https://github.com/diorgeneseugenio/fiap-tech-challenge-soat/main
@@ -10,6 +10,23 @@ Diórgenes Eugênio da Silveira - RM 349116
 Elton de Andrade Rodrigues - RM 349353
 Gabriel Mendes - RM 348989
 Juliana Amoasei dos Reis - RM 348666
+
+
+### Changelog Fase II:
+- **[Estrutura do Projeto](#estrutura-do-projeto)**: Refatoracao do projeto para utilizar conteitos do `clean architecture`;
+- **[Kubernetes](#kubernetes)**: Adicionado deploy utilizando Kubernetes;
+- **`/pedido/realizar-pedido/{id}`**  Atualizado endpoint que cria o checkout e retornar o pedido com a fatura para aguardar o pagamento;
+- **Webhook - Confirmação de pagamento**:  Adiconado o endpoint para alterar o status de pagamento(aprovado/reprovado);
+- **`/pedido/`**: Atualizado Endpoint de listar pedidos :
+  1. Por Padrao agora ela retorna na regra de Pronto > Em Preparo > Recebido e nao mosta as Finalizadas;
+  2. Mantido a possibilidade de filtrar usuário e ou status:
+      - Rascunho;
+      - Aguardando pagamento;
+      - Falha em gerar pedido(Pagamento reprovado);
+      - Aguardando preparo(Pagamento aprovado);
+      - Em preparo;
+      - Pronto;
+      - Entregue;
 
 ## Propósito do projeto
 
@@ -23,6 +40,7 @@ Fornecer um sistema para gerenciamento de pedidos para uma empresa do ramo de se
 * Express
 * Sequelize
 * Docker
+* Kubernetes
 
 
 ## Instalação do projeto
@@ -38,9 +56,9 @@ Para executar em ambiente de desenvolvimento:
 
 ### Kubernetes
 
-Os arquivos para o kubernetes se encontram no diretorio ```k8s/```:
+Os arquivos para o kubernetes se encontram no diretório ```k8s/```:
 
-Crie o secrets como o exemplo abaixo um de terceiros:
+Crie o secrets como o exemplo abaixo ou use um de terceiros com as envs listadas:
 
 ```yaml
 apiVersion: v1
@@ -142,8 +160,8 @@ Body: null ou {}
 
 3.1 Crie um pedido vazio usando o ```/pedido/iniciar-pedido``` passando o id do usuário;
 3.2 Adiciona produto ao pedido usando o ```/pedido/{id}/adicionar-item```;
-3.2 Envia o pedido pro pagamento junto do metodo de pagamento(```/metodoPagamento```) e retorna o QR Code ```/pedido/realizar-pedido/{id}```(fake checkout muda o pedido para pago);
-
+3.2 Envia o pedido pro pagamento junto do metodo de pagamento(```/metodoPagamento```) e retorna o QR Code ```/pedido/realizar-pedido/{id}```;
+3.3 Use o ```/pagamento``` para mudar o status de pagamento do pedido para aprovado ou reprovado;
 ### 4. Preparo
 4.1 Utilize o ```/pedido/iniciar-preparo/``` para pegar o próximo pedido da fila ou passar o id para furar a fila;
 4.2 Utilize o ```/pedido/finalizar-preparo/{id}``` para marcar como pronto;
@@ -152,7 +170,7 @@ Body: null ou {}
 ## Endpoints
 
 Esta API fornece documentação no padrão OpenAPI.
-Os endpoints disponíveis, suas descrições e dados necessários para requisição podem ser consultados e testados em http://localhost/3000/api-docs.
+Os endpoints disponíveis, suas descrições e dados necessários para requisição podem ser consultados e testados em ```/api-docs```.
 
 ## Desenvolvimento do projeto
 
@@ -179,112 +197,137 @@ Foram utilizadas técnicas de Domain Driven Design para definição dos fluxos:
 * Cozinha: Equipe que prepara os produtos do pedido.
 * Status do Pedido: Em que etapa do processo o pedido se encontra
 * Fatura: Registro relativo ao faturamento do pedido, onde detalhamos o meio de pagamento usado.
+* Pagamento: Realizadao do pagamento da fatura de um pedido.
 * Status de Pagamento: Identifica o atual estado da fatura, com ele identificamos se o pagamento foi efetuado, ocorreu algum erro, ou ainda não foi processado o pagamento.
 
-### estrutura do projeto
+### Estrutura do Projeto
 
-O projeto foi estruturado seguindo o padrão de *ports & adapters*. O `core` contém a camada de domínio da aplicação, separada da infraestrutura, do gerenciamento dos bancos de dados (`driven`) e das interfaces da aplicação (`driver`).
+O projeto foi reestruturado seguindo o padrão do clean architecture. 
 
+- `domain`:  contém a camada de domínio da aplicação com suas entidades, casos de uso e repositórios;
+- `datasources`:  comunicacao dos servicos externo como banco de dados e checkout;
+- `interfaceAdapters`: camada de interface do clean architecture com o controlador;
+- `presenters`: camada externa de comunicacao externa onde se entra a API;
 ```shell
 .
-└── src
-    ├── adapter
-    │   ├── driven
-    │   │   └── infra
-    │   │       ├── config
-    │   │       │   └── interfaces
-    │   │       ├── models
-    │   │       ├── repository
-    │   │       └── seeders
-    │   └── driver
-    │       └── api
-    │           ├── config
-    │           │   └── interfaces
-    │           ├── controllers
-    │           └── routers
-    ├── core
-    │   ├── applications
-    │   │   ├── repositories
-    │   │   └── services
-    │   └── domain
-    │       └── valueObjects
+│── src/
+│   ├── datasources/
+│   │   ├── checkout/
+│   │   └── database/
+│   ├── domain/
+│   │   ├── entities/
+│   │   ├── repositories/
+│   │   └── useCases/
+│   ├── index.ts
+│   ├── interfaceAdapters/
+│   │   └── controllers/
+│   └── presenters/
+│       └── api/
+
 ```
 
-### Core
+### Domain
 
 Contém a camada de domínio da aplicação e as lógicas de negócio.
 
 ```shell
- ├── core
- │   ├── applications
- │   │   ├── repositories
- │   │   │   ├── categoriaRepository.ts
- │   │   │   ├── produtoRepository.ts
- │   │   │   └── usuarioRepository.ts
- │   │   └── services
- │   │       ├── categoriaService.ts
- │   │       ├── produtoService.ts
- │   │       └── usuarioService.ts
- │   └── domain
- │       ├── categorias.ts
- │       ├── fatura.ts
- │       ├── itemPedido.ts
- │       ├── metodoDePagamento.ts
- │       ├── pedido.ts
- │       ├── produto.ts
- │       ├── usuarios.ts
- │       └── valueObjects
- │           ├── cpf.ts
- │           └── email.ts
+│── domain
+│   │   ├── entities
+│   │   │   ├── categoria.ts
+│   │   │   ├── fatura.ts
+│   │   │   ├── ImagemProduto.ts
+│   │   │   ├── itemPedido.ts
+│   │   │   ├── metodoDePagamento.ts
+│   │   │   ├── pedido.ts
+│   │   │   ├── produto.ts
+│   │   │   ├── types
+│   │   │   │   ├── CategoriaType.ts
+│   │   │   │   ├── itensPedidoType.ts
+│   │   │   │   ├── metodoPagamentoType.ts
+│   │   │   │   ├── pedidoService.type.ts
+│   │   │   │   ├── pedidoType.ts
+│   │   │   │   ├── produtoType.ts
+│   │   │   │   └── UsuarioType.ts
+│   │   │   ├── usuario.ts
+│   │   │   └── valueObjects
+│   │   │       ├── cpf.ts
+│   │   │       └── email.ts
+│   │   ├── repositories
+│   │   │   ├── categoriaRepository.ts
+│   │   │   ├── checkoutRepository.ts
+│   │   │   ├── faturaRepository.ts
+│   │   │   ├── metodoPagamentoRepository.ts
+│   │   │   ├── pedidoRepository.ts
+│   │   │   ├── produtoRepository.ts
+│   │   │   └── usuarioRepository.ts
+│   │   └── useCases
+│   │       ├── categoriaUseCase.ts
+│   │       ├── metodoPagamentoUseCase.ts
+│   │       ├── pedidoUseCase.ts
+│   │       ├── produtoUseCase.ts
+│   │       └── usuarioUseCase.ts
+
 ```
 
-O diretório `domain` contém as entidades definidoras do negócio, como `usuario`, `pedido` e `categorias`. Os atributos e métodos disponíveis para cada uma das entidades estão definidos no módulo `services` e a interface entre a camada de domínio e o restante da aplicação foi definida através do uso de interfaces em `repository`.
+O diretório `domain` contém as entidades definidoras do negócio, como `usuario`, `pedido` e `categorias` e seus casos de uso. A interface entre a camada de domínio e o restante da aplicação foi definida através do uso de interfaces em `repositories`.
 
-### adapter
+### datasources e presenters
 
 ```shell
- ├── adapter
- │   ├── driven
- │   │   └── infra
- │   │       ├── config
- │   │       │   ├── db.config.ts
- │   │       │   └── interfaces
- │   │       │       └── db.config.interface.ts
- │   │       ├── models
- │   │       │   ├── categoriaModel.ts
- │   │       │   ├── faturaModel.ts
- │   │       │   ├── index.ts
- │   │       │   ├── itemPedidoModel.ts
- │   │       │   ├── metodoDePagamentoModel.ts
- │   │       │   ├── pedidoModel.ts
- │   │       │   ├── produtoImagensModel.ts
- │   │       │   ├── produtoModel.ts
- │   │       │   └── usuarioModel.ts
- │   │       ├── repository
- │   │       │   ├── categoriaDatabaseRepository.ts
- │   │       │   ├── produtoDatabaseRepository.ts
- │   │       │   └── usuarioDatabaseRepository.ts
- │   │       └── seeders
- │   │           └── cria-categorias.ts
- │   └── driver
- │       └── api
- │           ├── config
- │           │   ├── interfaces
- │           │   │   └── server.config.interface.ts
- │           │   └── server.config.ts
- │           ├── controllers
- │           │   ├── categoriaController.ts
- │           │   ├── produtoController.ts
- │           │   └── usuarioController.ts
- │           └── routers
- │               ├── categoriaRouter.ts
- │               ├── index.ts
- │               ├── produtoRouter.ts
- │               └── usuarioRouter.ts
+├── src
+│   ├── datasources
+│   │   ├── checkout
+│   │   │   └── repository
+│   │   │       └── checkoutRepository.ts
+│   │   └── database
+│   │       ├── config
+│   │       │   ├── db.config.ts
+│   │       │   └── interfaces
+│   │       │       └── db.config.interface.ts
+│   │       ├── models
+│   │       │   ├── categoriaModel.ts
+│   │       │   ├── faturaModel.ts
+│   │       │   ├── index.ts
+│   │       │   ├── itemPedidoModel.ts
+│   │       │   ├── metodoDePagamentoModel.ts
+│   │       │   ├── pedidoModel.ts
+│   │       │   ├── produtoImagensModel.ts
+│   │       │   ├── produtoModel.ts
+│   │       │   └── usuarioModel.ts
+│   │       ├── repository
+│   │       │   ├── categoriaDatabaseRepository.ts
+│   │       │   ├── faturaDatabaseRepository.ts
+│   │       │   ├── metodoPagamentoDatabaseRepository.ts
+│   │       │   ├── pedidoDatabaseRepository.ts
+│   │       │   ├── produtoDatabaseRepository.ts
+│   │       │   └── usuarioDatabaseRepository.ts
+│   │       └── seeders
+│   │           ├── cria-categorias.ts
+│   │           └── cria-metodo-de-pagamento.ts
+│   └── presenters
+│       └── api
+│           ├── config
+│           │   ├── interfaces
+│           │   │   └── server.config.interface.ts
+│           │   └── server.config.ts
+│           ├── index.ts
+│           ├── routers
+│           │   ├── categoriaRouter.ts
+│           │   ├── index.ts
+│           │   ├── pagamentoRouter.ts
+│           │   ├── pedidoRouter.ts
+│           │   ├── produtoRouter.ts
+│           │   ├── schemas
+│           │   │   ├── categoriaRouter.schema.ts
+│           │   │   ├── pagamentoRouter.schema.ts
+│           │   │   ├── pedidoRouter.schema.ts
+│           │   │   ├── produtoRouter.schema.ts
+│           │   │   └── usuarioRouter.schema.ts
+│           │   ├── usuarioRouter.ts
+│           │   └── utils.ts
+│           └── swaggerConfig.ts
+
 ```
 
-O diretório `adapter` contém as lógicas responsáveis pela interação do `core` da aplicação (regras de negócio e entidades).
-
-O subdiretório `driven` é responsável pela conexão com elementos externos ao core. Este projeto utiliza este padrão para a conexão com a camada de dados através do uso do padrão `model` para definição de campos e tipos de dados de cada entidade.
-
-O subdiretório `driver` é responsável por definir as interfaces que farão contato com os recursos externos definidos em `driven`. Neste projeto, o diretório `driver` define os pontos de contato através de uma API REST com rotas e controladores para gerenciamento de cada rota.
+O diretório `adapter/driver` da fase I virou o `presenters/` aonde fica responsavem por interagir com o core a aplicacao, no nosso projeto respresentado pela API REST.
+O diretório `adapter/driven` da fase I virou foi `datasources/` responsável pela conexão com elementos externos ao core.
