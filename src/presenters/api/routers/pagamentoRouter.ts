@@ -16,7 +16,7 @@ const dbPagamentoRepository = new PagamentoDatabaseRepository();
  * @openapi
  * /pagamento:
  *   post:
- *     summary: Recebe confirmação ou negação de pagamento
+ *     summary: WebHook - Recebe confirmação ou negação de pagamento
  *     tags:
  *       - Pagamento
  *     requestBody:
