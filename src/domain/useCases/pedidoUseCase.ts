@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { statusDePagamento } from "~domain/entities/fatura";
 import ItemPedido from "~domain/entities/itemPedido";
 import Pedido from "~domain/entities/pedido";
 import Produto from "~domain/entities/produto";
 import { ItemDoPedidoInput } from "~domain/entities/types/itensPedidoType";
-import { PedidoDTO, PedidoInput } from "~domain/entities/types/pedidoType";
+import { PagamentoDTO } from "~domain/entities/types/PagamentoType";
+import { PedidoDTO, PedidoInput, statusDoPedido } from "~domain/entities/types/pedidoType";
 import CheckoutRepository from "~domain/repositories/checkoutRepository";
+import FaturaRepository from "~domain/repositories/faturaRepository";
 import PedidoRepository from "~domain/repositories/pedidoRepository";
 import ProdutoRepository from "~domain/repositories/produtoRepository";
 
@@ -43,6 +47,7 @@ export default class PedidoUseCase {
 
     pedido.entregaRascunho();
 
+    // no controller tem que ter uma lógica para decidir o meio de pagamento e chamar o correto
     const fatura = await checkoutRepository.geraPagamento({ metodoDePagamentoId: realizaPedidoInput.metodoDePagamentoId, pedido });
 
     // if (fatura.statusDePagamento === statusDePagamento.AGUARDANDO_PAGAMENTO) { //  Adicionar quando nao tiver o fake checkout
@@ -50,10 +55,9 @@ export default class PedidoUseCase {
     // }
 
     pedido.atualizaPagamento(fatura.statusDePagamento);
+    pedido.faturaId = fatura.id;
 
     return pedidoRepository.atualizaPedido(pedido);
-
-
   }
 
   static async retornaProximoPedidoFila(pedidoRepository: PedidoRepository, produtoRepository: ProdutoRepository) {
@@ -172,5 +176,24 @@ export default class PedidoUseCase {
 
   static async listaPedidos(pedidoRepository: PedidoRepository, status?: Array<string>, clienteId?: string): Promise<Array<PedidoDTO> | null> {
     return pedidoRepository.listaPedidos(status, clienteId);
+  }
+
+  static async pagamentoReprovado(pedidoRepository: PedidoRepository, faturaRepository: FaturaRepository, pagamento: PagamentoDTO) {
+    const fatura = await faturaRepository.pegaFatura(pagamento.faturaId);
+    const pedido = await pedidoRepository.retornaPedido(fatura.pedidoId);
+    faturaRepository.atualizaStatusPagamentoFatura(fatura.id, statusDePagamento.ERRO_AO_PROCESSAR_PAGAMENTO);
+    pedidoRepository.atualizaStatusDoPedido(pedido!.id, statusDoPedido.FALHA);
+  }
+  
+  static async pagamentoAprovado(pedidoRepository: PedidoRepository, faturaRepository: FaturaRepository, pagamento: PagamentoDTO) {
+    const fatura = await faturaRepository.pegaFatura(pagamento.faturaId);
+    const pedido = await pedidoRepository.retornaPedido(fatura.pedidoId);
+    if(pedido!.valor <= pagamento.valorPagamento) {
+      faturaRepository.atualizaStatusPagamentoFatura(fatura.id, statusDePagamento.PAGAMENTO_APROVADO);
+      pedidoRepository.atualizaStatusDoPedido(pedido!.id, statusDoPedido.EM_PREPARO);
+    } else {
+      faturaRepository.atualizaStatusPagamentoFatura(fatura.id, statusDePagamento.ERRO_AO_PROCESSAR_PAGAMENTO);
+      pedidoRepository.atualizaStatusDoPedido(pedido!.id, statusDoPedido.FALHA);
+    }
   }
 }

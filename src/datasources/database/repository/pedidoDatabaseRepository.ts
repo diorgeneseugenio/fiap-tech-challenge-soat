@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import sequelize, { Op, WhereOptions } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 
 import { ItemDoPedidoDTO } from "~domain/entities/types/itensPedidoType";
-import { PedidoDTO, statusDoPedido } from "~domain/entities/types/pedidoType";
+import { PedidoDTO, StatusDoPedido, statusDoPedido } from "~domain/entities/types/pedidoType";
 import PedidoRepository, {
   AdicionaItemInput,
   RemoveItemInput,
@@ -33,6 +34,19 @@ class PedidoDataBaseRepository implements PedidoRepository {
     }
   }
 
+  async atualizaStatusDoPedido(id: string, statusDoPedido: StatusDoPedido): Promise<PedidoDTO> {
+    try {
+      const pedido = await PedidoModel.findByPk(id);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      pedido!.status = statusDoPedido;
+      await pedido?.save();
+      return pedido as PedidoDTO; 
+    } catch (err: any) {
+      console.error("Erro ao atualizar status do pedido: ", err);
+      throw new Error(err);
+    }
+  }
+
   async atualizaPedido(pedido: PedidoDTO): Promise<PedidoDTO> {
     try {
       // TODO - refatorar
@@ -40,6 +54,10 @@ class PedidoDataBaseRepository implements PedidoRepository {
       const pedidoAtual = await PedidoModel.findByPk(pedido.id, {
         include: ["itens"],
       });
+
+      if (pedido.faturaId) {
+        pedidoAtual!.faturaId = pedido.faturaId;
+      }
 
       const idsPostsExistentes = pedidoAtual?.itens?.map(
         (item) => item.id

@@ -4,7 +4,8 @@ import swaggerUi from "swagger-ui-express";
 import { Server } from "./config/server.config";
 import {
     categoriaRouter,
-    metodoPagamento,
+    metodoPagamentoRouter,
+    pagamentoRouter,
     pedidoRouter,
     produtoRouter,
     usuarioRouter,
@@ -27,7 +28,8 @@ export default class API {
         server.addRouter("/api/produto", produtoRouter);
         server.addRouter("/api/pedido", pedidoRouter);
         server.addRouter("/api/usuario", usuarioRouter);
-        server.addRouter("/api/metodoPagamento", metodoPagamento);
+        server.addRouter("/api/metodo-pagamento", metodoPagamentoRouter);
+        server.addRouter("/api/pagamento", pagamentoRouter);
 
         server.init();
     }

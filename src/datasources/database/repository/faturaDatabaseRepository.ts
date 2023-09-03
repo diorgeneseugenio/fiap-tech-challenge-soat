@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { Fatura } from "~domain/entities/fatura";
+import { Fatura, StatusDePagamento } from "~domain/entities/fatura";
 import FaturaRepository, {
   AtualizaFaturaInput,
   CriaFaturaInput,
@@ -52,6 +52,24 @@ class FaturaDataBaseRepository implements FaturaRepository {
       console.error("Erro ao criar Fatura: ", err);
       throw new Error(err);
     }
+  }
+  
+  async pegaFatura(id: string): Promise<Fatura> {
+    try {
+      const fatura = await FaturaModel.findByPk(id);
+      return fatura as Fatura;
+    } catch (err: any) {
+      console.error("Erro ao recuperar Fatura: ", err);
+      throw new Error(err);
+    }
+  }
+
+  async atualizaStatusPagamentoFatura(id: string, statusDePagamento: StatusDePagamento): Promise<Fatura> {
+    const fatura = await FaturaModel.findByPk(id);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    fatura!.statusDePagamento = statusDePagamento;
+    await fatura?.save()
+    return fatura as Fatura;
   }
 }
 

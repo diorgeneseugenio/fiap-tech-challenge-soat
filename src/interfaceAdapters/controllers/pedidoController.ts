@@ -23,6 +23,8 @@ export class PedidoController {
     produtoRepository: ProdutoRepository,
     realizaPedidoInput: RealizaPedidoInput
   ): Promise<PedidoDTO | null> {
+    // verificação/decisão do checkoutRepository vai ser passado pra useCase dependendo do id recebido
+    // webhook fecha a fatura
     return await PedidoUseCase.realizaPedido(
       checkoutRepository, pedidoRepository, produtoRepository, realizaPedidoInput
     );

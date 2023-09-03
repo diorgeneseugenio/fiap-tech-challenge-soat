@@ -15,5 +15,7 @@ export type AtualizaFaturaInput = {
 
 export default interface FaturaRepository {
   atualizaFatura(atualizaFatura: AtualizaFaturaInput): Promise<Fatura>;
+  atualizaStatusPagamentoFatura(id: string, statusPagamento: StatusDePagamento): Promise<Fatura>;
   criaFatura(criarFaturaInput: CriaFaturaInput): Promise<Fatura>;
+  pegaFatura(id: string): Promise<Fatura>;
 }

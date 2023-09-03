@@ -13,7 +13,7 @@ export default class FakeCheckout implements CheckoutRepository {
   async geraPagamento(geraPagamentoInput: GeraPagamentoInput): Promise<Fatura> {
     // Deve validar a forma de pagamento e enviar o valor do pedido para o pagamento externo
     // O Fake checkout apenas vai gerar o fake qrcode e automaticamente mudar o status para aguardando preparo
-    let status: StatusDePagamento = statusDePagamento.PAGAMENTO_APROVADO; // FIXADO
+    let status: StatusDePagamento = statusDePagamento.AGUARDANDO_PAGAMENTO; // FIXADO
     let qrCode = "";
     try {
      qrCode = await QRCode.toDataURL('FAKE CHECKOUT') as string // Em um checkout real aqui seria a chamada externa
