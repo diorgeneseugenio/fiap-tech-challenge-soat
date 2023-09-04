@@ -20,7 +20,7 @@ const faturaRepository = new FaturaDataBaseRepository()
  * @openapi
  * /pagamento:
  *   post:
- *     summary: Recebe confirmação ou negação de pagamento
+ *     summary: Recebe confirmação ou negação de pagamento (Para teste pagamentoId=7ef6e15a-9f11-40fe-9d19-342505377600 )
  *     tags:
  *       - Pagamento
  *     requestBody:
@@ -32,6 +32,7 @@ const faturaRepository = new FaturaDataBaseRepository()
  *             properties:
  *               pagamentoId:
  *                 type: string
+ *                 default: 7ef6e15a-9f11-40fe-9d19-342505377600 
  *               faturaId:
  *                 type: string
  *               isPago:
@@ -40,6 +41,7 @@ const faturaRepository = new FaturaDataBaseRepository()
  *                 type: number
  *               tipoDePagamento:
  *                 type: string
+ *                 default: "QRCode"
  *     responses:
  *       200:
  *         description: lista de metodos de pagamento.
