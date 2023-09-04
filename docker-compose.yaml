@@ -6,8 +6,8 @@ services:
     container_name: fiap-soat-project_project_api
     environment:
       - DB_HOST=db
-      - DB_USERNAME=root
-      - DB_PASSWORD=admin123
+      - DB_USERNAME=user_tech
+      - DB_PASSWORD=testtest
       - DB_NAME=fiap-soat-project_db
     ports:
       - "3000:3000"

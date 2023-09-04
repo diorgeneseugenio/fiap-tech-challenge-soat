@@ -139,3 +139,19 @@ export const listarPedidosSchema = z.object({
 
 export type ListaPedidosPayload = z.infer<typeof listarPedidosSchema>;
 export type ListaPedidosQuery = ListaPedidosPayload["query"];
+
+/** Status de Pagamento */
+export const statusPagamentoSchema = z.object({
+  params: z.object({
+    id: z
+      .string({
+        required_error: "O id do pedido é obrigatório",
+        invalid_type_error: "O id pedido deve ser um texto",
+      })
+      .uuid({ message: "O id do pedido deve ser UUID" }),
+  }),
+});
+
+export type StatusPedidoPayload = z.infer<typeof statusPagamentoSchema>;
+
+export type StatusPedidoParams = StatusPedidoPayload["params"];

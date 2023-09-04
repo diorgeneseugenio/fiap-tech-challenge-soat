@@ -36,6 +36,7 @@ export type RetornaItemInput = {
 export default interface PedidoRepository {
   criaPedido(pedido: PedidoDTO): Promise<PedidoDTO>;
   atualizaPedido(pedido: Pedido): Promise<PedidoDTO>;
+  atualizaStatusDoPedido(id: string, statusDoPedido: StatusDoPedido): Promise<PedidoDTO>;
   adicionaItem(adicionarItemInput: AdicionaItemInput): Promise<PedidoDTO | null>;
   retornaPedido(id: string): Promise<PedidoDTO | null>;
   listaPedidos(status?: Array<string>, clienteId?: string): Promise<Array<PedidoDTO> | null>;
