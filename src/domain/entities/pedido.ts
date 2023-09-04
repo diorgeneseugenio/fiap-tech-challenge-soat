@@ -58,17 +58,14 @@ export default class Pedido {
   // }
 
   atualizaPagamento(statusPagamento: StatusDePagamento) {
-    if (this.status !== statusDoPedido.AGUARDANDO_PAGAMENTO) {
-      throw new Error(
-        `Não é possível alterar o status para ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status atual do pedido é ${this.status}`
-      );
-    }
 
     if (statusPagamento !== statusDePagamento.AGUARDANDO_PAGAMENTO) {
       this.status = statusPagamento === statusDePagamento.PAGAMENTO_APROVADO
         ? statusDoPedido.AGUARDANDO_PREPARO
         : statusDoPedido.FALHA;
     }
+
+    
   }
 
   emPreparo() {

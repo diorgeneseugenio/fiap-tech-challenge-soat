@@ -1,22 +1,24 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-import MetodoDePagamento from "~domain/entities/metodoDePagamento";
+import { PagamentoDTO } from "~domain/entities/types/PagamentoType";
 
 import FaturaModel from "./faturaModel";
 
-class MetodoDePagamentoModel
-  extends Model<MetodoDePagamento>
-  implements MetodoDePagamento
+class PagamentoModel
+  extends Model<PagamentoDTO>
+  implements PagamentoDTO
 {
   public id!: string;
-  public nome!: string;
-  public ativo!: boolean;
+  public isPago!: boolean;
+  public valorPagamento!: number;
+  public tipoDePagamento!: string;
+  public faturaId!: string;
   public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
   public readonly deletedAt!: Date | null;
+  public readonly updatedAt!: Date | null;
 
   static initialize(sequelize: Sequelize): void {
-    MetodoDePagamentoModel.init(
+    PagamentoModel.init(
       {
         id: {
           type: DataTypes.UUID,
@@ -24,14 +26,21 @@ class MetodoDePagamentoModel
           primaryKey: true,
           allowNull: false,
         },
-        nome: {
+        isPago: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+        },
+        valorPagamento: {
+          type: DataTypes.DECIMAL(10, 2),
+          allowNull: false,
+        },
+        tipoDePagamento: {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        ativo: {
-          type: DataTypes.BOOLEAN,
+        faturaId: {
+          type: DataTypes.UUID,
           allowNull: false,
-          defaultValue: true,
         },
         createdAt: {
           type: DataTypes.DATE,
@@ -50,7 +59,7 @@ class MetodoDePagamentoModel
       {
         paranoid: true,
         sequelize,
-        tableName: "MetodosDePagamento",
+        tableName: "Pagamentos",
         timestamps: true,
         underscored: true,
       }
@@ -58,10 +67,11 @@ class MetodoDePagamentoModel
   }
 
   static associate(): void {
-    this.hasMany(FaturaModel, {
-      foreignKey: "metodoDePagamentoId",
-    });
+    this.hasOne(FaturaModel, {
+      foreignKey: 'faturaId'
+    })
+
   }
 }
 
-export default MetodoDePagamentoModel;
+export default PagamentoModel;

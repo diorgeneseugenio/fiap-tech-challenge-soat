@@ -1,10 +1,10 @@
 import express from "express";
 import { Request, Response } from "express";
 
-import FakeCheckout from "~datasources/checkout/repository/checkoutRepository";
 import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~datasources/database/repository/produtoDatabaseRepository";
+import CheckoutProvider from "~datasources/paymentProvider/checkoutRepository";
 import { PedidoController } from "~interfaceAdapters/controllers/pedidoController";
 
 import {
@@ -33,10 +33,10 @@ import { validaRequisicao } from "./utils";
 
 const pedidoRouter = express.Router({});
 
+const checkoutRepository = new CheckoutProvider();
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
 const dbFaturaRepository = new FaturaDataBaseRepository();
-const checkoutRepository = new FakeCheckout(dbFaturaRepository); // TODO
 
 /**
  * @openapi
@@ -215,7 +215,7 @@ pedidoRouter.post(
  * @openapi
  * /pedido/realizar-pedido/{id}:
  *   patch:
- *     summary: Finaliza a customizacao do pedido e envia para checkout (fake checkou já aprova)
+ *     summary: Finaliza a customizacao do pedido
  *     parameters:
  *       - in: path
  *         name: id
@@ -254,6 +254,7 @@ pedidoRouter.patch(
 
       const pedidoCriado = await PedidoController.realizaPedido(
         checkoutRepository,
+        dbFaturaRepository,
         dbPedidosRepository,
         dbProdutoRepository,
         {
@@ -428,9 +429,9 @@ pedidoRouter.patch(
 
 /**
  * @openapi
- * /pedido/:id/status-pagamento
+ * /pedido/:
  *   get:
- *     summary: Consulta o status de pagamento de um pedido
+ *     summary: Lista os pedidos e filtra a fila por status
  *     parameters:
  *       - in: query
  *         name: status
@@ -490,7 +491,7 @@ pedidoRouter.get(
  * @openapi
  * /pedido/{id}/status-pagamento
  *   get:
- *     summary: Lista os pedidos e filtra a fila por status
+ *     summary: Consulta status de pagamento do pedido
  *     parameters:
  *       - in: path
  *         name: id

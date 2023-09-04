@@ -24,12 +24,14 @@ export class PedidoController {
 
   static async realizaPedido(
     checkoutRepository: CheckoutRepository,
+    faturaRepository: FaturaRepository,
     pedidoRepository: PedidoRepository,
     produtoRepository: ProdutoRepository,
     realizaPedidoInput: RealizaPedidoInput
   ): Promise<PedidoDTO | null> {
     return await PedidoUseCase.realizaPedido(
       checkoutRepository,
+      faturaRepository,
       pedidoRepository,
       produtoRepository,
       realizaPedidoInput

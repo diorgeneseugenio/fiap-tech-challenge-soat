@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  tech-challenge-db-svc
+spec:
+  selector:
+    app: tech-challenge-db
+  ports:
+    - protocol: TCP
+      port: 3306
