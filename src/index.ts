@@ -8,9 +8,9 @@ import API from "~presenters/api";
 dotenv.config();
 
 const database = new DataBaseConfig({
-  database: process.env.DB_NAME ?? "projeto",
+  database: process.env.DB_NAME ?? "fiap-soat-project_db",
   host: process.env.DB_HOST ?? "localhost",
-  userName: process.env.DB_USERNAME ?? "root",
+  userName: process.env.DB_USERNAME ?? "user_tech",
   password: process.env.DB_PASSWORD ?? "testtest",
   port: 3306,
 });
