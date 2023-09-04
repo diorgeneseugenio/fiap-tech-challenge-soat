@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import { statusDePagamento } from "~domain/entities/fatura";
 import ItemPedido from "~domain/entities/itemPedido";
 import Pedido from "~domain/entities/pedido";
@@ -7,10 +6,10 @@ import Produto from "~domain/entities/produto";
 import { ItemDoPedidoInput } from "~domain/entities/types/itensPedidoType";
 import { PagamentoDTO } from "~domain/entities/types/PagamentoType";
 import { PedidoDTO, PedidoInput, statusDoPedido } from "~domain/entities/types/pedidoType";
+import CheckoutRepository from "~domain/repositories/checkoutRepository";
 import FaturaRepository from "~domain/repositories/faturaRepository";
 import PedidoRepository from "~domain/repositories/pedidoRepository";
 import ProdutoRepository from "~domain/repositories/produtoRepository";
-import PagamentoGateway from "~interfaceAdapters/gateways/pagamentoGateway";
 
 import {
   RealizaPedidoInput,
@@ -38,6 +37,8 @@ export default class PedidoUseCase {
   }
 
   static async realizaPedido(
+    checkoutRepository: CheckoutRepository,
+    faturaRepository: FaturaRepository,
     pedidoRepository: PedidoRepository,
     produtoRepository: ProdutoRepository,
     realizaPedidoInput: RealizaPedidoInput): Promise<PedidoDTO | null> {
@@ -50,8 +51,7 @@ export default class PedidoUseCase {
     pedido.entregaRascunho();
 
     const fatura = await FaturaUseCase.geraFatura(realizaPedidoInput.metodoDePagamentoId, pedido);
-    const faturaRepository = new FaturaDataBaseRepository();
-    const faturaAtualizada = await PagamentoGateway.geraCobranca(fatura, faturaRepository);
+    const faturaAtualizada = await checkoutRepository.geraCobranca(fatura, faturaRepository);
     pedido.faturaId = faturaAtualizada.id;
 
     return pedidoRepository.atualizaPedido(pedido);
@@ -177,6 +177,11 @@ export default class PedidoUseCase {
 
   static async pagamentoReprovado(pedidoRepository: PedidoRepository, faturaRepository: FaturaRepository, pagamento: PagamentoDTO) {
     const fatura = await faturaRepository.pegaFatura(pagamento.faturaId);
+
+    if (!fatura) {
+      throw new Error('Fatura nao encontrada!');
+    }
+
     const pedido = await pedidoRepository.retornaPedido(fatura.pedidoId);
     faturaRepository.atualizaStatusPagamentoFatura(fatura.id, statusDePagamento.ERRO_AO_PROCESSAR_PAGAMENTO);
     pedidoRepository.atualizaStatusDoPedido(pedido!.id, statusDoPedido.FALHA);
@@ -184,10 +189,15 @@ export default class PedidoUseCase {
   
   static async pagamentoAprovado(pedidoRepository: PedidoRepository, faturaRepository: FaturaRepository, pagamento: PagamentoDTO) {
     const fatura = await faturaRepository.pegaFatura(pagamento.faturaId);
+    
+    if (!fatura) {
+      throw new Error('Fatura nao encontrada!');
+    }
+    
     const pedido = await pedidoRepository.retornaPedido(fatura.pedidoId);
-    if(pedido!.valor <= pagamento.valorPagamento) {
+    if(pedido!.valor <= pagamento.valorPagamento) { // TODO validar posteriormente se faz sentido essa validacao
       faturaRepository.atualizaStatusPagamentoFatura(fatura.id, statusDePagamento.PAGAMENTO_APROVADO);
-      pedidoRepository.atualizaStatusDoPedido(pedido!.id, statusDoPedido.EM_PREPARO);
+      pedidoRepository.atualizaStatusDoPedido(pedido!.id, statusDoPedido.AGUARDANDO_PREPARO);
     } else {
       faturaRepository.atualizaStatusPagamentoFatura(fatura.id, statusDePagamento.ERRO_AO_PROCESSAR_PAGAMENTO);
       pedidoRepository.atualizaStatusDoPedido(pedido!.id, statusDoPedido.FALHA);

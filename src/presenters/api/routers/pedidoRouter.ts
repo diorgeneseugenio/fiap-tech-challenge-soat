@@ -1,8 +1,10 @@
 import express from "express";
 import { Request, Response } from "express";
 
+import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~datasources/database/repository/produtoDatabaseRepository";
+import CheckoutProvider from "~datasources/paymentProvider/checkoutRepository";
 import { PedidoController } from "~interfaceAdapters/controllers/pedidoController";
 
 import {
@@ -29,8 +31,10 @@ import { validaRequisicao } from "./utils";
 
 const pedidoRouter = express.Router({});
 
+const checkoutRepository = new CheckoutProvider();
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
+const dbfaturaRepository = new FaturaDataBaseRepository();
 
 /**
  * @openapi
@@ -238,7 +242,7 @@ pedidoRouter.patch(
     try {
       const { params, body } = req;
 
-      const pedidoCriado = await PedidoController.realizaPedido(dbPedidosRepository, dbProdutoRepository, {
+      const pedidoCriado = await PedidoController.realizaPedido(checkoutRepository, dbfaturaRepository, dbPedidosRepository, dbProdutoRepository, {
         pedidoId: params.id,
         metodoDePagamentoId: body.metodoDePagamentoId,
       });

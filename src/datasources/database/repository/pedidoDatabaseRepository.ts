@@ -9,6 +9,7 @@ import PedidoRepository, {
   RemoveItemInput,
 } from "~domain/repositories/pedidoRepository";
 
+import FaturaModel from "../models/faturaModel";
 import ItemDoPedidoModel from "../models/itemPedidoModel";
 import PedidoModel from "../models/pedidoModel";
 
@@ -95,6 +96,10 @@ class PedidoDataBaseRepository implements PedidoRepository {
           {
             model: ItemDoPedidoModel,
             as: "itens",
+          },
+          {
+            model: FaturaModel,
+            as: "fatura",
           },
         ],
         where: { id },

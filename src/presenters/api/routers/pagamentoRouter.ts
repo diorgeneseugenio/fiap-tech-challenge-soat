@@ -1,7 +1,9 @@
 import express from "express";
 import { Request, Response } from "express";
 
+import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PagamentoDatabaseRepository from "~datasources/database/repository/pagamentoDatabaseRepository";
+import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
 import { PagamentoController } from "~interfaceAdapters/controllers/pagamentoController";
 
 import { RecebimentoDePagamentosPayload, RecebimentoDePagamentosSchema } from "./schemas/pagamentoRouter.schema";
@@ -10,6 +12,8 @@ import { validaRequisicao } from "./utils";
 const pagamentoRouter = express.Router();
 
 const dbPagamentoRepository = new PagamentoDatabaseRepository();
+const pedidoRepository = new PedidoDataBaseRepository()
+const faturaRepository = new FaturaDataBaseRepository()
 
 
 /**
@@ -42,15 +46,19 @@ const dbPagamentoRepository = new PagamentoDatabaseRepository();
  *       500:
  *         description: Erro na api.
  */
-  pagamentoRouter.post("/",
+pagamentoRouter.post("/",
   validaRequisicao(RecebimentoDePagamentosSchema),
   async (
-    req: Request<unknown, RecebimentoDePagamentosPayload>, 
+    req: Request<unknown, RecebimentoDePagamentosPayload>,
     res: Response
   ) => {
     try {
       const { body } = req;
-      const pagamentoCriado = await PagamentoController.recebePagamento(dbPagamentoRepository, body);
+      const pagamentoCriado = await PagamentoController.recebePagamento(
+        faturaRepository,
+        pedidoRepository,
+        dbPagamentoRepository,
+        body);
       return res.status(201).json({
         status: "success",
         message: pagamentoCriado,
@@ -63,5 +71,4 @@ const dbPagamentoRepository = new PagamentoDatabaseRepository();
     }
   })
 
-  export default pagamentoRouter;
-  
+export default pagamentoRouter;
