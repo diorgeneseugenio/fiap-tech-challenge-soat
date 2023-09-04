@@ -67,12 +67,11 @@ metadata:
   name: fiap-tech-secrets
 type: Opaque
 data: # value = Base64
-  db_host: 
-  db_username: {VALOR_BASE64}
-  db_password: {VALOR_BASE64}
-  db_root_password: {VALOR_BASE64}
-  db_name: {VALOR_BASE64}
-  jwt_secret: {VALOR_BASE64}
+  db_username: dXNlcl90ZWNo
+  db_password: dGVzdHRlc3Q=
+  db_root_password: YWRtaW4xMjM=
+  db_name: ZmlhcC1zb2F0LXByb2plY3RfZGI=
+  jwt_secret: dTZCWTh3NHMzYXlHNjJvRzA1TVYxSE96eTllYm9UYVdoUWpIQ0ZpWmhjMjBFYlIwOGdzWlZPdUdQUGVVVUVJMg==
 ```
 
 2. Execute o comando `kubectl apply -f <./caminho/do/arquivo/secret.yaml>` no diretório raiz do projeto para gerar os secrets;
@@ -219,10 +218,11 @@ Foram utilizadas técnicas de Domain Driven Design para definição dos fluxos:
 
 O projeto foi reestruturado seguindo o padrão do clean architecture. 
 
-- `datasources`:  comunicacao dos servicos externo como banco de dados e checkout;
+- `datasources`:  comunicação dos serviços externos como banco de dados e checkout;
 - `domain`:  contém a camada de domínio da aplicação com suas entidades, casos de uso e repositórios;
 - `interfaceAdapters`: camada de interface do clean architecture com o controlador;
 - `presenters`: camada externa de comunicacao externa onde se entra a API;
+
 ```shell
 .
 └── src/
