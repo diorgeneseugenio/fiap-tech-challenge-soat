@@ -107,14 +107,14 @@ export default class PedidoUseCase {
   ): Promise<PedidoDTO | null> {
     const pedido = pedidoId
       ? await PedidoUseCase.buscaPedido(
-          pedidoRepository,
-          produtoRepository,
-          pedidoId
-        )
+        pedidoRepository,
+        produtoRepository,
+        pedidoId
+      )
       : await PedidoUseCase.retornaProximoPedidoFila(
-          pedidoRepository,
-          produtoRepository
-        );
+        pedidoRepository,
+        produtoRepository
+      );
 
     if (pedido) {
       pedido.emPreparo();
@@ -291,6 +291,13 @@ export default class PedidoUseCase {
     }
 
     const pedido = await pedidoRepository.retornaPedido(fatura.pedidoId);
+
+    if (pedido?.status !== statusDePagamento.AGUARDANDO_PAGAMENTO) {
+      throw new Error(
+        `Só é permitido alterar o status do pedido quando o status é ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status Atual: ${pedido?.status}`
+      );
+    }
+
     faturaRepository.atualizaStatusPagamentoFatura(
       fatura.id,
       statusDePagamento.ERRO_AO_PROCESSAR_PAGAMENTO
@@ -310,6 +317,13 @@ export default class PedidoUseCase {
     }
 
     const pedido = await pedidoRepository.retornaPedido(fatura.pedidoId);
+
+    if (pedido?.status !== statusDePagamento.AGUARDANDO_PAGAMENTO) {
+      throw new Error(
+        `Só é permitido alterar o status do pedido quando o status é ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status Atual: ${pedido?.status}`
+      );
+    }
+
     if (pedido!.valor <= pagamento.valorPagamento) {
       // TODO validar posteriormente se faz sentido essa validacao
       faturaRepository.atualizaStatusPagamentoFatura(
