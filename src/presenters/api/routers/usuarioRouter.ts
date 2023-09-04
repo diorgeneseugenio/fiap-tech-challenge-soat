@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import DBUsuariosRepository from "~datasources/database/repository/usuarioDatabaseRepository";
 import { UsuarioController } from "~interfaceAdapters/controllers/usuarioController";
 
-import { ListaPagamentosSchema } from "./schemas/pagamentoRouter.schema";
+import { ListaPagamentosSchema } from "./schemas/metodoPagamentoRouter.schema";
 import { CriaUsuarioBody, CriaUsuarioSchema, RetornaUsuarioBody, RetornaUsuarioSchema } from "./schemas/usuarioRouter.schema";
 import { validaRequisicao } from "./utils";
 

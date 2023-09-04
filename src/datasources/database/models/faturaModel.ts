@@ -56,7 +56,7 @@ class FaturaModel extends Model<Fatura> implements Fatura {
           allowNull: true,
         },
         qrCode: {
-          type: DataTypes.STRING(1000),
+          type: DataTypes.STRING(10000),
           allowNull: true,
         },
         createdAt: {

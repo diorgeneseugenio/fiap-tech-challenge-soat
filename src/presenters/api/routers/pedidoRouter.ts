@@ -1,10 +1,10 @@
 import express from "express";
 import { Request, Response } from "express";
 
-import FakeCheckout from "~datasources/checkout/repository/checkoutRepository";
 import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~datasources/database/repository/produtoDatabaseRepository";
+import CheckoutProvider from "~datasources/paymentProvider/checkoutRepository";
 import { PedidoController } from "~interfaceAdapters/controllers/pedidoController";
 
 import {
@@ -31,11 +31,10 @@ import { validaRequisicao } from "./utils";
 
 const pedidoRouter = express.Router({});
 
+const checkoutRepository = new CheckoutProvider();
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
-const dbFaturaRepository = new FaturaDataBaseRepository();
-const checkoutRepository = new FakeCheckout(dbFaturaRepository); // TODO
-
+const dbfaturaRepository = new FaturaDataBaseRepository();
 
 /**
  * @openapi
@@ -206,7 +205,7 @@ pedidoRouter.post(
  * @openapi
  * /pedido/realizar-pedido/{id}:
  *   patch:
- *     summary: Finaliza a customizacao do pedido e envia para checkout (fake checkou já aprova)
+ *     summary: Finaliza a customizacao do pedido
  *     parameters:
  *       - in: path
  *         name: id
@@ -243,7 +242,7 @@ pedidoRouter.patch(
     try {
       const { params, body } = req;
 
-      const pedidoCriado = await PedidoController.realizaPedido(checkoutRepository, dbPedidosRepository, dbProdutoRepository, {
+      const pedidoCriado = await PedidoController.realizaPedido(checkoutRepository, dbfaturaRepository, dbPedidosRepository, dbProdutoRepository, {
         pedidoId: params.id,
         metodoDePagamentoId: body.metodoDePagamentoId,
       });
