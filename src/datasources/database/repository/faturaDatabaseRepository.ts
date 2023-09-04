@@ -12,25 +12,27 @@ class FaturaDataBaseRepository implements FaturaRepository {
   async atualizaFatura({
     id,
     pagoEm,
-    qrCode, }: AtualizaFaturaInput): Promise<Fatura> {
+    qrCode,
+  }: AtualizaFaturaInput): Promise<Fatura> {
     try {
       return (await FaturaModel.update(
         {
           pagoEm,
           qrCode,
-        }, { where: { id: id } }).then(() =>
-          FaturaModel.findOne({
-            where: { id: id },
-          }))
-      ) as Fatura;
-
+        },
+        { where: { id: id } }
+      ).then(() =>
+        FaturaModel.findOne({
+          where: { id: id },
+        })
+      )) as Fatura;
     } catch (err: any) {
       console.error("Erro ao criar Fatura: ", err);
       throw new Error(err);
     }
   }
 
-  static async criaFatura({
+  async criaFatura({
     metodoDePagamentoId,
     pedidoId,
     qrCode,
@@ -53,7 +55,20 @@ class FaturaDataBaseRepository implements FaturaRepository {
       throw new Error(err);
     }
   }
-  
+
+  async retornaFatura(faturaId: string): Promise<Fatura | null> {
+    try {
+      return await FaturaModel.findOne({
+        where: {
+          id: faturaId,
+        },
+      });
+    } catch (err: any) {
+      console.error("Erro ao retornar Fatura: ", err);
+      throw new Error(err);
+    }
+  }
+
   async pegaFatura(id: string): Promise<Fatura> {
     try {
       const fatura = await FaturaModel.findByPk(id);
@@ -64,11 +79,14 @@ class FaturaDataBaseRepository implements FaturaRepository {
     }
   }
 
-  async atualizaStatusPagamentoFatura(id: string, statusDePagamento: StatusDePagamento): Promise<Fatura> {
+  async atualizaStatusPagamentoFatura(
+    id: string,
+    statusDePagamento: StatusDePagamento
+  ): Promise<Fatura> {
     const fatura = await FaturaModel.findByPk(id);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     fatura!.statusDePagamento = statusDePagamento;
-    await fatura?.save()
+    await fatura?.save();
     return fatura as Fatura;
   }
 }

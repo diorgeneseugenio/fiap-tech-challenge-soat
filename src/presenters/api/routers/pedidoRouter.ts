@@ -26,6 +26,8 @@ import {
   realizarPedidoSchema,
   RemoverItemParams,
   removerItemSchema,
+  statusPagamentoSchema,
+  StatusPedidoParams,
 } from "./schemas/pedidoRouter.schema";
 import { validaRequisicao } from "./utils";
 
@@ -34,7 +36,7 @@ const pedidoRouter = express.Router({});
 const checkoutRepository = new CheckoutProvider();
 const dbPedidosRepository = new PedidoDataBaseRepository();
 const dbProdutoRepository = new ProdutosDataBaseRepository();
-const dbfaturaRepository = new FaturaDataBaseRepository();
+const dbFaturaRepository = new FaturaDataBaseRepository();
 
 /**
  * @openapi
@@ -81,10 +83,14 @@ pedidoRouter.post(
     try {
       const { body, params } = req;
 
-      const pedido = await PedidoController.adicionaItem(dbPedidosRepository, dbProdutoRepository, {
-        ...body,
-        pedidoId: params.id,
-      });
+      const pedido = await PedidoController.adicionaItem(
+        dbPedidosRepository,
+        dbProdutoRepository,
+        {
+          ...body,
+          pedidoId: params.id,
+        }
+      );
 
       return res.status(201).json({
         status: "success",
@@ -134,10 +140,14 @@ pedidoRouter.delete(
     try {
       const { params } = req;
 
-      const pedido = await PedidoController.removeItem(dbPedidosRepository, dbProdutoRepository, {
-        pedidoId: params.id,
-        itemId: params.idItem,
-      });
+      const pedido = await PedidoController.removeItem(
+        dbPedidosRepository,
+        dbProdutoRepository,
+        {
+          pedidoId: params.id,
+          itemId: params.idItem,
+        }
+      );
 
       return res.status(201).json({
         status: "success",
@@ -179,14 +189,14 @@ pedidoRouter.delete(
 pedidoRouter.post(
   "/iniciar-pedido",
   validaRequisicao(iniciaPedidoSchema),
-  async (
-    req: Request<unknown, IniciaPedidoPayload>,
-    res: Response
-  ) => {
+  async (req: Request<unknown, IniciaPedidoPayload>, res: Response) => {
     try {
       const { body } = req;
 
-      const pedidoCriado = await PedidoController.iniciaPedido(dbPedidosRepository, body);
+      const pedidoCriado = await PedidoController.iniciaPedido(
+        dbPedidosRepository,
+        body
+      );
 
       return res.status(201).json({
         status: "success",
@@ -242,10 +252,16 @@ pedidoRouter.patch(
     try {
       const { params, body } = req;
 
-      const pedidoCriado = await PedidoController.realizaPedido(checkoutRepository, dbfaturaRepository, dbPedidosRepository, dbProdutoRepository, {
-        pedidoId: params.id,
-        metodoDePagamentoId: body.metodoDePagamentoId,
-      });
+      const pedidoCriado = await PedidoController.realizaPedido(
+        checkoutRepository,
+        dbFaturaRepository,
+        dbPedidosRepository,
+        dbProdutoRepository,
+        {
+          pedidoId: params.id,
+          metodoDePagamentoId: body.metodoDePagamentoId,
+        }
+      );
 
       return res.status(201).json({
         status: "success",
@@ -258,7 +274,6 @@ pedidoRouter.patch(
       });
     }
   }
-
 );
 
 /**
@@ -290,7 +305,11 @@ pedidoRouter.patch(
     try {
       const { pedidoId } = req.query;
 
-      const pedido = await PedidoController.iniciaPreparo(dbPedidosRepository, dbProdutoRepository, pedidoId as string);
+      const pedido = await PedidoController.iniciaPreparo(
+        dbPedidosRepository,
+        dbProdutoRepository,
+        pedidoId as string
+      );
 
       if (pedido) {
         return res.status(201).json({
@@ -302,8 +321,7 @@ pedidoRouter.patch(
       return res.status(200).json({
         status: "success",
         message: "Nenhum pedido na fila",
-      })
-
+      });
     } catch (err: any) {
       return res.status(500).json({
         status: "error",
@@ -342,7 +360,11 @@ pedidoRouter.patch(
     try {
       const { params } = req;
 
-      const pedido = await PedidoController.finalizaPreparo(dbPedidosRepository, dbProdutoRepository, params.id);
+      const pedido = await PedidoController.finalizaPreparo(
+        dbPedidosRepository,
+        dbProdutoRepository,
+        params.id
+      );
 
       return res.status(201).json({
         status: "success",
@@ -386,7 +408,11 @@ pedidoRouter.patch(
     try {
       const { params } = req;
 
-      const pedido = await PedidoController.entregaPedido(dbPedidosRepository, dbProdutoRepository, params.id);
+      const pedido = await PedidoController.entregaPedido(
+        dbPedidosRepository,
+        dbProdutoRepository,
+        params.id
+      );
 
       return res.status(201).json({
         status: "success",
@@ -432,10 +458,7 @@ pedidoRouter.patch(
 pedidoRouter.get(
   "/",
   validaRequisicao(listarPedidosSchema),
-  async (
-    req: Request<unknown, unknown, ListaPedidosQuery>,
-    res: Response
-  ) => {
+  async (req: Request<unknown, unknown, ListaPedidosQuery>, res: Response) => {
     try {
       const { query } = req;
 
@@ -445,11 +468,71 @@ pedidoRouter.get(
         status = query.status.split(",");
       }
 
-      const pedidos = await PedidoController.listaPedidos(dbPedidosRepository, status, clienteId);
+      const pedidos = await PedidoController.listaPedidos(
+        dbPedidosRepository,
+        status,
+        clienteId
+      );
 
       return res.status(200).json({
         status: "success",
         message: pedidos,
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        status: "error",
+        message: err.message,
+      });
+    }
+  }
+);
+
+/**
+ * @openapi
+ * /pedido/{id}/status-pagamento
+ *   get:
+ *     summary: Consulta status de pagamento do pedido
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Id do pedido
+ *     tags:
+ *       - pedido
+ *     responses:
+ *       200:
+ *         description: retorna status de pagamento.
+ *       404:
+ *         description: pedido ou fatura nao encontrado.
+ *       500:
+ *         description: Erro na api.
+ */
+pedidoRouter.get(
+  "/:id/status-pagamento",
+  validaRequisicao(statusPagamentoSchema),
+  async (req: Request<StatusPedidoParams>, res: Response) => {
+    try {
+      const { params } = req;
+      const { id: idPedido } = params;
+
+      const statusPagamentoPedido = await PedidoController.statusDePagamento(
+        dbPedidosRepository,
+        dbFaturaRepository,
+        idPedido
+      );
+
+      if (statusPagamentoPedido) {
+        return res.status(200).json({
+          status: "success",
+          message: statusPagamentoPedido,
+        });
+      }
+
+      return res.status(404).json({
+        status: "error",
+        message: "Pedido ou fatura não encontrado",
       });
     } catch (err: any) {
       return res.status(500).json({
