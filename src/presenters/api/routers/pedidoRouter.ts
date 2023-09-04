@@ -489,7 +489,7 @@ pedidoRouter.get(
 
 /**
  * @openapi
- * /pedido/{id}/status-pagamento
+ * /pedido/{id}/status-pagamento:
  *   get:
  *     summary: Consulta status de pagamento do pedido
  *     parameters:
