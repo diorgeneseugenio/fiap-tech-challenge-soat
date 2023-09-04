@@ -49,7 +49,6 @@ metadata:
   name: fiap-tech-secrets
 type: Opaque
 data: # value = Base64
-  db_host: 
   db_username: {VALOR_BASE64}
   db_password: {VALOR_BASE64}
   db_root_password: {VALOR_BASE64}
