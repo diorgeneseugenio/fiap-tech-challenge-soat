@@ -3,7 +3,11 @@ import sequelize, { Op, WhereOptions } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 
 import { ItemDoPedidoDTO } from "~domain/entities/types/itensPedidoType";
-import { PedidoDTO, StatusDoPedido, statusDoPedido } from "~domain/entities/types/pedidoType";
+import {
+  PedidoDTO,
+  StatusDoPedido,
+  statusDoPedido,
+} from "~domain/entities/types/pedidoType";
 import PedidoRepository, {
   AdicionaItemInput,
   RemoveItemInput,
@@ -35,13 +39,16 @@ class PedidoDataBaseRepository implements PedidoRepository {
     }
   }
 
-  async atualizaStatusDoPedido(id: string, statusDoPedido: StatusDoPedido): Promise<PedidoDTO> {
+  async atualizaStatusDoPedido(
+    id: string,
+    statusDoPedido: StatusDoPedido
+  ): Promise<PedidoDTO> {
     try {
       const pedido = await PedidoModel.findByPk(id);
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       pedido!.status = statusDoPedido;
       await pedido?.save();
-      return pedido as PedidoDTO; 
+      return pedido as PedidoDTO;
     } catch (err: any) {
       console.error("Erro ao atualizar status do pedido: ", err);
       throw new Error(err);
