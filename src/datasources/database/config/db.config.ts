@@ -76,13 +76,11 @@ export class DataBaseConfig implements DataBaseConfigInterface {
       console.log("Modelos sincronizados com o banco de dados.");
 
       await createCategorias.up(
-        this.instance.getQueryInterface(),
-        this.instance
+        this.instance.getQueryInterface()
       );
 
       await createMetodoDePagamento.up(
-        this.instance.getQueryInterface(),
-        this.instance
+        this.instance.getQueryInterface()
       );
     } catch (error) {
       console.error("Erro ao sincronizar modelos com o banco de dados:", error);

@@ -6,7 +6,7 @@
   "author": "Diórgenes Eugênio <diorgeneseugenio@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "16.x",
+    "node": "18.x",
     "npm": "please-use-yarn",
     "yarn": ">= 1.19.1"
   },
@@ -17,7 +17,7 @@
     "start": "node dist/index.js",
     "dev": "node -r ts-node/register src/index.ts",
     "lint": "eslint . --ext .ts",
-    "test": "npx tsc && node --experimental-vm-modules ./node_modules/.bin/jest --coverage --silent=false"
+    "test": "npx tsc && jest --silent=false"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",

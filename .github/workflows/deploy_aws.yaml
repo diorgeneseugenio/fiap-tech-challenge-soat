@@ -2,14 +2,25 @@ name: Deploy AWS
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   test:
-    name: Run Test
-    run: echo TODO Criar Test
+    runs-on: ubuntu-latest
+    name: Run test and lint
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'yarn'
+    - run: yarn install --frozen-lockfile
+    - run: yarn test
+    - run: npx eslint . --ext .js,.jsx,.ts,.tsx
 
   build_and_publish_image:
+    needs: [ test ]
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +49,7 @@ jobs:
             ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
           # TODO - nao usar apenas o latest
   deploy-eks:
-    needs: [ terraform ]
+    needs: [ build_and_publish_image ]
     runs-on: ubuntu-latest
 
     steps:

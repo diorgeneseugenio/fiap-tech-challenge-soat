@@ -100,7 +100,7 @@ categoriaRouter.post("/",
         status: "success",
         message: categoriaCriado,
       });
-    } catch (err: unknown) {
+    } catch (err: any) {
       return res.status(500).json({
         status: "error",
         message: err,
@@ -144,7 +144,7 @@ categoriaRouter.get("/",
         status: "success",
         categorias,
       });
-    } catch (err: unknown) {
+    } catch (err: any) {
       return res.status(500).json({
         status: "error",
         message: err,
@@ -215,7 +215,7 @@ categoriaRouter.get("/:id",
         status: "error",
         message: "Categoria não encontrada!",
       });
-    } catch (err: unknown) {
+    } catch (err: any) {
       return res.status(500).json({
         status: "error",
         message: err,
@@ -283,7 +283,7 @@ categoriaRouter.delete("/:id",
         status: "error",
         message: "Categoria não encontrada!",
       });
-    } catch (err: unknown) {
+    } catch (err: any) {
       return res.status(500).json({
         status: "error",
         message: err,
@@ -369,7 +369,7 @@ categoriaRouter.put("/:id",
         status: "error",
         message: "Categoria não encontrada!",
       });
-    } catch (err: unknown) {
+    } catch (err: any) {
       return res.status(500).json({
         status: "error",
         message: err,
