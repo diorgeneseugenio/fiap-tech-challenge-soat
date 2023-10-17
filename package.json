@@ -59,6 +59,6 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3",
     "uuid": "^9.0.0",
-    "zod": "^3.21.4"
+    "zod": "^3.22.3"
   }
 }
