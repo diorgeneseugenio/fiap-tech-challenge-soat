@@ -5,7 +5,8 @@ import FaturaDataBaseRepository from "~datasources/database/repository/faturaDat
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~datasources/database/repository/produtoDatabaseRepository";
 import CheckoutProvider from "~datasources/paymentProvider/checkoutRepository";
-import { UserType } from "~domain/repositories/authenticationRepository";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
+import { queryStatusPagamentoInput } from "~domain/repositories/pedidoRepository";
 import { PedidoController } from "~interfaceAdapters/controllers/pedidoController";
 
 import authenticate from "../middleware/auth";
@@ -80,7 +81,7 @@ const dbFaturaRepository = new FaturaDataBaseRepository();
  */
 pedidoRouter.post(
   "/:id/adicionar-item",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(adicionarItemSchema),
   async (
     req: Request<AdicionarItemParams, AdicionarItemBody>,
@@ -88,6 +89,7 @@ pedidoRouter.post(
   ) => {
     try {
       const { body, params } = req;
+      const { clienteId } = req
 
       const pedido = await PedidoController.adicionaItem(
         dbPedidosRepository,
@@ -95,6 +97,7 @@ pedidoRouter.post(
         {
           ...body,
           pedidoId: params.id,
+          clienteId
         }
       );
 
@@ -143,11 +146,13 @@ pedidoRouter.post(
  */
 pedidoRouter.delete(
   "/:id/remover-item/:idItem",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(removerItemSchema),
   async (req: Request<RemoverItemParams>, res: Response) => {
     try {
       const { params } = req;
+      const { clienteId } = req
+
 
       const pedido = await PedidoController.removeItem(
         dbPedidosRepository,
@@ -155,6 +160,7 @@ pedidoRouter.delete(
         {
           pedidoId: params.id,
           itemId: params.idItem,
+          clienteId
         }
       );
 
@@ -174,21 +180,12 @@ pedidoRouter.delete(
 /**
  * @openapi
  * /pedido/iniciar-pedido:
- *   post:
+ *   get:
  *     summary: Cria um rascunho de pedido
  *     tags:
  *       - pedido
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               clienteId:
- *                 type: string
  *     responses:
  *       201:
  *         description: pedido criado.
@@ -197,17 +194,21 @@ pedidoRouter.delete(
  *       500:
  *         description: Erro na api.
  */
-pedidoRouter.post(
+pedidoRouter.get(
   "/iniciar-pedido",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(iniciaPedidoSchema),
   async (req: Request<unknown, IniciaPedidoPayload>, res: Response) => {
     try {
-      const { body } = req;
+      const { clienteId } = req;
+
+      if (!clienteId) {
+        throw new Error("ClienteId Nao encontrado!")
+      }
 
       const pedidoCriado = await PedidoController.iniciaPedido(
         dbPedidosRepository,
-        body
+        clienteId
       );
 
       return res.status(201).json({
@@ -258,7 +259,7 @@ pedidoRouter.post(
  */
 pedidoRouter.patch(
   "/realizar-pedido/:id",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(realizarPedidoSchema),
   async (
     req: Request<RealizarPedidoParams, RealizarPedidoBody>,
@@ -266,6 +267,7 @@ pedidoRouter.patch(
   ) => {
     try {
       const { params, body } = req;
+      const { clienteId } = req;
 
       const pedidoCriado = await PedidoController.realizaPedido(
         checkoutRepository,
@@ -275,6 +277,7 @@ pedidoRouter.patch(
         {
           pedidoId: params.id,
           metodoDePagamentoId: body.metodoDePagamentoId,
+          clienteId
         }
       );
 
@@ -317,7 +320,7 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/iniciar-preparo/",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(iniciarPreparoSchema),
   async (req: Request<IniciarPreparoParams>, res: Response) => {
     try {
@@ -375,7 +378,7 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/finalizar-preparo/:id",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(finalizarPreparoSchema),
   async (req: Request<FinalizarPreparoParams>, res: Response) => {
     try {
@@ -426,7 +429,7 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/entregar-pedido/:id",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(entregarPedidoSchema),
   async (req: Request<EntregarPedidoParams>, res: Response) => {
     try {
@@ -469,7 +472,7 @@ pedidoRouter.patch(
  *         schema:
  *           type: string
  *         required: false
- *         description: Retorna os pedidos do cliente
+ *         description: Retorna os pedidos do cliente(Apenas usuários admin. Cliente já filtra pelo usuario logado)
  *     tags:
  *       - pedido
  *     security:
@@ -484,22 +487,31 @@ pedidoRouter.patch(
  */
 pedidoRouter.get(
   "/",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(listarPedidosSchema),
   async (req: Request<unknown, unknown, ListaPedidosQuery>, res: Response) => {
     try {
       const { query } = req;
+      const { clienteId } = req;
+      const { tipoUsuario } = req
 
       let status: Array<string> = [];
-      const clienteId = query.clienteId as string;
+
+      if (query.clienteId && tipoUsuario === TipoUsuario.CLIENT && query.clienteId !== clienteId) {
+        return res.status(401).json({
+          error: "Sem permissao para consultar pedidos de outros usuários",
+        });
+      }
+
       if (query?.status && typeof query.status === "string") {
         status = query.status.split(",");
       }
 
+      const queryClienteId = query.clienteId as string ?? clienteId;
       const pedidos = await PedidoController.listaPedidos(
         dbPedidosRepository,
         status,
-        clienteId
+        queryClienteId
       );
 
       return res.status(200).json({
@@ -541,17 +553,27 @@ pedidoRouter.get(
  */
 pedidoRouter.get(
   "/:id/status-pagamento",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(statusPagamentoSchema),
   async (req: Request<StatusPedidoParams>, res: Response) => {
     try {
       const { params } = req;
-      const { id: idPedido } = params;
+      const { clienteId } = req;
+      const { tipoUsuario } = req;
+      const { id: pedidoId } = params;
 
+      const queryStatusPagamento: queryStatusPagamentoInput = {
+        pedidoId,
+      }
+
+      if (tipoUsuario === TipoUsuario.CLIENT)  {
+        queryStatusPagamento.clienteId = clienteId
+      }
+      
       const statusPagamentoPedido = await PedidoController.statusDePagamento(
         dbPedidosRepository,
         dbFaturaRepository,
-        idPedido
+        queryStatusPagamento
       );
 
       if (statusPagamentoPedido) {

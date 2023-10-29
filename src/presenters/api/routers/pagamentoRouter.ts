@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PagamentoDatabaseRepository from "~datasources/database/repository/pagamentoDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
-import { UserType } from "~domain/repositories/authenticationRepository";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
 import { PagamentoController } from "~interfaceAdapters/controllers/pagamentoController";
 
 import authenticate from "../middleware/auth";
@@ -54,7 +54,7 @@ const faturaRepository = new FaturaDataBaseRepository()
  *         description: Erro na api.
  */
 pagamentoRouter.post("/",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(RecebimentoDePagamentosSchema),
   async (
     req: Request<unknown, RecebimentoDePagamentosPayload>,

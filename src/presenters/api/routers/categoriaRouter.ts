@@ -2,7 +2,7 @@ import express from "express";
 import { Request, Response } from "express";
 
 import DBCategoriasRepository from "~datasources/database/repository/categoriaDatabaseRepository";
-import { UserType } from "~domain/repositories/authenticationRepository";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
 import { CategoriaController } from "~interfaceAdapters/controllers/categoriaController";
 
 import authenticate from "../middleware/auth";
@@ -93,7 +93,7 @@ const dbCategoriasRepository = new DBCategoriasRepository();
  *         description: Erro na criacao da categoria.
  */
 categoriaRouter.post("/",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(CriaCategoriaSchema),
   async (req: Request<unknown, CriaCategoriaPayload>, res: Response) => {
     try {
@@ -143,7 +143,7 @@ categoriaRouter.post("/",
  *         description: Erro.
  */
 categoriaRouter.get("/",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(ListaCategoriaSchema),
   async (req: Request<unknown, ListaCategoriaPayload>, res: Response) => {
     try {
@@ -209,7 +209,7 @@ categoriaRouter.get("/",
  *         description: Erro na api.
  */
 categoriaRouter.get("/:id",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(RetornaCategoriaSchema),
   async (req: Request<RetornaCategoriaParams, unknown>, res: Response) => {
     try {
@@ -281,7 +281,7 @@ categoriaRouter.get("/:id",
  *         description: Erro na api.
  */
 categoriaRouter.delete("/:id",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(DeletaCategoriaSchema),
   async (req: Request<DeletaCategoriaParams, unknown>, res: Response) => {
     try {
@@ -365,7 +365,7 @@ categoriaRouter.delete("/:id",
  *         description: Erro na api.
  */
 categoriaRouter.put("/:id",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(EditaCategoriaSchema),
   async (req: Request<EditaCategoriaParams, EditaCategoriaPayload>, res: Response) => {
     try {

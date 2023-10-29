@@ -1,8 +1,8 @@
-export enum UserType {
+export enum TipoUsuario {
   CLIENT = "Client",
   ADMIN = "Admin",
 }
 
 export default interface AuthenticationRepository {
-  authUser(token: string, userType: UserType): Promise<void>;
+  authUser(token: string, TipoUsuario: TipoUsuario): Promise<string>;
 }

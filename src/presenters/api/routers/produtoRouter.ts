@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 
 import DBProdutosRepository from "~datasources/database/repository/produtoDatabaseRepository";
 import { ImagemProdutoInput } from "~domain/entities/types/produtoType";
-import { UserType } from "~domain/repositories/authenticationRepository";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
 import { ProdutoController } from "~interfaceAdapters/controllers/produtoController";
 
 import authenticate from "../middleware/auth";
@@ -158,7 +158,7 @@ const dbProdutosRepository = new DBProdutosRepository();
  *         description: Erro na criacao do produto.
  */
 produtoRouter.post("/",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(CriaProdutoSchema),
   async (
     req: Request<unknown, CriaProdutoBody>,
@@ -231,7 +231,7 @@ produtoRouter.post("/",
  *         description: Erro na criacao da produto.
  */
 produtoRouter.get("/",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(ListaProdutoSchema),
   async (
     req: Request<ListaProdutoParams, unknown>,
@@ -310,7 +310,7 @@ produtoRouter.get("/",
  *         description: Erro na api.
  */
 produtoRouter.get("/:id",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
 
   validaRequisicao(RetornaProdutoSchema),
   async (
@@ -387,7 +387,7 @@ produtoRouter.get("/:id",
  *         description: Erro na api.
  */
 produtoRouter.delete("/:id",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(DeletaProdutoSchema),
   async (
     req: Request<DeletaProdutoBody, unknown>,
@@ -479,7 +479,7 @@ produtoRouter.delete("/:id",
  *         description: Erro na api.
  */
 produtoRouter.put("/:id",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(EditaProdutoSchema),
   async (
     req: Request<EditaProdutoParams, EditaProdutoBody>,
@@ -580,7 +580,7 @@ produtoRouter.put("/:id",
  */
 produtoRouter.delete(
   "/:idProduto/imagem/:idImagem",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(RemoveImagemSchema),
   async (
     req: Request<RemoveImagemParams, unknown>,
@@ -711,7 +711,7 @@ produtoRouter.delete(
  */
 produtoRouter.post(
   "/:id/imagens",
-  authenticate(UserType.ADMIN),
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(AdicionaImagenSchema),
   async (
     req: Request<AdicionarItemParams, AdicionarItemBody>,

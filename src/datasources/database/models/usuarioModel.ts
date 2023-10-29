@@ -2,7 +2,7 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 
 import { UsuarioDTO } from '~domain/entities/types/UsuarioType';
 
-import PedidoModel from './pedidoModel';
+// import PedidoModel from './pedidoModel';
 
 class UsuarioModel extends Model<UsuarioDTO> implements UsuarioDTO {
   public id!: string;
@@ -59,11 +59,11 @@ class UsuarioModel extends Model<UsuarioDTO> implements UsuarioDTO {
   }
 
   static associate(): void {
-    this.hasMany(PedidoModel, {
-      foreignKey: "cliente_id",
-      sourceKey: "id",
-      as: "pedido",
-    });
+    // this.hasMany(PedidoModel, {
+    //   foreignKey: "cliente_id",
+    //   sourceKey: "id",
+    //   as: "pedido",
+    // });
   }
 
 }

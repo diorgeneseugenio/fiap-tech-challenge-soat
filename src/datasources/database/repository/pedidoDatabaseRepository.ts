@@ -3,15 +3,13 @@ import sequelize, { Op, WhereOptions } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 
 import { ItemDoPedidoDTO } from "~domain/entities/types/itensPedidoType";
+import { AdicionaItemInput, RemoveItemInput } from "~domain/entities/types/pedidoService.type";
 import {
   PedidoDTO,
   StatusDoPedido,
   statusDoPedido,
 } from "~domain/entities/types/pedidoType";
-import PedidoRepository, {
-  AdicionaItemInput,
-  RemoveItemInput,
-} from "~domain/repositories/pedidoRepository";
+import PedidoRepository from "~domain/repositories/pedidoRepository";
 
 import FaturaModel from "../models/faturaModel";
 import ItemDoPedidoModel from "../models/itemPedidoModel";
@@ -96,7 +94,7 @@ class PedidoDataBaseRepository implements PedidoRepository {
     }
   }
 
-  async retornaPedido(id: string): Promise<PedidoDTO | null> {
+  async retornaPedido(id: string, clienteId: string | null = null): Promise<PedidoDTO | null> {
     try {
       return (await PedidoModel.findOne({
         include: [
@@ -109,7 +107,7 @@ class PedidoDataBaseRepository implements PedidoRepository {
             as: "fatura",
           },
         ],
-        where: { id },
+        where: clienteId ? { id, clienteId } : { id },
       })) as PedidoDTO;
     } catch (err: any) {
       console.error("Erro ao retornar pedido: ", err);

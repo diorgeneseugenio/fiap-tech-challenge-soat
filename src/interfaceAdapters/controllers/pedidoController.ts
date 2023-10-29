@@ -1,11 +1,10 @@
 import { StatusDePagamento } from "~domain/entities/fatura";
-import { RealizaPedidoInput } from "~domain/entities/types/pedidoService.type";
+import { AdicionaItemInput, RealizaPedidoInput, RemoveItemInput } from "~domain/entities/types/pedidoService.type";
 import { PedidoDTO, PedidoInput } from "~domain/entities/types/pedidoType";
 import CheckoutRepository from "~domain/repositories/checkoutRepository";
 import FaturaRepository from "~domain/repositories/faturaRepository";
 import PedidoRepository, {
-  AdicionaItemInput,
-  RemoveItemInput,
+  queryStatusPagamentoInput,
 } from "~domain/repositories/pedidoRepository";
 import ProdutoRepository from "~domain/repositories/produtoRepository";
 import PedidoUseCase from "~domain/useCases/pedidoUseCase";
@@ -13,11 +12,22 @@ import PedidoUseCase from "~domain/useCases/pedidoUseCase";
 export class PedidoController {
   static async iniciaPedido(
     pedidoRepository: PedidoRepository,
-    pedido: PedidoInput
+    clienteId: string
   ): Promise<PedidoDTO | null> {
+    const pedidoInput: PedidoInput = {
+      clienteId,
+      faturaId: null,
+      status: "Rascunho",
+      valor: 0,
+      retiradoEm: null,
+      createdAt: new Date(),
+      updatedAt: null,
+      deletedAt: null
+    }
+
     const pedidoCriada = await PedidoUseCase.iniciaPedido(
       pedidoRepository,
-      pedido
+      pedidoInput
     );
     return pedidoCriada;
   }
@@ -113,12 +123,12 @@ export class PedidoController {
   static async statusDePagamento(
     pedidoRepository: PedidoRepository,
     faturaRepository: FaturaRepository,
-    pedidoId: string
+    queryStatusPagamento: queryStatusPagamentoInput
   ): Promise<StatusDePagamento | null | undefined> {
     return await PedidoUseCase.statusDePagamento(
       pedidoRepository,
       faturaRepository,
-      pedidoId
+      queryStatusPagamento
     );
   }
 }

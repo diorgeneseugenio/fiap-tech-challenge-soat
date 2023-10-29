@@ -2,7 +2,7 @@ import express from "express";
 import { Request, Response } from "express";
 
 import MetodoPagamentoDatabaseRepository from "~datasources/database/repository/metodoPagamentoDatabaseRepository";
-import { UserType } from "~domain/repositories/authenticationRepository";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
 import MetodoPagamentoUseCase from "~domain/useCases/metodoPagamentoUseCase";
 
 import authenticate from "../middleware/auth";
@@ -30,7 +30,7 @@ const dbMetodoPagamentoRepository = new MetodoPagamentoDatabaseRepository();
  *         description: Erro na api.
  */
 metodoPagamentoRouter.get("/",
-  authenticate(UserType.CLIENT),
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(ListaPagamentosSchema),
   async (
     req: Request<ListaPagamentosParams, ListaPagamentosPayload>, 

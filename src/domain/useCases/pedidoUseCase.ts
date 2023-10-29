@@ -12,7 +12,7 @@ import {
 } from "~domain/entities/types/pedidoType";
 import CheckoutRepository from "~domain/repositories/checkoutRepository";
 import FaturaRepository from "~domain/repositories/faturaRepository";
-import PedidoRepository from "~domain/repositories/pedidoRepository";
+import PedidoRepository, { queryStatusPagamentoInput } from "~domain/repositories/pedidoRepository";
 import ProdutoRepository from "~domain/repositories/produtoRepository";
 
 import {
@@ -26,14 +26,15 @@ export default class PedidoUseCase {
   static async buscaPedido(
     pedidoRepository: PedidoRepository,
     produtoRepository: ProdutoRepository,
-    pedidoId: string
+    pedidoId: string,
+    clienteId?: string | null
   ) {
     const itensAtuais = await PedidoUseCase.retornaItensPedido(
       pedidoRepository,
       produtoRepository,
       pedidoId
     );
-    const pedido = await pedidoRepository.retornaPedido(pedidoId);
+    const pedido = await pedidoRepository.retornaPedido(pedidoId, clienteId);
 
     if (pedido) {
       return new Pedido(pedido, itensAtuais);
@@ -60,7 +61,8 @@ export default class PedidoUseCase {
     const pedido = await PedidoUseCase.buscaPedido(
       pedidoRepository,
       produtoRepository,
-      realizaPedidoInput.pedidoId
+      realizaPedidoInput.pedidoId,
+      realizaPedidoInput.clienteId
     );
 
     if (!pedido) {
@@ -172,7 +174,8 @@ export default class PedidoUseCase {
     const pedido = await PedidoUseCase.buscaPedido(
       pedidoRepository,
       produtoRepository,
-      itemDoPedidoInput.pedidoId as string
+      itemDoPedidoInput.pedidoId as string,
+      itemDoPedidoInput.clienteId as string
     );
 
     if (!pedido) {
@@ -235,7 +238,8 @@ export default class PedidoUseCase {
     const pedido = await PedidoUseCase.buscaPedido(
       pedidoRepository,
       produtoRepository,
-      removeItemInput.pedidoId as string
+      removeItemInput.pedidoId as string,
+      removeItemInput.clienteId as string
     );
 
     if (!pedido) {
@@ -258,9 +262,12 @@ export default class PedidoUseCase {
   static async statusDePagamento(
     pedidoRepository: PedidoRepository,
     faturaRepository: FaturaRepository,
-    pedidoId: string
+    queryStatusPagamento: queryStatusPagamentoInput
   ) {
-    const pedido = await pedidoRepository.retornaPedido(pedidoId);
+    const pedido = await pedidoRepository.retornaPedido(
+      queryStatusPagamento.pedidoId,
+      queryStatusPagamento.clienteId
+    );
 
     if (pedido) {
       const pedidoEntity = new Pedido(pedido);

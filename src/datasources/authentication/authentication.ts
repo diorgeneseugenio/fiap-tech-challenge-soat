@@ -1,7 +1,7 @@
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import dotenv from "dotenv";
 
-import AuthenticationRepository, { UserType } from "~domain/repositories/authenticationRepository";
+import AuthenticationRepository, { TipoUsuario } from "~domain/repositories/authenticationRepository";
 
 dotenv.config();
 
@@ -11,7 +11,7 @@ const CLIENT_ID = process.env.CLIENT_ID as string;
 
 export default class Authenticatior implements AuthenticationRepository {
 
-    async authUser(token: string, type: UserType): Promise<void> {
+    async authUser(token: string, tipo: TipoUsuario): Promise<string> {
         const verifier = CognitoJwtVerifier.create({
             userPoolId: USER_POOL_ID,
             tokenUse: "access",
@@ -21,9 +21,11 @@ export default class Authenticatior implements AuthenticationRepository {
         const payload = await verifier.verify(token);
 
         // TODO - Como validar as permissoes
-        if (!(payload['cognito:groups'] && (payload['cognito:groups'].includes(UserType.ADMIN) || payload['cognito:groups'].includes(type)))) {
-            throw new Error('No permission to perform the action')
+        if (!(payload['cognito:groups'] && (payload['cognito:groups'].includes(TipoUsuario.ADMIN) || payload['cognito:groups'].includes(tipo)))) {
+            throw new Error('Sem permissao para executar essa acao')
         }
+        
+        return payload.username;
     }
 
 }
