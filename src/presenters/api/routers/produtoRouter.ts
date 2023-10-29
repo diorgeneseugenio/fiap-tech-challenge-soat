@@ -3,7 +3,10 @@ import { Request, Response } from "express";
 
 import DBProdutosRepository from "~datasources/database/repository/produtoDatabaseRepository";
 import { ImagemProdutoInput } from "~domain/entities/types/produtoType";
+import { UserType } from "~domain/repositories/authenticationRepository";
 import { ProdutoController } from "~interfaceAdapters/controllers/produtoController";
+
+import authenticate from "../middleware/auth";
 
 import { AdicionarItemBody, AdicionarItemParams } from "./schemas/pedidoRouter.schema";
 import {
@@ -81,6 +84,8 @@ const dbProdutosRepository = new DBProdutosRepository();
  *     summary: Criar um produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -153,6 +158,7 @@ const dbProdutosRepository = new DBProdutosRepository();
  *         description: Erro na criacao do produto.
  */
 produtoRouter.post("/",
+  authenticate(UserType.ADMIN),
   validaRequisicao(CriaProdutoSchema),
   async (
     req: Request<unknown, CriaProdutoBody>,
@@ -202,6 +208,8 @@ produtoRouter.post("/",
  *         description: Id da categoria
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Retorna a lista de produtos.
@@ -223,6 +231,7 @@ produtoRouter.post("/",
  *         description: Erro na criacao da produto.
  */
 produtoRouter.get("/",
+  authenticate(UserType.CLIENT),
   validaRequisicao(ListaProdutoSchema),
   async (
     req: Request<ListaProdutoParams, unknown>,
@@ -260,6 +269,8 @@ produtoRouter.get("/",
  *     summary: Retorna produto por id
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -299,6 +310,8 @@ produtoRouter.get("/",
  *         description: Erro na api.
  */
 produtoRouter.get("/:id",
+  authenticate(UserType.CLIENT),
+
   validaRequisicao(RetornaProdutoSchema),
   async (
     req: Request<RetornaProdutoParams, unknown>,
@@ -335,6 +348,8 @@ produtoRouter.get("/:id",
  *     summary: Deleta uma produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -372,6 +387,7 @@ produtoRouter.get("/:id",
  *         description: Erro na api.
  */
 produtoRouter.delete("/:id",
+  authenticate(UserType.ADMIN),
   validaRequisicao(DeletaProdutoSchema),
   async (
     req: Request<DeletaProdutoBody, unknown>,
@@ -407,6 +423,8 @@ produtoRouter.delete("/:id",
  *     summary: Atualiza um produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -461,6 +479,7 @@ produtoRouter.delete("/:id",
  *         description: Erro na api.
  */
 produtoRouter.put("/:id",
+  authenticate(UserType.ADMIN),
   validaRequisicao(EditaProdutoSchema),
   async (
     req: Request<EditaProdutoParams, EditaProdutoBody>,
@@ -508,6 +527,8 @@ produtoRouter.put("/:id",
  *     summary: Deleta imagem do produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: idProduto
@@ -559,6 +580,7 @@ produtoRouter.put("/:id",
  */
 produtoRouter.delete(
   "/:idProduto/imagem/:idImagem",
+  authenticate(UserType.ADMIN),
   validaRequisicao(RemoveImagemSchema),
   async (
     req: Request<RemoveImagemParams, unknown>,
@@ -612,6 +634,8 @@ produtoRouter.delete(
  *     summary: Adiciona lista de imagens ao produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -687,6 +711,7 @@ produtoRouter.delete(
  */
 produtoRouter.post(
   "/:id/imagens",
+  authenticate(UserType.ADMIN),
   validaRequisicao(AdicionaImagenSchema),
   async (
     req: Request<AdicionarItemParams, AdicionarItemBody>,

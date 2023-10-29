@@ -2,7 +2,10 @@ import express from "express";
 import { Request, Response } from "express";
 
 import DBCategoriasRepository from "~datasources/database/repository/categoriaDatabaseRepository";
+import { UserType } from "~domain/repositories/authenticationRepository";
 import { CategoriaController } from "~interfaceAdapters/controllers/categoriaController";
+
+import authenticate from "../middleware/auth";
 
 import {
   CriaCategoriaPayload,
@@ -57,6 +60,8 @@ const dbCategoriasRepository = new DBCategoriasRepository();
  *     summary: Criar uma categoria
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -88,6 +93,7 @@ const dbCategoriasRepository = new DBCategoriasRepository();
  *         description: Erro na criacao da categoria.
  */
 categoriaRouter.post("/",
+  authenticate(UserType.ADMIN),
   validaRequisicao(CriaCategoriaSchema),
   async (req: Request<unknown, CriaCategoriaPayload>, res: Response) => {
     try {
@@ -116,6 +122,8 @@ categoriaRouter.post("/",
  *     summary: Lista todas as categorias
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Retorna a lista de categorias.
@@ -135,6 +143,7 @@ categoriaRouter.post("/",
  *         description: Erro.
  */
 categoriaRouter.get("/",
+  authenticate(UserType.CLIENT),
   validaRequisicao(ListaCategoriaSchema),
   async (req: Request<unknown, ListaCategoriaPayload>, res: Response) => {
     try {
@@ -159,6 +168,8 @@ categoriaRouter.get("/",
  *     summary: Retorna categoria por id
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -198,12 +209,13 @@ categoriaRouter.get("/",
  *         description: Erro na api.
  */
 categoriaRouter.get("/:id",
+  authenticate(UserType.CLIENT),
   validaRequisicao(RetornaCategoriaSchema),
   async (req: Request<RetornaCategoriaParams, unknown>, res: Response) => {
     try {
       const { id } = req.params;
 
-      const categoria = await CategoriaController.retornaCategoria(dbCategoriasRepository,id);
+      const categoria = await CategoriaController.retornaCategoria(dbCategoriasRepository, id);
 
       if (categoria) {
         return res.status(200).json({
@@ -230,6 +242,8 @@ categoriaRouter.get("/:id",
  *     summary: Deleta uma categoria
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -266,7 +280,8 @@ categoriaRouter.get("/:id",
  *       500:
  *         description: Erro na api.
  */
-categoriaRouter.delete("/:id", 
+categoriaRouter.delete("/:id",
+  authenticate(UserType.ADMIN),
   validaRequisicao(DeletaCategoriaSchema),
   async (req: Request<DeletaCategoriaParams, unknown>, res: Response) => {
     try {
@@ -298,6 +313,8 @@ categoriaRouter.delete("/:id",
  *     summary: Atualiza uma categoria
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -348,7 +365,8 @@ categoriaRouter.delete("/:id",
  *         description: Erro na api.
  */
 categoriaRouter.put("/:id",
-  validaRequisicao(EditaCategoriaSchema), 
+  authenticate(UserType.ADMIN),
+  validaRequisicao(EditaCategoriaSchema),
   async (req: Request<EditaCategoriaParams, EditaCategoriaPayload>, res: Response) => {
     try {
       const { id } = req.params;

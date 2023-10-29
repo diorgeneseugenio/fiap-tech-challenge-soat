@@ -5,7 +5,10 @@ import FaturaDataBaseRepository from "~datasources/database/repository/faturaDat
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~datasources/database/repository/produtoDatabaseRepository";
 import CheckoutProvider from "~datasources/paymentProvider/checkoutRepository";
+import { UserType } from "~domain/repositories/authenticationRepository";
 import { PedidoController } from "~interfaceAdapters/controllers/pedidoController";
+
+import authenticate from "../middleware/auth";
 
 import {
   AdicionarItemBody,
@@ -52,6 +55,8 @@ const dbFaturaRepository = new FaturaDataBaseRepository();
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -75,6 +80,7 @@ const dbFaturaRepository = new FaturaDataBaseRepository();
  */
 pedidoRouter.post(
   "/:id/adicionar-item",
+  authenticate(UserType.CLIENT),
   validaRequisicao(adicionarItemSchema),
   async (
     req: Request<AdicionarItemParams, AdicionarItemBody>,
@@ -125,6 +131,8 @@ pedidoRouter.post(
  *         description: Id do item do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: retorna pedido.
@@ -135,6 +143,7 @@ pedidoRouter.post(
  */
 pedidoRouter.delete(
   "/:id/remover-item/:idItem",
+  authenticate(UserType.CLIENT),
   validaRequisicao(removerItemSchema),
   async (req: Request<RemoverItemParams>, res: Response) => {
     try {
@@ -169,6 +178,8 @@ pedidoRouter.delete(
  *     summary: Cria um rascunho de pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -188,6 +199,7 @@ pedidoRouter.delete(
  */
 pedidoRouter.post(
   "/iniciar-pedido",
+  authenticate(UserType.CLIENT),
   validaRequisicao(iniciaPedidoSchema),
   async (req: Request<unknown, IniciaPedidoPayload>, res: Response) => {
     try {
@@ -225,6 +237,8 @@ pedidoRouter.post(
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -244,6 +258,7 @@ pedidoRouter.post(
  */
 pedidoRouter.patch(
   "/realizar-pedido/:id",
+  authenticate(UserType.CLIENT),
   validaRequisicao(realizarPedidoSchema),
   async (
     req: Request<RealizarPedidoParams, RealizarPedidoBody>,
@@ -283,6 +298,8 @@ pedidoRouter.patch(
  *     summary: Muda status do proximo pedido da fila para "Em preparo" ou um pedido especifico
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: pedidoId
@@ -300,6 +317,7 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/iniciar-preparo/",
+  authenticate(UserType.ADMIN),
   validaRequisicao(iniciarPreparoSchema),
   async (req: Request<IniciarPreparoParams>, res: Response) => {
     try {
@@ -345,6 +363,8 @@ pedidoRouter.patch(
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: atualizacao do pedido.
@@ -355,6 +375,7 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/finalizar-preparo/:id",
+  authenticate(UserType.ADMIN),
   validaRequisicao(finalizarPreparoSchema),
   async (req: Request<FinalizarPreparoParams>, res: Response) => {
     try {
@@ -393,6 +414,8 @@ pedidoRouter.patch(
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: atualizacao do pedido.
@@ -403,6 +426,7 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/entregar-pedido/:id",
+  authenticate(UserType.ADMIN),
   validaRequisicao(entregarPedidoSchema),
   async (req: Request<EntregarPedidoParams>, res: Response) => {
     try {
@@ -448,6 +472,8 @@ pedidoRouter.patch(
  *         description: Retorna os pedidos do cliente
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: lista de pedidos.
@@ -458,6 +484,7 @@ pedidoRouter.patch(
  */
 pedidoRouter.get(
   "/",
+  authenticate(UserType.CLIENT),
   validaRequisicao(listarPedidosSchema),
   async (req: Request<unknown, unknown, ListaPedidosQuery>, res: Response) => {
     try {
@@ -502,6 +529,8 @@ pedidoRouter.get(
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: retorna status de pagamento.
@@ -512,6 +541,7 @@ pedidoRouter.get(
  */
 pedidoRouter.get(
   "/:id/status-pagamento",
+  authenticate(UserType.CLIENT),
   validaRequisicao(statusPagamentoSchema),
   async (req: Request<StatusPedidoParams>, res: Response) => {
     try {

@@ -4,7 +4,10 @@ import { Request, Response } from "express";
 import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PagamentoDatabaseRepository from "~datasources/database/repository/pagamentoDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
+import { UserType } from "~domain/repositories/authenticationRepository";
 import { PagamentoController } from "~interfaceAdapters/controllers/pagamentoController";
+
+import authenticate from "../middleware/auth";
 
 import { RecebimentoDePagamentosPayload, RecebimentoDePagamentosSchema } from "./schemas/pagamentoRouter.schema";
 import { validaRequisicao } from "./utils";
@@ -23,6 +26,8 @@ const faturaRepository = new FaturaDataBaseRepository()
  *     summary: Recebe confirmação ou negação de pagamento (Para teste pagamentoId=7ef6e15a-9f11-40fe-9d19-342505377600 )
  *     tags:
  *       - Pagamento
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -49,6 +54,7 @@ const faturaRepository = new FaturaDataBaseRepository()
  *         description: Erro na api.
  */
 pagamentoRouter.post("/",
+  authenticate(UserType.ADMIN),
   validaRequisicao(RecebimentoDePagamentosSchema),
   async (
     req: Request<unknown, RecebimentoDePagamentosPayload>,

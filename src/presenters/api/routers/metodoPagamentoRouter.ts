@@ -2,7 +2,10 @@ import express from "express";
 import { Request, Response } from "express";
 
 import MetodoPagamentoDatabaseRepository from "~datasources/database/repository/metodoPagamentoDatabaseRepository";
+import { UserType } from "~domain/repositories/authenticationRepository";
 import MetodoPagamentoUseCase from "~domain/useCases/metodoPagamentoUseCase";
+
+import authenticate from "../middleware/auth";
 
 import { ListaPagamentosParams, ListaPagamentosPayload, ListaPagamentosSchema } from "./schemas/metodoPagamentoRouter.schema";
 import { validaRequisicao } from "./utils";
@@ -18,6 +21,8 @@ const dbMetodoPagamentoRepository = new MetodoPagamentoDatabaseRepository();
  *     summary: Lista metodos de pagamento
  *     tags:
  *       - MetodoPagamentos
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: lista de metodos de pagamento.
@@ -25,6 +30,7 @@ const dbMetodoPagamentoRepository = new MetodoPagamentoDatabaseRepository();
  *         description: Erro na api.
  */
 metodoPagamentoRouter.get("/",
+  authenticate(UserType.CLIENT),
   validaRequisicao(ListaPagamentosSchema),
   async (
     req: Request<ListaPagamentosParams, ListaPagamentosPayload>, 
