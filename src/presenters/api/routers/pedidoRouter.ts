@@ -1,5 +1,6 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import { Request, Response } from "express";
+import throwError from "handlerError/handlerError";
 
 import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
@@ -85,7 +86,8 @@ pedidoRouter.post(
   validaRequisicao(adicionarItemSchema),
   async (
     req: Request<AdicionarItemParams, AdicionarItemBody>,
-    res: Response
+    res: Response,
+    next: NextFunction,
   ) => {
     try {
       const { body, params } = req;
@@ -105,11 +107,9 @@ pedidoRouter.post(
         status: "success",
         message: pedido,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao adicionar item ao pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -148,7 +148,7 @@ pedidoRouter.delete(
   "/:id/remover-item/:idItem",
   authenticate(TipoUsuario.CLIENT),
   validaRequisicao(removerItemSchema),
-  async (req: Request<RemoverItemParams>, res: Response) => {
+  async (req: Request<RemoverItemParams>, res: Response, next: NextFunction) => {
     try {
       const { params } = req;
       const { clienteId } = req
@@ -168,11 +168,9 @@ pedidoRouter.delete(
         status: "success",
         message: pedido,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao deletar item ao pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -198,12 +196,12 @@ pedidoRouter.get(
   "/iniciar-pedido",
   authenticate(TipoUsuario.CLIENT),
   validaRequisicao(iniciaPedidoSchema),
-  async (req: Request<unknown, IniciaPedidoPayload>, res: Response) => {
+  async (req: Request<unknown, IniciaPedidoPayload>, res: Response, next: NextFunction) => {
     try {
       const { clienteId } = req;
 
       if (!clienteId) {
-        throw new Error("ClienteId Nao encontrado!")
+        throwError("NOT_FOUND","ClienteId Nao encontrado!");
       }
 
       const pedidoCriado = await PedidoController.iniciaPedido(
@@ -215,11 +213,9 @@ pedidoRouter.get(
         status: "success",
         message: pedidoCriado,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao inciar pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -263,7 +259,8 @@ pedidoRouter.patch(
   validaRequisicao(realizarPedidoSchema),
   async (
     req: Request<RealizarPedidoParams, RealizarPedidoBody>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { params, body } = req;
@@ -285,11 +282,9 @@ pedidoRouter.patch(
         status: "success",
         message: pedidoCriado,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao realizar pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -322,7 +317,7 @@ pedidoRouter.patch(
   "/iniciar-preparo/",
   authenticate(TipoUsuario.ADMIN),
   validaRequisicao(iniciarPreparoSchema),
-  async (req: Request<IniciarPreparoParams>, res: Response) => {
+  async (req: Request<IniciarPreparoParams>, res: Response, next: NextFunction) => {
     try {
       const { pedidoId } = req.query;
 
@@ -343,11 +338,9 @@ pedidoRouter.patch(
         status: "success",
         message: "Nenhum pedido na fila",
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao iniciar preparo do pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -380,7 +373,7 @@ pedidoRouter.patch(
   "/finalizar-preparo/:id",
   authenticate(TipoUsuario.ADMIN),
   validaRequisicao(finalizarPreparoSchema),
-  async (req: Request<FinalizarPreparoParams>, res: Response) => {
+  async (req: Request<FinalizarPreparoParams>, res: Response, next: NextFunction) => {
     try {
       const { params } = req;
 
@@ -394,11 +387,9 @@ pedidoRouter.patch(
         status: "success",
         message: pedido,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao finalizar preparo do pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -431,7 +422,7 @@ pedidoRouter.patch(
   "/entregar-pedido/:id",
   authenticate(TipoUsuario.ADMIN),
   validaRequisicao(entregarPedidoSchema),
-  async (req: Request<EntregarPedidoParams>, res: Response) => {
+  async (req: Request<EntregarPedidoParams>, res: Response, next: NextFunction) => {
     try {
       const { params } = req;
 
@@ -445,11 +436,9 @@ pedidoRouter.patch(
         status: "success",
         message: pedido,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao entregar  pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -489,7 +478,7 @@ pedidoRouter.get(
   "/",
   authenticate(TipoUsuario.CLIENT),
   validaRequisicao(listarPedidosSchema),
-  async (req: Request<unknown, unknown, ListaPedidosQuery>, res: Response) => {
+  async (req: Request<unknown, unknown, ListaPedidosQuery>, res: Response, next: NextFunction) => {
     try {
       const { query } = req;
       const { clienteId } = req;
@@ -518,11 +507,9 @@ pedidoRouter.get(
         status: "success",
         message: pedidos,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao buscar pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -555,7 +542,7 @@ pedidoRouter.get(
   "/:id/status-pagamento",
   authenticate(TipoUsuario.CLIENT),
   validaRequisicao(statusPagamentoSchema),
-  async (req: Request<StatusPedidoParams>, res: Response) => {
+  async (req: Request<StatusPedidoParams>, res: Response, next: NextFunction) => {
     try {
       const { params } = req;
       const { clienteId } = req;
@@ -566,10 +553,10 @@ pedidoRouter.get(
         pedidoId,
       }
 
-      if (tipoUsuario === TipoUsuario.CLIENT)  {
+      if (tipoUsuario === TipoUsuario.CLIENT) {
         queryStatusPagamento.clienteId = clienteId
       }
-      
+
       const statusPagamentoPedido = await PedidoController.statusDePagamento(
         dbPedidosRepository,
         dbFaturaRepository,
@@ -583,15 +570,11 @@ pedidoRouter.get(
         });
       }
 
-      return res.status(404).json({
-        status: "error",
-        message: "Pedido ou fatura não encontrado",
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+      throwError("NOT_FOUND", "Pedido ou fatura não encontrado");
+
+    } catch (err: unknown) {
+      console.log(`Erro ao buscar status pagamento do pedido: ${err}`);
+      return next(err);
     }
   }
 );

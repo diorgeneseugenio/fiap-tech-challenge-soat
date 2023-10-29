@@ -16,7 +16,13 @@ export default function authenticate(type: TipoUsuario) {
             req.clienteId = clienteId;
             return next();
         } catch (error: any) {
-            res.status(401).json({
+            if (error.code === 'NO_PERMISSION') {
+                return res.status(401).json({
+                    error: error.message,
+                });
+            }
+            console
+            return res.status(401).json({
                 error: error.message,
             });
         }

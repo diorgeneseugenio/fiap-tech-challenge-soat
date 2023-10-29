@@ -1,3 +1,4 @@
+import throwError from "handlerError/handlerError";
 import { v4 as uuidv4 } from "uuid";
 
 import { ImagemProdutoInput } from "./types/produtoType";
@@ -24,7 +25,7 @@ export default class ImagemProduto {
 
   validar() {
     if (this.url.length <= 0) {
-      throw new Error('Url da imagem nao fornecida');
+      throwError("BAD_REQUEST","Url da imagem nao fornecida");
     }
   }
 }

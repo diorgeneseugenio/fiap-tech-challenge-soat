@@ -1,9 +1,11 @@
+import throwError from "handlerError/handlerError";
+
 export default class CPF {
   private readonly valor: string;
 
   constructor(valor: string) {
     if (!this.validacao(valor)) {
-      throw new Error('CPF inválido');
+      throwError("BAD_REQUEST", 'CPF inválido');
     }
 
     this.valor = valor;

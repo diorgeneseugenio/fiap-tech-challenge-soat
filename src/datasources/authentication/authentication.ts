@@ -1,5 +1,6 @@
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import dotenv from "dotenv";
+import throwError from "handlerError/handlerError";
 
 import AuthenticationRepository, { TipoUsuario } from "~domain/repositories/authenticationRepository";
 
@@ -22,9 +23,9 @@ export default class Authenticatior implements AuthenticationRepository {
 
         // TODO - Como validar as permissoes
         if (!(payload['cognito:groups'] && (payload['cognito:groups'].includes(TipoUsuario.ADMIN) || payload['cognito:groups'].includes(tipo)))) {
-            throw new Error('Sem permissao para executar essa acao')
+            throwError('NO_PERMISSION','Sem permissao para executar essa acao' )
         }
-        
+
         return payload.username;
     }
 

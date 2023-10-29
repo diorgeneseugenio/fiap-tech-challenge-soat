@@ -1,5 +1,6 @@
 import { json, urlencoded } from "body-parser";
-import { Express, Request, Response, Router } from "express";
+import { Express, NextFunction, Request, Response, Router } from "express";
+import { CustomError } from "handlerError/handlerError";
 import morgan from "morgan";
 
 // import { DataBaseConfigInterface } from "adapter/driven/infra/config/interfaces/db.config.interface";
@@ -46,6 +47,30 @@ export class Server implements ServerInterface {
         const routeBase = Object.keys(route)[0];
         this.appConfig.use(routeBase, route[routeBase]);
       }
+
+      this.appConfig.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
+        if (err.code === 'NO_PERMISSION') {
+          return res.status(401).json({
+            error: {
+              message: err.message,
+            }
+          });
+        }
+
+        if (err.code === 'NOT_FOUND') {
+          return res.status(404).json({
+            error: {
+              message: err.message,
+            }
+          });
+        }
+
+        return res.status(500).json({
+          error: {
+            message: err.message,
+          }
+        })
+      });
 
       this.appConfig.all("*", (req: Request, res: Response) => {
         res.status(404).json({

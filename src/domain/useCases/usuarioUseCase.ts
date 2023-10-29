@@ -1,3 +1,5 @@
+import throwError from "handlerError/handlerError";
+
 import { UsuarioDTO } from "~domain/entities/types/UsuarioType";
 import Usuario from "~domain/entities/usuario";
 import CPF from "~domain/entities/valueObjects/cpf";
@@ -26,7 +28,7 @@ export default class UsuarioUseCase {
       const usuarioExiste = await UsuarioUseCase.usuarioExiste(usuarioRepository, usuario.email, usuario.cpf)
 
       if (usuarioExiste) {
-        throw new Error("usuario_duplicado");
+        throwError("BAD_REQUEST", "usuario_duplicado");
       }
 
     }

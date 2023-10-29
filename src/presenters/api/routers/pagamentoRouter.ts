@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import { Request, Response } from "express";
 
 import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
@@ -58,7 +58,8 @@ pagamentoRouter.post("/",
   validaRequisicao(RecebimentoDePagamentosSchema),
   async (
     req: Request<unknown, RecebimentoDePagamentosPayload>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { body } = req;
@@ -67,15 +68,14 @@ pagamentoRouter.post("/",
         pedidoRepository,
         dbPagamentoRepository,
         body);
+
       return res.status(201).json({
         status: "success",
         message: pagamentoCriado,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao criar  pagamento: ${err}`)
+      return next(err);
     }
   })
 

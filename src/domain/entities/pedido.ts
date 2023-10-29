@@ -1,4 +1,5 @@
 // import { ItensDoPedido } from "./itemPedido";
+import throwError from "handlerError/handlerError";
 import { v4 as uuidv4 } from "uuid";
 
 import { PedidoInput, StatusDoPedido, statusDoPedido } from "./types/pedidoType";
@@ -22,7 +23,7 @@ export default class Pedido {
     this.clienteId = pedidoInput.clienteId;
     this.faturaId = pedidoInput.faturaId ?? null;
     this.status = pedidoInput.status ?? this.criaRascunho();
-    this.itens =  itens ?? [];
+    this.itens = itens ?? [];
     this.retiradoEm = pedidoInput.retiradoEm ?? null;
     this.createdAt = pedidoInput.createdAt ?? new Date();
     this.deletedAt = pedidoInput.deletedAt ?? null;
@@ -39,9 +40,7 @@ export default class Pedido {
 
   entregaRascunho() {
     if (this.status !== statusDoPedido.RASCUNHO) {
-      throw new Error(
-        `Não é possível alterar o status para ${statusDoPedido.RASCUNHO}. Status atual do pedido é ${this.status}`
-      );
+      throwError("BAD_REQUEST", `Não é possível alterar o status para ${statusDoPedido.RASCUNHO}. Status atual do pedido é ${this.status}`);
     }
 
     this.validaValor();
@@ -50,9 +49,7 @@ export default class Pedido {
 
   // aguardaPagamento() {
   //   if (this.status !== statusDoPedido.AGUARDANDO_PAGAMENTO) {
-  //     throw new Error(
-  //       `Não é possível alterar o status para ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status atual do pedido é ${this.status}`
-  //     );
+  //     throwError("BAD_REQUEST", `Não é possível alterar o status para ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status atual do pedido é ${this.status}`);
   //   }
   //   this.status = statusDoPedido.AGUARDANDO_PREPARO;
   // }
@@ -65,32 +62,26 @@ export default class Pedido {
         : statusDoPedido.FALHA;
     }
 
-    
+
   }
 
   emPreparo() {
     if (this.status !== statusDoPedido.AGUARDANDO_PREPARO) {
-      throw new Error(
-        `Não é possível alterar o status para ${statusDoPedido.AGUARDANDO_PREPARO}. Status atual do pedido é ${this.status}`
-      );
+      throwError("BAD_REQUEST", `Não é possível alterar o status para ${statusDoPedido.AGUARDANDO_PREPARO}. Status atual do pedido é ${this.status}`);
     }
     this.status = statusDoPedido.EM_PREPARO;
   }
 
   pronto() {
     if (this.status !== statusDoPedido.EM_PREPARO) {
-      throw new Error(
-        `Não é possível alterar o status para ${statusDoPedido.EM_PREPARO}. Status atual do pedido é ${this.status}`
-      );
+      throwError("BAD_REQUEST", `Não é possível alterar o status para ${statusDoPedido.EM_PREPARO}. Status atual do pedido é ${this.status}`);
     }
     this.status = statusDoPedido.PRONTO;
   }
 
   entregue() {
     if (this.status !== statusDoPedido.PRONTO) {
-      throw new Error(
-        `Não é possível alterar o status para ${statusDoPedido.PRONTO}. Status atual do pedido é ${this.status}`
-      );
+      throwError("BAD_REQUEST", `Não é possível alterar o status para ${statusDoPedido.PRONTO}. Status atual do pedido é ${this.status}`);
     }
     this.retiradoEm = new Date();
     this.status = statusDoPedido.ENTREGUE;
@@ -102,18 +93,14 @@ export default class Pedido {
 
   validaValor() {
     if (this.valor <= 0) {
-      throw new Error(
-        `Não é possível realizar um pedido sem nenhum valor`
-      );
+      throwError("BAD_REQUEST", `Não é possível realizar um pedido sem nenhum valor`);
     }
   }
 
   adicionarItem(item: ItemPedido) {
     console.log(this.status)
     if (this.status !== statusDoPedido.RASCUNHO) {
-      throw new Error(
-        `Não é possível adicionar itens a um pedido que não está em rascunho`
-      );
+      throwError("BAD_REQUEST", `Não é possível adicionar itens a um pedido que não está em rascunho`);
     }
 
     this.itens.push(item);
@@ -122,15 +109,13 @@ export default class Pedido {
 
   removeItem(itemId: string) {
     if (this.status !== statusDoPedido.RASCUNHO) {
-      throw new Error(
-        `Não é possível remover itens a um pedido que não está em rascunho`
-      );
+      throwError("BAD_REQUEST", `Não é possível remover itens a um pedido que não está em rascunho`);
     }
 
     this.itens = this.itens?.filter(item => item.id !== itemId);
     this.calculaTotal();
   }
-  
+
   calculaTotal() {
     this.valor = this.itens?.reduce((total: number, item: ItemPedido,) => total + item.calculaTotal(), 0) ?? 0;
   }

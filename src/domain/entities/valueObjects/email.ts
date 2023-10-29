@@ -1,9 +1,11 @@
+import throwError from "handlerError/handlerError";
+
 export default class Email {
   private readonly valor: string;
 
   constructor(valor: string) {
     if (!this.validacao(valor)) {
-      throw new Error('Endereço de e-mail inválido');
+      throwError("BAD_REQUEST", 'Endereço de e-mail inválido');
     }
 
     this.valor = valor;
