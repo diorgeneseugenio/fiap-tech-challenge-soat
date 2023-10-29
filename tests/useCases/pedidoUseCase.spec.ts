@@ -356,6 +356,7 @@ describe('PedidoUseCase', () => {
 
     const prealizaPedidoInput: RealizaPedidoInput = {
       pedidoId: "1",
+      clienteId: '1',
       metodoDePagamentoId: ""
     }
 
@@ -458,6 +459,7 @@ describe('PedidoUseCase', () => {
 
     const prealizaPedidoInput: RealizaPedidoInput = {
       pedidoId: "1",
+      clienteId: '1',
       metodoDePagamentoId: ""
     }
 

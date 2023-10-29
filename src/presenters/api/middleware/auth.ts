@@ -9,7 +9,6 @@ export default function authenticate(type: TipoUsuario) {
         try {
             const token = req?.headers?.authorization?.split(' ')[1] as string;
             const authenticatior = new Authenticatior();
-            console.log(type)
             const clienteId = await authenticatior.authUser(token, type);
 
             req.tipoUsuario = type;
