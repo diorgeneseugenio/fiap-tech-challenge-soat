@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: tech-challenge-api-container
-          image: eltonarodrigues/fiap-tech-challenge-soat-grupo-30:v2.0.0
+          image: eltonarodrigues/fiap-tech-challenge-soat-grupo-30:latest
           ports:
             - containerPort: 3000
           env:

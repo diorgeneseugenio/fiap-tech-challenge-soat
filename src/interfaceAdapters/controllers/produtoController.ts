@@ -44,7 +44,7 @@ export class ProdutoController {
 
   static async listaProdutos(
     produtoRepository: ProdutoRepository,
-    filtro: any,
+    filtro: object,
   ): Promise<ProdutoDTO[]> {
     return await ProdutoUseCase.listaProdutos(produtoRepository, filtro);
   }

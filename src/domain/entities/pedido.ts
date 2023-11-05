@@ -109,6 +109,7 @@ export default class Pedido {
   }
 
   adicionarItem(item: ItemPedido) {
+    console.log(this.status)
     if (this.status !== statusDoPedido.RASCUNHO) {
       throw new Error(
         `Não é possível adicionar itens a um pedido que não está em rascunho`

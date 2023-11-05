@@ -63,11 +63,11 @@ export class Server implements ServerInterface {
         //   .then(() => {
         //     console.log("✅: Synced database successfully.");
         //   })
-        //   .catch((err: unknown) => {
+        //   .catch((err: any) => {
         //     console.error("❌: Error on sync database.", err);
         //   });
       });
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error("🚨: Unable to init the server:", err);
     }
   }

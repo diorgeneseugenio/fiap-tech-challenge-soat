@@ -34,7 +34,7 @@ Fornecer um sistema para gerenciamento de pedidos para uma empresa do ramo de se
 
 ## Stack utilizada
 
-* Node.js v16
+* Node.js v18
 * TypeScript 
 * MySQL
 * Express
