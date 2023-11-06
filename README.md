@@ -2,15 +2,22 @@
 
 Este é o projeto desenvolvido durante a fase I e atualizado durante a fase III do curso de pós-graduação em arquitetura de software da FIAP - turma II/2023.
 
-Repositório:
-https://github.com/diorgeneseugenio/fiap-tech-challenge-soat/main
-
 Membros do grupo 30:
 Diórgenes Eugênio da Silveira - RM 349116
 Elton de Andrade Rodrigues - RM 349353
 Gabriel Mendes - RM 348989
 Juliana Amoasei dos Reis - RM 348666
 
+## Repositórios
+
+Infraestrutura da API principal e do banco de dados com Terraform e Kubernetes:
+https://github.com/diorgeneseugenio/fiap-tech-challenge-soat-terraform
+
+API principal:
+https://github.com/diorgeneseugenio/fiap-tech-challenge-soat
+
+Serviço de autenticação via funções Lambda:
+https://github.com/JulianaAmoasei/fiap-auth-service-cognito
 
 ### Changelog Fase III:
 - **[Estrutura do Projeto](#estrutura-do-projeto)**: Refatoração do projeto para exigir autenticação de usuários via JWT para acesso aos endpoints;
