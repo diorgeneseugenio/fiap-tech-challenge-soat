@@ -19,7 +19,10 @@ spec:
             - containerPort: 3000
           env:
             - name: DB_HOST
-              value: tech-challenge-db-svc
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: db_host
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
