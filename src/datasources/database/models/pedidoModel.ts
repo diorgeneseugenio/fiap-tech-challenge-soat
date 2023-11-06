@@ -6,7 +6,6 @@ import { PedidoDTO, StatusDoPedido, statusDoPedido } from "~domain/entities/type
 
 import FaturaModel from "./faturaModel";
 import ItemDoPedidoModel from "./itemPedidoModel";
-import UsuarioModel from "./usuarioModel";
 
 class PedidoModel extends Model<PedidoDTO> implements PedidoDTO {
   public id!: string;
@@ -93,10 +92,6 @@ class PedidoModel extends Model<PedidoDTO> implements PedidoDTO {
       foreignKey: "pedidoId",
       sourceKey: "id",
       as: "itens",
-    });
-
-    this.belongsTo(UsuarioModel, {
-      as: "cliente",
     });
   }
 }

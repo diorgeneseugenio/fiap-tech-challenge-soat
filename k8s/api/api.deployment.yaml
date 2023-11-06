@@ -40,3 +40,23 @@ spec:
                 secretKeyRef:
                   name: fiap-tech-secrets
                   key: jwt_secret
+            - name: USER_POOL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: user_pool_id
+            - name: ADMIN_POOL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: admin_pool_id
+            - name: POOL_CLIENT_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: pool_client_client_id
+            - name: POOL_ADMIN_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-secrets
+                  key: pool_admin_client_id

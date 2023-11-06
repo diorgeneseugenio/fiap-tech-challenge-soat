@@ -14,7 +14,6 @@ class FaturaDataBaseRepository implements FaturaRepository {
     pagoEm,
     qrCode,
   }: AtualizaFaturaInput): Promise<Fatura> {
-    try {
       return (await FaturaModel.update(
         {
           pagoEm,
@@ -26,10 +25,6 @@ class FaturaDataBaseRepository implements FaturaRepository {
           where: { id: id },
         })
       )) as Fatura;
-    } catch (err: any) {
-      console.error("Erro ao criar Fatura: ", err);
-      throw new Error(err);
-    }
   }
 
   async criaFatura({
@@ -38,7 +33,6 @@ class FaturaDataBaseRepository implements FaturaRepository {
     qrCode,
     statusDePagamento,
   }: CriaFaturaInput): Promise<Fatura> {
-    try {
       const fatura = await FaturaModel.create({
         id: uuidv4(),
         pedidoId,
@@ -50,33 +44,20 @@ class FaturaDataBaseRepository implements FaturaRepository {
       });
 
       return fatura.dataValues as Fatura;
-    } catch (err: any) {
-      console.error("Erro ao criar Fatura: ", err);
-      throw new Error(err);
-    }
+
   }
 
   async retornaFatura(faturaId: string): Promise<Fatura | null> {
-    try {
       return await FaturaModel.findOne({
         where: {
           id: faturaId,
         },
       });
-    } catch (err: any) {
-      console.error("Erro ao retornar Fatura: ", err);
-      throw new Error(err);
-    }
   }
 
   async pegaFatura(id: string): Promise<Fatura> {
-    try {
       const fatura = await FaturaModel.findByPk(id);
       return fatura as Fatura;
-    } catch (err: any) {
-      console.error("Erro ao recuperar Fatura: ", err);
-      throw new Error(err);
-    }
   }
 
   async atualizaStatusPagamentoFatura(

@@ -1,5 +1,6 @@
 import Pedido from "~domain/entities/pedido";
 import { ItemDoPedidoDTO } from "~domain/entities/types/itensPedidoType";
+import { AdicionaItemInput, RemoveItemInput } from "~domain/entities/types/pedidoService.type";
 import { PedidoDTO, StatusDoPedido } from "~domain/entities/types/pedidoType";
 
 export type CriaPedidoInput = {
@@ -15,19 +16,11 @@ export type AtualizaPedidoInput = {
   faturaId?: string;
 };
 
-export type AdicionaItemInput = {
+export type queryStatusPagamentoInput = {
   pedidoId: string;
-  produtoId: string;
-  quantidade: number;
-  valorUnitario: number;
-  valorTotal: number;
-  observacao?: string | null;
+  clienteId?: string;
 };
 
-export type RemoveItemInput = {
-  pedidoId: string;
-  itemId: string;
-};
 
 export type RetornaItemInput = {
   id: string;
@@ -38,7 +31,7 @@ export default interface PedidoRepository {
   atualizaPedido(pedido: Pedido): Promise<PedidoDTO>;
   atualizaStatusDoPedido(id: string, statusDoPedido: StatusDoPedido): Promise<PedidoDTO>;
   adicionaItem(adicionarItemInput: AdicionaItemInput): Promise<PedidoDTO | null>;
-  retornaPedido(id: string): Promise<PedidoDTO | null>;
+  retornaPedido(id: string, clienteId?: string | null): Promise<PedidoDTO | null>;
   listaPedidos(status?: Array<string>, clienteId?: string): Promise<Array<PedidoDTO> | null>;
   retornaProximoPedidoFila(): Promise<PedidoDTO | null>;
   removeItem(removeItemInput: RemoveItemInput): Promise<PedidoDTO | null>;

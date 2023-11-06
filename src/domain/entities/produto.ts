@@ -1,3 +1,4 @@
+import throwError from "handlerError/handlerError";
 import { v4 as uuidv4 } from "uuid";
 
 import { ProdutoInput } from "./types/produtoType";
@@ -31,7 +32,7 @@ export default class Produto {
 
   validar() {
     if (this.preco <= 0) {
-      throw new Error('Preco nao pode ser menor igual a zero');
+      throwError("BAD_REQUEST", 'Preco nao pode ser menor igual a zero');
     }
   }
 

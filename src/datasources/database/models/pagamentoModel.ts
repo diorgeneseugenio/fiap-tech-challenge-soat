@@ -12,7 +12,7 @@ class PagamentoModel
   public isPago!: boolean;
   public valorPagamento!: number;
   public tipoDePagamento!: string;
-  public faturaId!: string;
+  public pagamentoId!: string;
   public readonly createdAt!: Date;
   public readonly deletedAt!: Date | null;
   public readonly updatedAt!: Date | null;
@@ -38,7 +38,7 @@ class PagamentoModel
           type: DataTypes.STRING,
           allowNull: false,
         },
-        faturaId: {
+        pagamentoId: {
           type: DataTypes.UUID,
           allowNull: false,
         },
@@ -68,7 +68,7 @@ class PagamentoModel
 
   static associate(): void {
     this.hasOne(FaturaModel, {
-      foreignKey: 'faturaId'
+      foreignKey: 'pagamentoId'
     })
 
   }

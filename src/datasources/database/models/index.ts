@@ -7,7 +7,6 @@ import PagamentoModel from "./pagamentoModel";
 import PedidoModel from "./pedidoModel";
 import ImagensProdutoModel from "./produtoImagensModel";
 import ProdutoModel from "./produtoModel";
-import UsuarioModel from "./usuarioModel";
 
 export default [
   CategoriaModel,
@@ -17,6 +16,5 @@ export default [
   MetodoDePagamentoModel,
   PedidoModel,
   ProdutoModel,
-  UsuarioModel,
   PagamentoModel
 ];

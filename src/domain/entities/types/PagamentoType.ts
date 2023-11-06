@@ -3,7 +3,7 @@ export interface PagamentoDTO {
   isPago: boolean;
   valorPagamento: number;
   tipoDePagamento: string;
-  faturaId: string;
+  pagamentoId: string;
   createdAt: Date;
   deletedAt: Date | null;
   updatedAt: Date | null;
@@ -14,7 +14,7 @@ export interface PagamentoInput {
   isPago: boolean;
   valorPagamento: number;
   tipoDePagamento: string;
-  faturaId: string;
+  pagamentoId: string;
   createdAt: Date;
   deletedAt: Date | null;
   updatedAt: Date | null;

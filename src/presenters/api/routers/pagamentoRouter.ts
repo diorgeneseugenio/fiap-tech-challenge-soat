@@ -1,10 +1,13 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import { Request, Response } from "express";
 
 import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PagamentoDatabaseRepository from "~datasources/database/repository/pagamentoDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
 import { PagamentoController } from "~interfaceAdapters/controllers/pagamentoController";
+
+import authenticate from "../middleware/auth";
 
 import { RecebimentoDePagamentosPayload, RecebimentoDePagamentosSchema } from "./schemas/pagamentoRouter.schema";
 import { validaRequisicao } from "./utils";
@@ -23,6 +26,8 @@ const faturaRepository = new FaturaDataBaseRepository()
  *     summary: Recebe confirmação ou negação de pagamento (Para teste pagamentoId=7ef6e15a-9f11-40fe-9d19-342505377600 )
  *     tags:
  *       - Pagamento
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -49,10 +54,12 @@ const faturaRepository = new FaturaDataBaseRepository()
  *         description: Erro na api.
  */
 pagamentoRouter.post("/",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(RecebimentoDePagamentosSchema),
   async (
     req: Request<unknown, RecebimentoDePagamentosPayload>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { body } = req;
@@ -61,15 +68,14 @@ pagamentoRouter.post("/",
         pedidoRepository,
         dbPagamentoRepository,
         body);
+
       return res.status(201).json({
         status: "success",
         message: pagamentoCriado,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao criar  pagamento: ${err}`)
+      return next(err);
     }
   })
 

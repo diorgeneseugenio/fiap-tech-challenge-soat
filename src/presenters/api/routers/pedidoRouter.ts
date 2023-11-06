@@ -1,11 +1,16 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import { Request, Response } from "express";
+import throwError from "handlerError/handlerError";
 
 import FaturaDataBaseRepository from "~datasources/database/repository/faturaDatabaseRepository";
 import PedidoDataBaseRepository from "~datasources/database/repository/pedidoDatabaseRepository";
 import ProdutosDataBaseRepository from "~datasources/database/repository/produtoDatabaseRepository";
 import CheckoutProvider from "~datasources/paymentProvider/checkoutRepository";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
+import { queryStatusPagamentoInput } from "~domain/repositories/pedidoRepository";
 import { PedidoController } from "~interfaceAdapters/controllers/pedidoController";
+
+import authenticate from "../middleware/auth";
 
 import {
   AdicionarItemBody,
@@ -52,6 +57,8 @@ const dbFaturaRepository = new FaturaDataBaseRepository();
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -75,13 +82,16 @@ const dbFaturaRepository = new FaturaDataBaseRepository();
  */
 pedidoRouter.post(
   "/:id/adicionar-item",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(adicionarItemSchema),
   async (
     req: Request<AdicionarItemParams, AdicionarItemBody>,
-    res: Response
+    res: Response,
+    next: NextFunction,
   ) => {
     try {
       const { body, params } = req;
+      const { clienteId } = req
 
       const pedido = await PedidoController.adicionaItem(
         dbPedidosRepository,
@@ -89,6 +99,7 @@ pedidoRouter.post(
         {
           ...body,
           pedidoId: params.id,
+          clienteId
         }
       );
 
@@ -96,11 +107,9 @@ pedidoRouter.post(
         status: "success",
         message: pedido,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao adicionar item ao pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -125,6 +134,8 @@ pedidoRouter.post(
  *         description: Id do item do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: retorna pedido.
@@ -135,10 +146,13 @@ pedidoRouter.post(
  */
 pedidoRouter.delete(
   "/:id/remover-item/:idItem",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(removerItemSchema),
-  async (req: Request<RemoverItemParams>, res: Response) => {
+  async (req: Request<RemoverItemParams>, res: Response, next: NextFunction) => {
     try {
       const { params } = req;
+      const { clienteId } = req
+
 
       const pedido = await PedidoController.removeItem(
         dbPedidosRepository,
@@ -146,6 +160,7 @@ pedidoRouter.delete(
         {
           pedidoId: params.id,
           itemId: params.idItem,
+          clienteId
         }
       );
 
@@ -153,11 +168,9 @@ pedidoRouter.delete(
         status: "success",
         message: pedido,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao deletar item ao pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -165,19 +178,12 @@ pedidoRouter.delete(
 /**
  * @openapi
  * /pedido/iniciar-pedido:
- *   post:
+ *   get:
  *     summary: Cria um rascunho de pedido
  *     tags:
  *       - pedido
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               clienteId:
- *                 type: string
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: pedido criado.
@@ -186,27 +192,30 @@ pedidoRouter.delete(
  *       500:
  *         description: Erro na api.
  */
-pedidoRouter.post(
+pedidoRouter.get(
   "/iniciar-pedido",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(iniciaPedidoSchema),
-  async (req: Request<unknown, IniciaPedidoPayload>, res: Response) => {
+  async (req: Request<unknown, IniciaPedidoPayload>, res: Response, next: NextFunction) => {
     try {
-      const { body } = req;
+      const { clienteId } = req;
+
+      if (!clienteId) {
+        throwError("NOT_FOUND","ClienteId Nao encontrado!");
+      }
 
       const pedidoCriado = await PedidoController.iniciaPedido(
         dbPedidosRepository,
-        body
+        clienteId
       );
 
       return res.status(201).json({
         status: "success",
         message: pedidoCriado,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao inciar pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -225,6 +234,8 @@ pedidoRouter.post(
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -244,13 +255,16 @@ pedidoRouter.post(
  */
 pedidoRouter.patch(
   "/realizar-pedido/:id",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(realizarPedidoSchema),
   async (
     req: Request<RealizarPedidoParams, RealizarPedidoBody>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { params, body } = req;
+      const { clienteId } = req;
 
       const pedidoCriado = await PedidoController.realizaPedido(
         checkoutRepository,
@@ -260,6 +274,7 @@ pedidoRouter.patch(
         {
           pedidoId: params.id,
           metodoDePagamentoId: body.metodoDePagamentoId,
+          clienteId
         }
       );
 
@@ -267,11 +282,9 @@ pedidoRouter.patch(
         status: "success",
         message: pedidoCriado,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao realizar pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -283,6 +296,8 @@ pedidoRouter.patch(
  *     summary: Muda status do proximo pedido da fila para "Em preparo" ou um pedido especifico
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: pedidoId
@@ -300,8 +315,9 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/iniciar-preparo/",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(iniciarPreparoSchema),
-  async (req: Request<IniciarPreparoParams>, res: Response) => {
+  async (req: Request<IniciarPreparoParams>, res: Response, next: NextFunction) => {
     try {
       const { pedidoId } = req.query;
 
@@ -322,11 +338,9 @@ pedidoRouter.patch(
         status: "success",
         message: "Nenhum pedido na fila",
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao iniciar preparo do pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -345,6 +359,8 @@ pedidoRouter.patch(
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: atualizacao do pedido.
@@ -355,8 +371,9 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/finalizar-preparo/:id",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(finalizarPreparoSchema),
-  async (req: Request<FinalizarPreparoParams>, res: Response) => {
+  async (req: Request<FinalizarPreparoParams>, res: Response, next: NextFunction) => {
     try {
       const { params } = req;
 
@@ -370,11 +387,9 @@ pedidoRouter.patch(
         status: "success",
         message: pedido,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao finalizar preparo do pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -393,6 +408,8 @@ pedidoRouter.patch(
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: atualizacao do pedido.
@@ -403,8 +420,9 @@ pedidoRouter.patch(
  */
 pedidoRouter.patch(
   "/entregar-pedido/:id",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(entregarPedidoSchema),
-  async (req: Request<EntregarPedidoParams>, res: Response) => {
+  async (req: Request<EntregarPedidoParams>, res: Response, next: NextFunction) => {
     try {
       const { params } = req;
 
@@ -418,11 +436,9 @@ pedidoRouter.patch(
         status: "success",
         message: pedido,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao entregar  pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -445,9 +461,11 @@ pedidoRouter.patch(
  *         schema:
  *           type: string
  *         required: false
- *         description: Retorna os pedidos do cliente
+ *         description: Retorna os pedidos do cliente(Apenas usuários admin. Cliente já filtra pelo usuario logado)
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: lista de pedidos.
@@ -458,32 +476,40 @@ pedidoRouter.patch(
  */
 pedidoRouter.get(
   "/",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(listarPedidosSchema),
-  async (req: Request<unknown, unknown, ListaPedidosQuery>, res: Response) => {
+  async (req: Request<unknown, unknown, ListaPedidosQuery>, res: Response, next: NextFunction) => {
     try {
       const { query } = req;
+      const { clienteId } = req;
+      const { tipoUsuario } = req
 
       let status: Array<string> = [];
-      const clienteId = query.clienteId as string;
+
+      if (query.clienteId && tipoUsuario === TipoUsuario.CLIENT && query.clienteId !== clienteId) {
+        return res.status(401).json({
+          error: "Sem permissao para consultar pedidos de outros usuários",
+        });
+      }
+
       if (query?.status && typeof query.status === "string") {
         status = query.status.split(",");
       }
 
+      const queryClienteId = query.clienteId as string ?? clienteId;
       const pedidos = await PedidoController.listaPedidos(
         dbPedidosRepository,
         status,
-        clienteId
+        queryClienteId
       );
 
       return res.status(200).json({
         status: "success",
         message: pedidos,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao buscar pedido: ${err}`);
+      return next(err);
     }
   }
 );
@@ -502,6 +528,8 @@ pedidoRouter.get(
  *         description: Id do pedido
  *     tags:
  *       - pedido
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: retorna status de pagamento.
@@ -512,16 +540,27 @@ pedidoRouter.get(
  */
 pedidoRouter.get(
   "/:id/status-pagamento",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(statusPagamentoSchema),
-  async (req: Request<StatusPedidoParams>, res: Response) => {
+  async (req: Request<StatusPedidoParams>, res: Response, next: NextFunction) => {
     try {
       const { params } = req;
-      const { id: idPedido } = params;
+      const { clienteId } = req;
+      const { tipoUsuario } = req;
+      const { id: pedidoId } = params;
+
+      const queryStatusPagamento: queryStatusPagamentoInput = {
+        pedidoId,
+      }
+
+      if (tipoUsuario === TipoUsuario.CLIENT) {
+        queryStatusPagamento.clienteId = clienteId
+      }
 
       const statusPagamentoPedido = await PedidoController.statusDePagamento(
         dbPedidosRepository,
         dbFaturaRepository,
-        idPedido
+        queryStatusPagamento
       );
 
       if (statusPagamentoPedido) {
@@ -531,15 +570,11 @@ pedidoRouter.get(
         });
       }
 
-      return res.status(404).json({
-        status: "error",
-        message: "Pedido ou fatura não encontrado",
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err.message,
-      });
+      throwError("NOT_FOUND", "Pedido ou fatura não encontrado");
+
+    } catch (err: unknown) {
+      console.log(`Erro ao buscar status pagamento do pedido: ${err}`);
+      return next(err);
     }
   }
 );

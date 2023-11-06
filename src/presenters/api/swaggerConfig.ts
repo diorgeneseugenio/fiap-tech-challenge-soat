@@ -9,7 +9,17 @@ const options = {
     },
     servers: [
       { url: "/api" }
-    ]
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          name: 'Authorization',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        }
+      }
+    },
   },
   apis: ['**/routers/*.*'],
 };

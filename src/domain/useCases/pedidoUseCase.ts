@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import throwError from "handlerError/handlerError";
+
 import { statusDePagamento } from "~domain/entities/fatura";
 import ItemPedido from "~domain/entities/itemPedido";
 import Pedido from "~domain/entities/pedido";
@@ -12,7 +14,7 @@ import {
 } from "~domain/entities/types/pedidoType";
 import CheckoutRepository from "~domain/repositories/checkoutRepository";
 import FaturaRepository from "~domain/repositories/faturaRepository";
-import PedidoRepository from "~domain/repositories/pedidoRepository";
+import PedidoRepository, { queryStatusPagamentoInput } from "~domain/repositories/pedidoRepository";
 import ProdutoRepository from "~domain/repositories/produtoRepository";
 
 import {
@@ -26,14 +28,15 @@ export default class PedidoUseCase {
   static async buscaPedido(
     pedidoRepository: PedidoRepository,
     produtoRepository: ProdutoRepository,
-    pedidoId: string
+    pedidoId: string,
+    clienteId?: string | null
   ) {
     const itensAtuais = await PedidoUseCase.retornaItensPedido(
       pedidoRepository,
       produtoRepository,
       pedidoId
     );
-    const pedido = await pedidoRepository.retornaPedido(pedidoId);
+    const pedido = await pedidoRepository.retornaPedido(pedidoId, clienteId);
 
     if (pedido) {
       return new Pedido(pedido, itensAtuais);
@@ -60,11 +63,12 @@ export default class PedidoUseCase {
     const pedido = await PedidoUseCase.buscaPedido(
       pedidoRepository,
       produtoRepository,
-      realizaPedidoInput.pedidoId
+      realizaPedidoInput.pedidoId,
+      realizaPedidoInput.clienteId
     );
 
     if (!pedido) {
-      throw new Error("Pedido nao encontrado");
+      throwError("NOT_FOUND", "Pedido nao encontrado");
     }
 
     pedido.entregaRascunho();
@@ -136,7 +140,7 @@ export default class PedidoUseCase {
     );
 
     if (!pedido) {
-      throw new Error("Pedido nao encontrado");
+      throwError("NOT_FOUND", "Pedido nao encontrado");
     }
 
     pedido.pronto();
@@ -156,7 +160,7 @@ export default class PedidoUseCase {
     );
 
     if (!pedido) {
-      throw new Error("Pedido nao encontrado");
+      throwError("NOT_FOUND", "Pedido nao encontrado");
     }
 
     pedido.entregue();
@@ -172,11 +176,12 @@ export default class PedidoUseCase {
     const pedido = await PedidoUseCase.buscaPedido(
       pedidoRepository,
       produtoRepository,
-      itemDoPedidoInput.pedidoId as string
+      itemDoPedidoInput.pedidoId as string,
+      itemDoPedidoInput.clienteId as string
     );
 
     if (!pedido) {
-      throw new Error("Pedido nao encontrado");
+      throwError("NOT_FOUND", "Pedido nao encontrado");
     }
 
     const produtoEncontrado = await produtoRepository.retornaProduto(
@@ -184,7 +189,7 @@ export default class PedidoUseCase {
     );
 
     if (!produtoEncontrado) {
-      throw new Error("Produto nao encontrado");
+      throwError("NOT_FOUND", "Produto nao encontrado");
     }
 
     const produto = new Produto(produtoEncontrado);
@@ -212,7 +217,7 @@ export default class PedidoUseCase {
         );
 
         if (!produtoEncontrado) {
-          throw new Error("Produto nao encontrado");
+          throwError("NOT_FOUND", "Produto nao encontrado");
         }
 
         const produto = new Produto(produtoEncontrado);
@@ -235,11 +240,12 @@ export default class PedidoUseCase {
     const pedido = await PedidoUseCase.buscaPedido(
       pedidoRepository,
       produtoRepository,
-      removeItemInput.pedidoId as string
+      removeItemInput.pedidoId as string,
+      removeItemInput.clienteId as string
     );
 
     if (!pedido) {
-      throw new Error("Pedido nao encontrado");
+      throwError("NOT_FOUND", "Pedido nao encontrado");
     }
 
     pedido.removeItem(removeItemInput.itemId);
@@ -258,9 +264,12 @@ export default class PedidoUseCase {
   static async statusDePagamento(
     pedidoRepository: PedidoRepository,
     faturaRepository: FaturaRepository,
-    pedidoId: string
+    queryStatusPagamento: queryStatusPagamentoInput
   ) {
-    const pedido = await pedidoRepository.retornaPedido(pedidoId);
+    const pedido = await pedidoRepository.retornaPedido(
+      queryStatusPagamento.pedidoId,
+      queryStatusPagamento.clienteId
+    );
 
     if (pedido) {
       const pedidoEntity = new Pedido(pedido);
@@ -284,18 +293,16 @@ export default class PedidoUseCase {
     faturaRepository: FaturaRepository,
     pagamento: PagamentoDTO
   ) {
-    const fatura = await faturaRepository.pegaFatura(pagamento.faturaId);
+    const fatura = await faturaRepository.pegaFatura(pagamento.pagamentoId);
 
     if (!fatura) {
-      throw new Error("Fatura nao encontrada!");
+      throwError("NOT_FOUND", "Fatura nao encontrada!");
     }
 
     const pedido = await pedidoRepository.retornaPedido(fatura.pedidoId);
 
     if (pedido?.status !== statusDePagamento.AGUARDANDO_PAGAMENTO) {
-      throw new Error(
-        `Só é permitido alterar o status do pedido quando o status é ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status Atual: ${pedido?.status}`
-      );
+      throwError("BAD_REQUEST", `Só é permitido alterar o status do pedido quando o status é ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status Atual: ${pedido?.status}`);
     }
 
     faturaRepository.atualizaStatusPagamentoFatura(
@@ -310,18 +317,17 @@ export default class PedidoUseCase {
     faturaRepository: FaturaRepository,
     pagamento: PagamentoDTO
   ) {
-    const fatura = await faturaRepository.pegaFatura(pagamento.faturaId);
+    const fatura = await faturaRepository.pegaFatura(pagamento.pagamentoId);
 
     if (!fatura) {
-      throw new Error("Fatura nao encontrada!");
+      throwError("NOT_FOUND", "Fatura nao encontrada!");
     }
 
     const pedido = await pedidoRepository.retornaPedido(fatura.pedidoId);
 
     if (pedido?.status !== statusDePagamento.AGUARDANDO_PAGAMENTO) {
-      throw new Error(
-        `Só é permitido alterar o status do pedido quando o status é ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status Atual: ${pedido?.status}`
-      );
+      throwError("BAD_REQUEST", `Só é permitido alterar o status do pedido quando o status é ${statusDoPedido.AGUARDANDO_PAGAMENTO}. Status Atual: ${pedido?.status}`);
+
     }
 
     if (pedido!.valor <= pagamento.valorPagamento) {

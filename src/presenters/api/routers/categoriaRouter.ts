@@ -1,8 +1,12 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import { Request, Response } from "express";
+import throwError from "handlerError/handlerError";
 
 import DBCategoriasRepository from "~datasources/database/repository/categoriaDatabaseRepository";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
 import { CategoriaController } from "~interfaceAdapters/controllers/categoriaController";
+
+import authenticate from "../middleware/auth";
 
 import {
   CriaCategoriaPayload,
@@ -57,6 +61,8 @@ const dbCategoriasRepository = new DBCategoriasRepository();
  *     summary: Criar uma categoria
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -88,8 +94,9 @@ const dbCategoriasRepository = new DBCategoriasRepository();
  *         description: Erro na criacao da categoria.
  */
 categoriaRouter.post("/",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(CriaCategoriaSchema),
-  async (req: Request<unknown, CriaCategoriaPayload>, res: Response) => {
+  async (req: Request<unknown, CriaCategoriaPayload>, res: Response, next: NextFunction) => {
     try {
       const categoria = req.body;
 
@@ -116,6 +123,8 @@ categoriaRouter.post("/",
  *     summary: Lista todas as categorias
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Retorna a lista de categorias.
@@ -135,8 +144,9 @@ categoriaRouter.post("/",
  *         description: Erro.
  */
 categoriaRouter.get("/",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(ListaCategoriaSchema),
-  async (req: Request<unknown, ListaCategoriaPayload>, res: Response) => {
+  async (req: Request<unknown, ListaCategoriaPayload>, res: Response, next: NextFunction) => {
     try {
       const categorias = await CategoriaController.listaCategorias(dbCategoriasRepository);
 
@@ -144,11 +154,9 @@ categoriaRouter.get("/",
         status: "success",
         categorias,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao buscar categorias: ${err}`);
+      return next(err);
     }
   }
 );
@@ -159,6 +167,8 @@ categoriaRouter.get("/",
  *     summary: Retorna categoria por id
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -198,12 +208,13 @@ categoriaRouter.get("/",
  *         description: Erro na api.
  */
 categoriaRouter.get("/:id",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(RetornaCategoriaSchema),
-  async (req: Request<RetornaCategoriaParams, unknown>, res: Response) => {
+  async (req: Request<RetornaCategoriaParams, unknown>, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
 
-      const categoria = await CategoriaController.retornaCategoria(dbCategoriasRepository,id);
+      const categoria = await CategoriaController.retornaCategoria(dbCategoriasRepository, id);
 
       if (categoria) {
         return res.status(200).json({
@@ -211,15 +222,12 @@ categoriaRouter.get("/:id",
           categoria,
         });
       }
-      return res.status(404).json({
-        status: "error",
-        message: "Categoria não encontrada!",
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+
+      throwError("NOT_FOUND", "Categoria não encontrada!");
+
+    } catch (err: unknown) {
+      console.log(`Erro ao buscar categoria: ${err}`);
+      return next(err);
     }
   }
 );
@@ -230,6 +238,8 @@ categoriaRouter.get("/:id",
  *     summary: Deleta uma categoria
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -266,9 +276,10 @@ categoriaRouter.get("/:id",
  *       500:
  *         description: Erro na api.
  */
-categoriaRouter.delete("/:id", 
+categoriaRouter.delete("/:id",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(DeletaCategoriaSchema),
-  async (req: Request<DeletaCategoriaParams, unknown>, res: Response) => {
+  async (req: Request<DeletaCategoriaParams, unknown>, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
 
@@ -279,15 +290,11 @@ categoriaRouter.delete("/:id",
           status: "success",
         });
       }
-      return res.status(404).json({
-        status: "error",
-        message: "Categoria não encontrada!",
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+
+      throwError("NOT_FOUND", "Categoria não encontrada!");
+    } catch (err: unknown) {
+      console.log(`Erro ao deletar categoria: ${err}`);
+      return next(err);
     }
   }
 );
@@ -298,6 +305,8 @@ categoriaRouter.delete("/:id",
  *     summary: Atualiza uma categoria
  *     tags:
  *       - categoria
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -348,8 +357,9 @@ categoriaRouter.delete("/:id",
  *         description: Erro na api.
  */
 categoriaRouter.put("/:id",
-  validaRequisicao(EditaCategoriaSchema), 
-  async (req: Request<EditaCategoriaParams, EditaCategoriaPayload>, res: Response) => {
+  authenticate(TipoUsuario.ADMIN),
+  validaRequisicao(EditaCategoriaSchema),
+  async (req: Request<EditaCategoriaParams, EditaCategoriaPayload>, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const categoria = req.body;
@@ -365,15 +375,11 @@ categoriaRouter.put("/:id",
           message: categoriaAtualizada,
         });
       }
-      return res.status(404).json({
-        status: "error",
-        message: "Categoria não encontrada!",
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+
+      throwError("NOT_FOUND", "Categoria não encontrada!");
+    } catch (err: unknown) {
+      console.log(`Erro ao editar categoria: ${err}`);
+      return next(err);
     }
   }
 );

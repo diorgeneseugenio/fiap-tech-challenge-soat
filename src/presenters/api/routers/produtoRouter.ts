@@ -1,9 +1,13 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import { Request, Response } from "express";
+import throwError from "handlerError/handlerError";
 
 import DBProdutosRepository from "~datasources/database/repository/produtoDatabaseRepository";
 import { ImagemProdutoInput } from "~domain/entities/types/produtoType";
+import { TipoUsuario } from "~domain/repositories/authenticationRepository";
 import { ProdutoController } from "~interfaceAdapters/controllers/produtoController";
+
+import authenticate from "../middleware/auth";
 
 import { AdicionarItemBody, AdicionarItemParams } from "./schemas/pedidoRouter.schema";
 import {
@@ -81,6 +85,8 @@ const dbProdutosRepository = new DBProdutosRepository();
  *     summary: Criar um produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -153,10 +159,12 @@ const dbProdutosRepository = new DBProdutosRepository();
  *         description: Erro na criacao do produto.
  */
 produtoRouter.post("/",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(CriaProdutoSchema),
   async (
     req: Request<unknown, CriaProdutoBody>,
-    res: Response
+    res: Response,
+    next: NextFunction,
   ) => {
     try {
       const produto = req.body;
@@ -166,24 +174,10 @@ produtoRouter.post("/",
         status: "success",
         message: produtoCriado,
       });
-    } catch (err: any) {
-      if (err.message === "categoria_inexistente") {
-        return res.status(404).json({
-          status: "error",
-          message: "Categoria não encontrada!",
-        });
-      }
-
-      if (err.message === "preco_zerado") {
-        return res.status(400).json({
-          status: "error",
-          message: "O preço deve ser maior que zero!",
-        });
-      }
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+    
+    } catch (err: unknown) {
+      console.log(`Erro ao adicionar produto: ${err}`);
+      return next(err);
     }
   }
 );
@@ -202,6 +196,8 @@ produtoRouter.post("/",
  *         description: Id da categoria
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Retorna a lista de produtos.
@@ -223,10 +219,12 @@ produtoRouter.post("/",
  *         description: Erro na criacao da produto.
  */
 produtoRouter.get("/",
+  authenticate(TipoUsuario.CLIENT),
   validaRequisicao(ListaProdutoSchema),
   async (
     req: Request<ListaProdutoParams, unknown>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const categoriaId = req.query.categoriaId;
@@ -244,11 +242,10 @@ produtoRouter.get("/",
         status: "success",
         produtos,
       });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+
+    } catch (err: unknown) {
+      console.log(`Erro ao buscar produtos: ${err}`);
+      return next(err);
     }
   }
 );
@@ -260,6 +257,8 @@ produtoRouter.get("/",
  *     summary: Retorna produto por id
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -299,10 +298,13 @@ produtoRouter.get("/",
  *         description: Erro na api.
  */
 produtoRouter.get("/:id",
+  authenticate(TipoUsuario.CLIENT),
+
   validaRequisicao(RetornaProdutoSchema),
   async (
     req: Request<RetornaProdutoParams, unknown>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -315,15 +317,12 @@ produtoRouter.get("/:id",
           produto,
         });
       }
-      return res.status(404).json({
-        status: "error",
-        message: "Produto não encontrado!",
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+
+      throwError('NOT_FOUND', "Produto não encontrado!");
+
+    } catch (err: unknown) {
+      console.log(`Erro ao buscar produto: ${err}`);
+      return next(err);
     }
   }
 );
@@ -335,6 +334,8 @@ produtoRouter.get("/:id",
  *     summary: Deleta uma produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -372,10 +373,12 @@ produtoRouter.get("/:id",
  *         description: Erro na api.
  */
 produtoRouter.delete("/:id",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(DeletaProdutoSchema),
   async (
     req: Request<DeletaProdutoBody, unknown>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -387,15 +390,12 @@ produtoRouter.delete("/:id",
           status: "success",
         });
       }
-      return res.status(404).json({
-        status: "error",
-        message: "produto não encontrado!",
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+
+      throwError('NOT_FOUND', "Produto não encontrado!");
+
+    } catch (err: unknown) {
+      console.log(`Erro ao deletar produto: ${err}`);
+      return next(err);
     }
   }
 );
@@ -407,6 +407,8 @@ produtoRouter.delete("/:id",
  *     summary: Atualiza um produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -461,10 +463,12 @@ produtoRouter.delete("/:id",
  *         description: Erro na api.
  */
 produtoRouter.put("/:id",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(EditaProdutoSchema),
   async (
     req: Request<EditaProdutoParams, EditaProdutoBody>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -481,22 +485,11 @@ produtoRouter.put("/:id",
           message: produtoAtualizado,
         });
       }
-      return res.status(404).json({
-        status: "error",
-        message: "Produto não encontrado!",
-      });
-    } catch (err: any) {
-      if (err.message === "categoria_inexistente") {
-        return res.status(404).json({
-          status: "error",
-          message: "Categoria não encontrada!",
-        });
-      }
 
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+      throwError('NOT_FOUND', 'Produto não encontrado!');
+    } catch (err: unknown) {
+      console.log(`Erro ao editar produto: ${err}`);
+      return next(err);
     }
   }
 );
@@ -508,6 +501,8 @@ produtoRouter.put("/:id",
  *     summary: Deleta imagem do produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: idProduto
@@ -559,27 +554,23 @@ produtoRouter.put("/:id",
  */
 produtoRouter.delete(
   "/:idProduto/imagem/:idImagem",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(RemoveImagemSchema),
   async (
     req: Request<RemoveImagemParams, unknown>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { idProduto } = req.params;
       const { idImagem } = req.params;
 
       if (!idProduto) {
-        return res.status(404).json({
-          status: "error",
-          message: "Produto não encontrado!",
-        });
+        throwError('NOT_FOUND', "Produto não encontrado!");
       }
 
       if (!idImagem) {
-        return res.status(404).json({
-          status: "error",
-          message: "Imagem não encontrada!",
-        });
+        throwError('NOT_FOUND', "Imagem não encontrada!!");
       }
 
       const imagemDeletada = await ProdutoController.removeImagem(dbProdutosRepository,
@@ -592,15 +583,12 @@ produtoRouter.delete(
           status: "success",
         });
       }
-      return res.status(404).json({
-        status: "error",
-        message: "Imagem ou produto não encontrado!",
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+
+      throwError('NOT_FOUND', "Imagem ou produto não encontrado!");
+
+    } catch (err: unknown) {
+      console.log(`Erro ao deletar imagem do produto: ${err}`);
+      return next(err);
     }
   }
 );
@@ -612,6 +600,8 @@ produtoRouter.delete(
  *     summary: Adiciona lista de imagens ao produto
  *     tags:
  *       - produto
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -687,10 +677,12 @@ produtoRouter.delete(
  */
 produtoRouter.post(
   "/:id/imagens",
+  authenticate(TipoUsuario.ADMIN),
   validaRequisicao(AdicionaImagenSchema),
   async (
     req: Request<AdicionarItemParams, AdicionarItemBody>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -707,17 +699,9 @@ produtoRouter.post(
         status: "success",
         message: imagensAdicionadas,
       });
-    } catch (err: any) {
-      if (err.message === "produto_inexistente") {
-        return res.status(404).json({
-          status: "error",
-          message: "Produto não encontrado!",
-        });
-      }
-      return res.status(500).json({
-        status: "error",
-        message: err,
-      });
+    } catch (err: unknown) {
+      console.log(`Erro ao adicionar imagem do produto: ${err}`);
+      return next(err);
     }
   }
 );
