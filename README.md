@@ -72,6 +72,10 @@ data: # value = Base64
   db_root_password: YWRtaW4xMjM=
   db_name: ZmlhcC1zb2F0LXByb2plY3RfZGI=
   jwt_secret: dTZCWTh3NHMzYXlHNjJvRzA1TVYxSE96eTllYm9UYVdoUWpIQ0ZpWmhjMjBFYlIwOGdzWlZPdUdQUGVVVUVJMg==
+  user_pool_id: dXMtZWFzdC0xX1FtWkNMUElnWg==
+  admin_pool_id: dXMtZWFzdC0xX252bnk0V1llRQ==
+  pool_client_client_id: MTkydjlnZmVvYmxqM3NpczNmajA0a2o0ZDE=
+  pool_admin_client_id: cHRmOHEwYW9qaDFkNnBicG1vOXJhaGc1dg==
 ```
 
 2. Execute o comando `kubectl apply -f <./caminho/do/arquivo/secret.yaml>` no diretório raiz do projeto para gerar os secrets;

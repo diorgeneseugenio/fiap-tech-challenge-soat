@@ -293,7 +293,7 @@ export default class PedidoUseCase {
     faturaRepository: FaturaRepository,
     pagamento: PagamentoDTO
   ) {
-    const fatura = await faturaRepository.pegaFatura(pagamento.faturaId);
+    const fatura = await faturaRepository.pegaFatura(pagamento.pagamentoId);
 
     if (!fatura) {
       throwError("NOT_FOUND", "Fatura nao encontrada!");
@@ -317,7 +317,7 @@ export default class PedidoUseCase {
     faturaRepository: FaturaRepository,
     pagamento: PagamentoDTO
   ) {
-    const fatura = await faturaRepository.pegaFatura(pagamento.faturaId);
+    const fatura = await faturaRepository.pegaFatura(pagamento.pagamentoId);
 
     if (!fatura) {
       throwError("NOT_FOUND", "Fatura nao encontrada!");
