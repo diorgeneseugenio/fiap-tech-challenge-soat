@@ -1,32 +1,32 @@
 # Tech Challenge - Pós-Tech SOAT - FIAP
 
-Este é o projeto desenvolvido durante a fase I e atualizado durante a fase II do curso de pós-graduação em arquitetura de software da FIAP - turma II/2023.
+Este é o projeto desenvolvido durante a fase I e atualizado durante a fase III do curso de pós-graduação em arquitetura de software da FIAP - turma II/2023.
 
-Repositório:
-https://github.com/diorgeneseugenio/fiap-tech-challenge-soat/main
-
-Membros do grupo:
+Membros do grupo 30:
 Diórgenes Eugênio da Silveira - RM 349116
 Elton de Andrade Rodrigues - RM 349353
 Gabriel Mendes - RM 348989
 Juliana Amoasei dos Reis - RM 348666
 
+## Repositórios
 
-### Changelog Fase II:
-- **[Estrutura do Projeto](#estrutura-do-projeto)**: Refatoração do projeto para utilizar conceitos do `clean architecture`;
-- **[Kubernetes](#kubernetes)**: Adicionado deploy utilizando Kubernetes;
-- **`/pedido/realizar-pedido/{id}`**: Atualizado endpoint para criar o checkout e retornar o pedido com a fatura para aguardar o pagamento;
-- **Webhook - Confirmação de pagamento**: Adicionado o endpoint para alterar o status de pagamento(aprovado/reprovado);
-- **`/pedido/`**: Atualizado endpoint para listar pedidos:
-  1. Por Padrao agora ela retorna na regra de Pronto > Em Preparo > Recebido e não mosta as Finalizadas;
-  2. Mantida a possibilidade de filtrar por usuário e/ou status:
-      - Rascunho;
-      - Aguardando pagamento;
-      - Falha em gerar pedido (Pagamento reprovado);
-      - Aguardando preparo (Pagamento aprovado);
-      - Em preparo;
-      - Pronto;
-      - Entregue;
+Infraestrutura da API principal e do banco de dados com Terraform e Kubernetes:
+https://github.com/diorgeneseugenio/fiap-tech-challenge-soat-terraform
+
+API principal:
+https://github.com/diorgeneseugenio/fiap-tech-challenge-soat
+
+Serviço de autenticação via funções Lambda:
+https://github.com/JulianaAmoasei/fiap-auth-service-cognito
+
+### Changelog Fase III:
+- **[Estrutura do Projeto](#estrutura-do-projeto)**: Refatoração do projeto para exigir autenticação de usuários via JWT para acesso aos endpoints;
+- **Implementação de serviço Lambda** para gerenciamento de usuários utilizando AWS Cognito e autenticação via token JWT:
+  - **clientes do restaurante** via CPF válido para iniciar o fluxo de pedido;
+  - **usuários admin** para acesso a endpoints de inclusão, alteração e exclusão de produtos e categorias;
+- **Refatoração do sistema de infraestrutura** com provisionamento de recursos e implantação automatizados via Kubernetes e Terraform;
+- **Migração do banco de dados da API principal** para o AWS RDS;
+- **Gerenciamento de deploy** automatizado via GitHub Actions.
 
 ## Propósito do projeto
 
@@ -41,6 +41,11 @@ Fornecer um sistema para gerenciamento de pedidos para uma empresa do ramo de se
 * Sequelize
 * Docker
 * Kubernetes
+* AWS
+  * RDS
+  * Lambda
+  * Cognito
+  * API Gateway
 
 
 ## Instalação do projeto
@@ -116,9 +121,6 @@ Os projeto cria o metodo de pagamento no banco(QR Code) e as categorias padrão 
 Esta API fornece documentação no padrão OpenAPI.
 Os endpoints disponíveis, suas descrições e dados necessários para requisição podem ser consultados e testados em ```/api-docs```.
 
-O repositório do projeto também fornece uma coleção do Postman para testes em todos os endpoints.
-
-
 ### 1. Cadastrar Produtos
 
 1.1 O projeto já cria as principais categorias(Lanche, Acompanhamento, Bebida, Sobremesa);
@@ -137,43 +139,7 @@ O repositório do projeto também fornece uma coleção do Postman para testes e
 }
 ```
 
-### 2. Cliente 
-
-1.1 - Cadastrar o cliente:
-    É possível cadastrar o cliente com os dados de e-mail, nome e CPF. 
-    **ATENÇÃO**: O e-mail e o CPF não podem estar cadastrado por outro usuário e o CPF deve ser um número válido. Utilize serviços de [geração de número válido de CPF](https://www.4devs.com.br/gerador_de_cpf) para os testes.
-
-Com todos os dados:
-Body:
-```json
-{
-    "nome": "user_demo",
-    "cpf": "269.289.330-11",
-    "email": "test@test.com"
-}
-```
-
-    Com apenas um dos identificadores:
-Body:
-```json
-{
-    "nome": "user_demo",
-    "cpf": "269.289.330-11",
-}
-```
-Body:
-```json
-{
-    "nome": "user_demo",
-    "email": "test@test.com"
-}
-```
-
-Usuário Anônimo:
-    Cria um usuário anônimo para esse atendimento e retorna o id
-Body: null ou {}
-
-### 3. Pedido
+### 2. Pedido
 
 3.1 Crie um pedido vazio usando o ```/pedido/iniciar-pedido``` passando o id do usuário;
 3.2 Adicione um produto ao pedido usando o ```/pedido/{id}/adicionar-item```;
@@ -185,7 +151,7 @@ Body: null ou {}
 
 **OBS**: Todos os dados necessários para envio das requisições, via parâmetros ou body, estão disponíveis em ```/api-docs```.
 
-### 4. Preparo
+### 3. Preparo
 4.1 Utilize o ```/pedido/iniciar-preparo/``` para pegar o próximo pedido da fila ou passar o id para furar a fila;
 4.2 Utilize o ```/pedido/finalizar-preparo/{id}``` para marcar como pronto;
 4.3 Utilize o ```/pedido/entregar-pedido/{id}``` para marcar como finalizado;
@@ -208,6 +174,7 @@ Foram utilizadas técnicas de Domain Driven Design para definição dos fluxos:
 ### Dicionário
 
 * Cliente: Usuário que faz o pedido;
+* Admin: Usuário com permissões de acesso à rotas de gerenciamento das entidades (ex. criação de novos produtos e categorias)
 * Produto: É o alimento cadastrado pelo estabelecimento que será disponibilizado para o cliente escolher.
 * Categoria: A definição do tipo de Produto
 * Pedido: Solicitação realizada pelo cliente que contém itens.
@@ -229,18 +196,21 @@ O projeto foi reestruturado seguindo o padrão do clean architecture.
 
 ```shell
 .
-└── src/
-    ├── datasources/
-    │   ├── database/
-    │   └── paymentProvider/
-    ├── domain/
-    │   ├── entities/
-    │   ├── repositories/
-    │   └── useCases/
-    ├── interfaceAdapters/
-    │   └── controllers/
-    └── presenters/
-        └── api/
+├── src
+│   ├── datasources
+│   │   ├── authentication
+│   │   ├── database
+│   │   └── paymentProvider
+│   ├── domain
+│   │   ├── entities
+│   │   ├── repositories
+│   │   └── useCases
+│   ├── interfaceAdapters
+│   │   └── controllers
+│   ├── presenters
+│   │   └── api
+│   └── @types
+│       └── express
 
 ```
 
@@ -251,19 +221,6 @@ Contém a camada de domínio da aplicação e as lógicas de negócio.
 ```shell
 │   ├── domain
 │   │   ├── entities
-│   │   │   ├── types
-│   │   │   │   ├── CategoriaType.ts
-│   │   │   │   ├── CobrancaType.ts
-│   │   │   │   ├── itensPedidoType.ts
-│   │   │   │   ├── metodoPagamentoType.ts
-│   │   │   │   ├── PagamentoType.ts
-│   │   │   │   ├── pedidoService.type.ts
-│   │   │   │   ├── pedidoType.ts
-│   │   │   │   ├── produtoType.ts
-│   │   │   │   └── UsuarioType.ts
-│   │   │   ├── valueObjects
-│   │   │   │   ├── cpf.ts
-│   │   │   │   └── email.ts
 │   │   │   ├── categoria.ts
 │   │   │   ├── fatura.ts
 │   │   │   ├── ImagemProduto.ts
@@ -272,25 +229,34 @@ Contém a camada de domínio da aplicação e as lógicas de negócio.
 │   │   │   ├── Pagamento.ts
 │   │   │   ├── pedido.ts
 │   │   │   ├── produto.ts
-│   │   │   └── usuario.ts
+│   │   │   ├── types
+│   │   │   │   ├── CategoriaType.ts
+│   │   │   │   ├── CobrancaType.ts
+│   │   │   │   ├── itensPedidoType.ts
+│   │   │   │   ├── metodoPagamentoType.ts
+│   │   │   │   ├── PagamentoType.ts
+│   │   │   │   ├── pedidoService.type.ts
+│   │   │   │   ├── pedidoType.ts
+│   │   │   │   └── produtoType.ts
+│   │   │   └── valueObjects
+│   │   │       ├── cpf.ts
+│   │   │       └── email.ts
 │   │   ├── repositories
+│   │   │   ├── authenticationRepository.ts
 │   │   │   ├── categoriaRepository.ts
 │   │   │   ├── checkoutRepository.ts
 │   │   │   ├── faturaRepository.ts
 │   │   │   ├── metodoPagamentoRepository.ts
 │   │   │   ├── pagamentoRepository.ts
 │   │   │   ├── pedidoRepository.ts
-│   │   │   ├── produtoRepository.ts
-│   │   │   └── usuarioRepository.ts
+│   │   │   └── produtoRepository.ts
 │   │   └── useCases
 │   │       ├── categoriaUseCase.ts
 │   │       ├── faturaUseCase.ts
 │   │       ├── metodoPagamentoUseCase.ts
 │   │       ├── pagamentoUseCase.ts
 │   │       ├── pedidoUseCase.ts
-│   │       ├── produtoUseCase.ts
-│   │       └── usuarioUseCase.ts
-
+│   │       └── produtoUseCase.ts
 ```
 
 O diretório `domain` contém as entidades definidoras do negócio, como `usuario`, `pedido` e `categorias` e seus casos de uso. A interface entre a camada de domínio e o restante da aplicação foi definida através do uso de interfaces em `repositories`.
@@ -300,11 +266,13 @@ O diretório `domain` contém as entidades definidoras do negócio, como `usuari
 ```shell
 ├── src
 │   ├── datasources
+│   │   ├── authentication
+│   │   │   └── authentication.ts
 │   │   ├── database
 │   │   │   ├── config
-│   │   │   │   ├── interfaces
-│   │   │   │   │   └── db.config.interface.ts
-│   │   │   │   └── db.config.ts
+│   │   │   │   ├── db.config.ts
+│   │   │   │   └── interfaces
+│   │   │   │       └── db.config.interface.ts
 │   │   │   ├── models
 │   │   │   │   ├── categoriaModel.ts
 │   │   │   │   ├── faturaModel.ts
@@ -314,47 +282,43 @@ O diretório `domain` contém as entidades definidoras do negócio, como `usuari
 │   │   │   │   ├── pagamentoModel.ts
 │   │   │   │   ├── pedidoModel.ts
 │   │   │   │   ├── produtoImagensModel.ts
-│   │   │   │   ├── produtoModel.ts
-│   │   │   │   └── usuarioModel.ts
+│   │   │   │   └── produtoModel.ts
 │   │   │   ├── repository
 │   │   │   │   ├── categoriaDatabaseRepository.ts
 │   │   │   │   ├── faturaDatabaseRepository.ts
 │   │   │   │   ├── metodoPagamentoDatabaseRepository.ts
 │   │   │   │   ├── pagamentoDatabaseRepository.ts
 │   │   │   │   ├── pedidoDatabaseRepository.ts
-│   │   │   │   ├── produtoDatabaseRepository.ts
-│   │   │   │   └── usuarioDatabaseRepository.ts
+│   │   │   │   └── produtoDatabaseRepository.ts
 │   │   │   └── seeders
 │   │   │       ├── cria-categorias.ts
 │   │   │       └── cria-metodo-de-pagamento.ts
 │   │   └── paymentProvider
 │   │       └── checkoutRepository.ts
+
 │   ├── presenters
 │   │   └── api
 │   │       ├── config
 │   │       │   ├── interfaces
 │   │       │   │   └── server.config.interface.ts
 │   │       │   └── server.config.ts
+│   │       ├── index.ts
+│   │       ├── middleware
+│   │       │   └── auth.ts
 │   │       ├── routers
-│   │       │   ├── schemas
-│   │       │   │   ├── categoriaRouter.schema.ts
-│   │       │   │   ├── metodoPagamentoRouter.schema.ts
-│   │       │   │   ├── pagamentoRouter.schema.ts
-│   │       │   │   ├── pedidoRouter.schema.ts
-│   │       │   │   ├── produtoRouter.schema.ts
-│   │       │   │   └── usuarioRouter.schema.ts
 │   │       │   ├── categoriaRouter.ts
 │   │       │   ├── index.ts
 │   │       │   ├── metodoPagamentoRouter.ts
 │   │       │   ├── pagamentoRouter.ts
 │   │       │   ├── pedidoRouter.ts
 │   │       │   ├── produtoRouter.ts
-│   │       │   ├── usuarioRouter.ts
+│   │       │   ├── schemas
+│   │       │   │   ├── categoriaRouter.schema.ts
+│   │       │   │   ├── metodoPagamentoRouter.schema.ts
+│   │       │   │   ├── pagamentoRouter.schema.ts
+│   │       │   │   ├── pedidoRouter.schema.ts
+│   │       │   │   └── produtoRouter.schema.ts
 │   │       │   └── utils.ts
-│   │       ├── index.ts
 │   │       └── swaggerConfig.ts
-
 ```
-
-O diretório `adapter/driver` da fase I foi substituído por `presenters/`, responsável por interagir com o core da aplicação, no nosso projeto respresentado pela API REST.
-O diretório `adapter/driven` da fase I foi substituído por `datasources/`, responsável pela conexão com elementos externos ao core.
+Nos datasources e presenters foram implementados os métodos necessários para autenticação dos usuários. 
