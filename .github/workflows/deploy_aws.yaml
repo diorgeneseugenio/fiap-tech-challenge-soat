@@ -65,12 +65,16 @@ jobs:
     - name: Deploy Secrets
       run: echo "${{ secrets.K8S_SECRETS }}" > k8s/secrets.yaml
     - name: Deploy no Kubernetes
+      # run: |
+      #   kubectl apply -f k8s/secrets.yaml
+      #   kubectl apply -f k8s/db/db.svc.yaml
+      #   kubectl apply -f k8s/db/db.pv.yaml
+      #   kubectl apply -f k8s/db/db.pvc.yaml
+      #   kubectl apply -f k8s/db/db.deployment.yaml
+      #   kubectl apply -f k8s/api/api.deployment.yaml
+      #   kubectl apply -f k8s/api/api.svc.yaml
       run: |
         kubectl apply -f k8s/secrets.yaml
-        kubectl apply -f k8s/db/db.svc.yaml
-        kubectl apply -f k8s/db/db.pv.yaml
-        kubectl apply -f k8s/db/db.pvc.yaml
-        kubectl apply -f k8s/db/db.deployment.yaml
         kubectl apply -f k8s/api/api.deployment.yaml
         kubectl apply -f k8s/api/api.svc.yaml
 
